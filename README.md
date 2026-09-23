@@ -1,18 +1,7 @@
-# Family Assignment Board
+# Synced Family Assignment Board
 
-This folder is ready for GitHub Pages.
+1. In Cloudflare D1, open `family-assignments`, choose **Console**, and run the contents of `schema.sql`.
+2. Replace your GitHub repository contents with this folder's contents and push to `main`.
+3. Cloudflare Pages redeploys automatically. The existing `DB` binding and three password secrets are used by the new app.
 
-1. Create a new GitHub repository.
-2. Upload the contents of this folder (not the folder itself) to the repository's main branch.
-3. In the repository, open **Settings → Pages**.
-4. Choose **Deploy from a branch**, select **main** and **/(root)**, then save.
-
-GitHub will provide the site address after it finishes publishing.
-
-## Parent access
-
-On the home screen, choose **Parent / caregiver sign in**. The initial passcode is `family`; change it immediately in the editor.
-
-## Important
-
-This GitHub Pages edition is a static website. Assignment edits, completion checkmarks, and the parent passcode are saved only in the browser where they are made. They do not automatically sync to other devices. Anyone who knows the site's address can view the initial assignment list, so use a private repository if the list should not be public.
+The first successful sign-in imports the assignment lists into D1.

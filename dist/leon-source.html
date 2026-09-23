@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leon's Assignment Quest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f0f9ff;
+            background-image: radial-gradient(#bae6fd 2px, transparent 2px);
+            background-size: 30px 30px;
+        }
+        .checkbox-custom {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border: 3px solid #cbd5e1;
+            border-radius: 6px;
+            background-color: white;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease-in-out;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .checkbox-custom:checked {
+            background-color: #22c55e;
+            border-color: #22c55e;
+        }
+        .checkbox-custom:checked::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 2px;
+            width: 6px;
+            height: 12px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+        }
+        .task-row {
+            transition: all 0.3s ease;
+        }
+        /* Mute out completed text and override the date color */
+        .task-row.completed span.task-text, .task-row.completed span.due-text {
+            text-decoration: line-through;
+            color: #94a3b8 !important;
+        }
+        .task-row.completed {
+            background-color: #f8fafc;
+        }
+        /* Hide priority tags if completed */
+        .task-row.completed .date-tag {
+            display: none !important;
+        }
+        
+        /* Scrollbox styling */
+        .task-list-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .task-list-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .task-list-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .task-list-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .task-list-container::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Custom subject colors */
+        .card-math { border-top: 6px solid #ef4444; }
+        .text-math { color: #ef4444; }
+        
+        .card-ela { border-top: 6px solid #3b82f6; }
+        .text-ela { color: #3b82f6; }
+        
+        .card-science { border-top: 6px solid #10b981; }
+        .text-science { color: #10b981; }
+        
+        .card-social { border-top: 6px solid #f59e0b; }
+        .text-social { color: #f59e0b; }
+        
+        .card-stem { border-top: 6px solid #8b5cf6; }
+        .text-stem { color: #8b5cf6; }
+    </style>
+</head>
+<body class="min-h-screen py-8 px-4 sm:px-8">
+
+    <div class="max-w-7xl mx-auto">
+        
+        <header class="text-center mb-8 bg-white p-6 rounded-2xl shadow-sm border border-blue-100">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-800 mb-2">Leon's Assignments Due</h1>
+            <p class="text-lg text-slate-500 font-semibold mb-4"></p>
+            
+            <div class="max-w-md mx-auto">
+                <div class="flex justify-between text-sm font-bold text-slate-600 mb-1">
+                    <span>Progress Tracker</span>
+                    <span id="progress-text">0 / 0 Completed</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-4 shadow-inner overflow-hidden">
+                    <div id="progress-bar" class="bg-gradient-to-r from-green-400 to-green-500 h-4 rounded-full transition-all duration-500 ease-out w-0"></div>
+                </div>
+                <p id="cheer-message" class="text-green-600 font-bold mt-2 h-6 text-sm"></p>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Math Section -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden card-math flex flex-col">
+                <div class="p-4 bg-red-50 border-b border-red-100">
+                    <h2 class="text-2xl font-bold text-math flex items-center gap-2">
+                        <span>🧮</span> Mathematics 5
+                    </h2>
+                </div>
+                <div id="math-list" class="p-2 flex-grow task-list-container">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- ELA Section -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden card-ela flex flex-col">
+                <div class="p-4 bg-blue-50 border-b border-blue-100">
+                    <h2 class="text-2xl font-bold text-ela flex items-center gap-2">
+                        <span>📚</span> ELA 5
+                    </h2>
+                </div>
+                <div id="ela-list" class="p-2 flex-grow task-list-container">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Science Section -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden card-science flex flex-col">
+                <div class="p-4 bg-green-50 border-b border-green-100">
+                    <h2 class="text-2xl font-bold text-science flex items-center gap-2">
+                        <span>🔬</span> Science 5
+                    </h2>
+                </div>
+                <div id="science-list" class="p-2 flex-grow task-list-container">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Social Studies Section -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden card-social flex flex-col">
+                <div class="p-4 bg-amber-50 border-b border-amber-100">
+                    <h2 class="text-2xl font-bold text-social flex items-center gap-2">
+                        <span>🗺️</span> Social Studies 5
+                    </h2>
+                </div>
+                <div id="social-list" class="p-2 flex-grow task-list-container">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- STEM Section -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden card-stem flex flex-col">
+                <div class="p-4 bg-purple-50 border-b border-purple-100">
+                    <h2 class="text-2xl font-bold text-stem flex items-center gap-2">
+                        <span>🚀</span> STEM 5
+                    </h2>
+                </div>
+                <div id="stem-list" class="p-2 flex-grow task-list-container">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <script>
+        // Data Structure Format: ["Assignment Name", "Date", isSubmittedHardcode]
+        const assignmentsData = {
+            ela: [
+                ["Getting Started Knowledge Check", "Wed, Sep 9, 2026", true],
+                ["Grammar Adventures Day 1 - Assignment", "Mon, Sep 14, 2026", true],
+                ["Grammar Adventures Day 2 - Assignment", "Tue, Sep 15, 2026", true],
+                ["Grammar Adventures Day 5 - Assignment", "Fri, Sep 18, 2026", true],
+                ["ELA5 Fall 26 Benchmark", "Mon, Sep 21, 2026", true],
+                ["Grammar Adventures Day 7 - Assignment", "Tue, Sep 22, 2026", true],
+                ["Grammar Adventures Day 8 - Assignment", "Wed, Sep 23, 2026", true],
+                ["Grammar Adventures Day 9 - Assignment", "Thu, Sep 24, 2026", false],
+                ["Grammar Adventures Final Exam", "Fri, Sep 25, 2026", false],
+                ["Grammar Participation", "Fri, Sep 25, 2026", false],
+                ["Reading Information Quiz", "Fri, Oct 2, 2026", false],
+                ["Sharing Information Quiz", "Fri, Oct 9, 2026", false],
+                ["Finding Information Quiz", "Fri, Oct 16, 2026", false],
+                ["Module 1 Exam", "Tue, Oct 20, 2026", false],
+                ["Opinion Essay - Topic Approved", "Fri, Oct 23, 2026", false],
+                ["Opinion Essay - Prewrite Due", "Thu, Oct 29, 2026", false],
+                ["Views on Zoos Discussion", "Thu, Oct 29, 2026", false],
+                ["Claims and Opinions Quiz", "Fri, Oct 30, 2026", false],
+                ["Opinion Essay - Rough Draft Due", "Fri, Nov 6, 2026", false],
+                ["Reading Science Quiz", "Fri, Nov 6, 2026", false],
+                ["Opinion Essay - Final Copy Due", "Fri, Nov 13, 2026", false],
+                ["Analyzing Information Quiz", "Mon, Nov 16, 2026", false],
+                ["Module 2 Exam", "Tue, Nov 17, 2026", false],
+                ["Module 2 Exam*", "Tue, Nov 17, 2026", false],
+                ["Research PBL - Topic Due", "Wed, Nov 25, 2026", false],
+                ["Reading History Quiz", "Wed, Dec 2, 2026", false],
+                ["Analyzing History Quiz", "Wed, Dec 9, 2026", false],
+                ["Blast from the Past Discussion", "Wed, Dec 9, 2026", false],
+                ["Module 3 Exam", "Fri, Dec 11, 2026", false],
+                ["Research PBL - Partial Notes (Graphic Organizer) Due", "Fri, Dec 11, 2026", false],
+                ["Research Report Assignment - Submit Your Graphic Organizer (Research Notes)", "Wed, Dec 16, 2026", false],
+                ["Prepare to Share Quiz", "Thu, Dec 17, 2026", false],
+                ["Research Report Assignment - Project Due", "Wed, Dec 23, 2026", false],
+                ["Writing a Report Quiz", "Thu, Jan 7, 2027", false],
+                ["Module 4 Exam", "Fri, Jan 8, 2027", false],
+                ["Poetry Devices Quiz", "Tue, Jan 19, 2027", false],
+                ["Informational Exam", "Fri, Jan 22, 2027", false],
+                ["Grammar Adventures Day 1 - Pretest", "N/A", false],
+                ["Grammar Adventures Day 4 - Assignment", "N/A", false],
+                ["Grammar Adventures Day 4* - Assignment", "N/A", false]
+            ],
+            math: [
+                ["IXL: Mod 1 Pre Check", "Mon, Sep 14, 2026", false],
+                ["M1 L1 Knowledge Check", "Tue, Sep 15, 2026", true],
+                ["M1 L2 Knowledge Check", "Wed, Sep 16, 2026", true],
+                ["M1 L2 Assign: Order of Operations Assignment", "Thu, Sep 17, 2026", true],
+                ["M1 L3 Knowledge Check", "Fri, Sep 18, 2026", true],
+                ["M1 L4 Knowledge Check", "Mon, Sep 21, 2026", true],
+                ["M1 L5 Knowledge Check", "Wed, Sep 23, 2026", true],
+                ["M1 L6 Knowledge Check", "Thu, Sep 24, 2026", false],
+                ["M1 L6 IXL Assignment", "Fri, Sep 25, 2026", false],
+                ["M1 L7 Knowledge Check", "Mon, Sep 28, 2026", false],
+                ["M1 L7 IXL Assignment", "Tue, Sep 29, 2026", false],
+                ["M1 L8 Knowledge Check", "Wed, Sep 30, 2026", false],
+                ["M1 L8 IXL Assignment", "Thu, Oct 1, 2026", false],
+                ["M1 PBL Assignment: Patterns of the Sun", "Fri, Oct 2, 2026", false],
+                ["Module 1 - IXL Review", "Mon, Oct 5, 2026", false],
+                ["M1 Exam", "Tue, Oct 6, 2026", false],
+                ["Module 2 - IXL Preview", "Wed, Oct 7, 2026", false],
+                ["M2 L1 Knowledge Check", "Thu, Oct 8, 2026", false],
+                ["M2 L1 Assign: Number Multiplication", "Fri, Oct 9, 2026", false],
+                ["M2 L2 Knowledge Check", "Tue, Oct 13, 2026", false],
+                ["M2 L3 Knowledge Check", "Wed, Oct 14, 2026", false],
+                ["M2 L4 Knowledge Check", "Thu, Oct 15, 2026", false],
+                ["M2 L4 IXL Assignment", "Fri, Oct 16, 2026", false],
+                ["M2 L5 Knowledge Check", "Mon, Oct 19, 2026", false],
+                ["M2 L6 Knowledge Check", "Tue, Oct 20, 2026", false],
+                ["M2 Exam", "Fri, Oct 23, 2026", false],
+                ["M3 L1 Knowledge Check", "Tue, Oct 27, 2026", false],
+                ["M3 L2 Knowledge Check", "Wed, Oct 28, 2026", false],
+                ["M3 L2 IXL Assignment", "Thu, Oct 29, 2026", false],
+                ["M3 L3 Knowledge Check", "Fri, Oct 30, 2026", false],
+                ["M3 L3 IXL Assignment", "Mon, Nov 2, 2026", false],
+                ["M3 L4 Knowledge Check", "Tue, Nov 3, 2026", false],
+                ["M3 L5 Knowledge Check", "Wed, Nov 4, 2026", false],
+                ["M3 L5 IXL Assignment", "Thu, Nov 5, 2026", false],
+                ["M3 L6 Knowledge Check", "Fri, Nov 6, 2026", false],
+                ["M3 L7 Knowledge Check", "Mon, Nov 9, 2026", false],
+                ["M3 L7 IXL Assignment", "Thu, Nov 12, 2026", false],
+                ["Module 3 - IXL Review", "Fri, Nov 13, 2026", false],
+                ["M3 Exam", "Mon, Nov 16, 2026", false],
+                ["Module 4 - IXL Preview", "Tue, Nov 17, 2026", false],
+                ["M4 L1 Knowledge Check", "Wed, Nov 18, 2026", false],
+                ["M4 L2 Knowledge Check", "Thu, Nov 19, 2026", false],
+                ["M4 L2 IXL Assignment", "Fri, Nov 20, 2026", false],
+                ["M4 L3 Knowledge Check", "Mon, Nov 23, 2026", false],
+                ["M4 L3 Assign: Comparing & Expanding Decimals", "Tue, Nov 24, 2026", false],
+                ["M4 L4 Knowledge Check", "Wed, Nov 25, 2026", false],
+                ["M4 L5 Knowledge Check", "Tue, Dec 1, 2026", false],
+                ["M4 L5 IXL Assignment", "Wed, Dec 2, 2026", false],
+                ["M4 L6 Knowledge Check", "Thu, Dec 3, 2026", false],
+                ["M4 L6 Assign: Rounding & Estimating Decimals", "Fri, Dec 4, 2026", false],
+                ["Module 4 - IXL Review", "Fri, Dec 4, 2026", false],
+                ["M4 Exam", "Tue, Dec 8, 2026", false],
+                ["Module 5 - IXL Preview", "Wed, Dec 9, 2026", false],
+                ["M5 L1 Knowledge Check", "Thu, Dec 10, 2026", false],
+                ["M5 L2 Knowledge Check", "Fri, Dec 11, 2026", false],
+                ["M5 L3 Knowledge Check", "Mon, Dec 14, 2026", false],
+                ["M5 L3 IXL Assignment", "Tue, Dec 15, 2026", false],
+                ["M5 L4 Knowledge Check", "Wed, Dec 16, 2026", false],
+                ["M5 L5 Knowledge Check", "Thu, Dec 17, 2026", false],
+                ["M5 L5 IXL Assignment", "Fri, Dec 18, 2026", false],
+                ["M5 L6 Knowledge Check", "Mon, Dec 21, 2026", false],
+                ["M5 L6 IXL Assignment", "Tue, Dec 22, 2026", false],
+                ["M5 L7 Knowledge Check", "Tue, Jan 5, 2027", false],
+                ["M5 L7 IXL Assignment", "Wed, Jan 6, 2027", false],
+                ["M5 L8 Knowledge Check", "Thu, Jan 7, 2027", false],
+                ["M5 L9 Knowledge Check", "Fri, Jan 8, 2027", false],
+                ["M5 L9 IXL Assignment", "Mon, Jan 11, 2027", false],
+                ["Module 5 - IXL Review", "Tue, Jan 12, 2027", false],
+                ["M5 Exam", "Wed, Jan 13, 2027", false],
+                ["Module 6 - IXL Preview", "Thu, Jan 14, 2027", false],
+                ["M6 L1 Knowledge Check", "Fri, Jan 15, 2027", false],
+                ["M6 L1 IXL Assignment", "Tue, Jan 19, 2027", false],
+                ["M6 L2 Knowledge Check", "Wed, Jan 20, 2027", false],
+                ["M6 L3 Knowledge Check", "Thu, Jan 21, 2027", false],
+                ["M6 L4 Knowledge Check", "Mon, Jan 25, 2027", false],
+                ["M6 L5 Knowledge Check", "Tue, Jan 26, 2027", false],
+                ["M6 L6 Knowledge Check", "Wed, Jan 27, 2027", false],
+                ["IXL BOY DIAGNOSTIC", "N/A", false],
+                ["IXL: IXL Diagnostic", "N/A", false],
+                ["M2 L6 Assign: Division Practice", "N/A", false],
+                ["M6 L10 IXL Assignment", "N/A", false],
+                ["M6 L10 IXL Assignment*", "N/A", false],
+                ["M6 L8 IXL Assignment*", "N/A", false],
+                ["Module 2 - IXL Review", "N/A", false],
+                ["Module 3 - IXL Preview", "N/A", false],
+                ["Mth5 Fall 26 Benchmark", "N/A", true]
+            ],
+            science: [
+                ["M1 Our Sun and Earth Preview", "Fri, Sep 11, 2026", true],
+                ["M1 L1 Knowledge Check", "Tue, Sep 15, 2026", true],
+                ["M1 L2 Knowledge Check", "Fri, Sep 18, 2026", true],
+                ["M1 L3 Assignment: Rotation and Revolution", "Tue, Sep 22, 2026", true],
+                ["M1 L3 Knowledge Check", "Wed, Sep 23, 2026", true],
+                ["☀️🌑🌎M1 Sun Patterns PBL Activity 1 Inquiry", "Thu, Sep 24, 2026", true],
+                ["M1 Sun Patterns PBL Activity 2 Data Collection", "Tue, Sep 29, 2026", false],
+                ["Fall PBL Assignment: Patterns of the Sun", "Fri, Oct 2, 2026", false],
+                ["M1 Sun Patterns PBL Activity 3 Sundial Prediction", "Tue, Oct 6, 2026", false],
+                ["M1 Sun Patterns PBL Activity 4 Sundial Innovation", "Fri, Oct 16, 2026", false],
+                ["M1 Sun Patterns PBL Activity 5 Reflection", "Mon, Oct 19, 2026", false],
+                ["M1 L4 Knowledge Check", "Wed, Oct 21, 2026", false],
+                ["M1 L5 Quiz", "Fri, Oct 23, 2026", false],
+                ["M1L6 Knowledge Check", "Wed, Oct 28, 2026", false],
+                ["M1L7 Activity: Drop It!", "Fri, Oct 30, 2026", false],
+                ["M1 L7 Knowledge Check", "Mon, Nov 2, 2026", false],
+                ["M1 Our Sun and Earth Review", "Tue, Nov 3, 2026", false],
+                ["M1 Exam: Our Sun and Earth", "Wed, Nov 4, 2026", false],
+                ["M2 Matter Preview", "Thu, Nov 5, 2026", false],
+                ["M2 L1 Knowledge Check", "Fri, Nov 6, 2026", false],
+                ["M2L1 Activity: Papers and Balloons", "Fri, Nov 6, 2026", false],
+                ["M2 L2 Knowledge Check", "Mon, Nov 9, 2026", false],
+                ["M2L3 Assignment Elements & Compounds", "Fri, Nov 13, 2026", false],
+                ["M2 L3 Knowledge Check", "Mon, Nov 16, 2026", false],
+                ["M2 L4 Knowledge Check", "Tue, Nov 17, 2026", false],
+                ["M2 L5 Knowledge Check", "Thu, Nov 19, 2026", false],
+                ["M2 L6 Knowledge Check", "Fri, Nov 20, 2026", false],
+                ["M2 L7 Quiz: Mixtures and Solutions", "Mon, Nov 23, 2026", false],
+                ["M2 L8 Knowledge Check", "Tue, Dec 1, 2026", false],
+                ["M2L9 Assignment: Changes in Matter & Mixtures", "Wed, Dec 2, 2026", false],
+                ["M2 L9 Knowledge Check", "Thu, Dec 3, 2026", false],
+                ["M2 Matter Review", "Fri, Dec 4, 2026", false],
+                ["Module 2 Exam: Matter", "Mon, Dec 7, 2026", false],
+                ["M3 Earth's Spheres and Food Chains Preview", "Tue, Dec 8, 2026", false],
+                ["M3 L1 Knowledge Check", "Tue, Dec 8, 2026", false],
+                ["M3L2 Assignment: Interaction of Earth’s Spheres", "Thu, Dec 10, 2026", false],
+                ["M3L2 Activity A: How Do Clouds Form?", "Fri, Dec 11, 2026", false],
+                ["M3 L2 Knowledge Check", "Mon, Dec 14, 2026", false],
+                ["M3L2 Activity B: Water, Water Everywhere!", "Mon, Dec 14, 2026", false],
+                ["M3 L3 Quiz", "Wed, Dec 16, 2026", false],
+                ["M3 L4 Knowledge Check", "Thu, Dec 17, 2026", false],
+                ["M3L4 Assignment: Ecosystems", "Thu, Dec 17, 2026", false],
+                ["M3L5 Assignment: Plant & Animal Cells", "Fri, Dec 18, 2026", false],
+                ["M3 L5 Knowledge Check", "Mon, Dec 21, 2026", false],
+                ["M3 L6 Knowledge Check", "Tue, Jan 5, 2027", false],
+                ["M3 L7 Knowledge Check", "Thu, Jan 7, 2027", false],
+                ["M3L8 Activity: Energy and Matter Flow Model", "Tue, Jan 12, 2027", false],
+                ["M3 L9 Knowledge Check", "Thu, Jan 14, 2027", false],
+                ["M3L10 Assignment: Food Webs", "Tue, Jan 19, 2027", false],
+                ["M3 L10 Quiz: Extreme Organisms", "Wed, Jan 20, 2027", false],
+                ["M3 Earth's Spheres and Food Chains Review", "Thu, Jan 21, 2027", false],
+                ["Module 3 Exam: Earth's Spheres and Food Chains", "Fri, Jan 22, 2027", false],
+                ["M4 Earth's Ecosystems Preview", "Mon, Jan 25, 2027", false],
+                ["M4 L1 Knowledge Check", "Mon, Jan 25, 2027", false],
+                ["M4 L2 Knowledge Check", "Tue, Jan 26, 2027", false],
+                ["M4 L3 Knowledge Check", "Wed, Jan 27, 2027", false],
+                ["M1L1 Activity: Distance Matters", "N/A", true],
+                ["M6 Activity 1: Investigation How Much Water*", "N/A", false],
+                ["M6 Activity 1: Investigation- How Much Water", "N/A", false],
+                ["M6 Activity 2: Investigation- Water Footprint", "N/A", false],
+                ["M6 Activity 2: Investigation- Water Footprint*", "N/A", false],
+                ["M6 Activity 3: Connections- What Affects Water", "N/A", false],
+                ["M6 Activity 3: Connections- What Affects Water*", "N/A", false],
+                ["M6 Activity 5a: Engage and Explore Water", "N/A", false],
+                ["M6 Activity 5a: Engage and Explore Water*", "N/A", false],
+                ["M6 Activity 5b: Brainstorm & Blueprint", "N/A", false],
+                ["M6 Activity 5b: Brainstorm and Blueprint*", "N/A", false],
+                ["M6 Activity 5c: Build, Test, and Reflect", "N/A", false],
+                ["M6 Activity 5c: Build, Test, and Reflect*", "N/A", false],
+                ["Module 5 Lesson 5 Assignment: Grasslands*", "N/A", false],
+                ["Module 9 Lesson 5 Assignment: Measurement*", "N/A", false],
+                ["SCI5 Fall 26 Benchmark", "N/A", true]
+            ],
+            social: [
+                ["M1L1 Homework: Primary & Secondary Sources", "Fri, Sep 11, 2026", true],
+                ["M1 L2 Knowledge Check", "Mon, Sep 14, 2026", true],
+                ["M1 L3 Assignment: Early Civilizations Map", "Wed, Sep 16, 2026", true],
+                ["M1L4 Homework: People of the NE", "Mon, Sep 21, 2026", true],
+                ["M1L5 Homework: People of the SE", "Tue, Sep 22, 2026", true],
+                ["M1L6 Homework: People of the Plains", "Thu, Sep 24, 2026", false],
+                ["M1 L7 Knowledge Check", "Mon, Sep 28, 2026", false],
+                ["M1L8 Homework: People of the NW", "Tue, Sep 29, 2026", false],
+                ["M1 L9 Knowledge Check", "Wed, Sep 30, 2026", false],
+                ["M1 L10 Knowledge Check", "Thu, Oct 1, 2026", false],
+                ["Module 1 Exam: The First Americans", "Wed, Oct 7, 2026", false],
+                ["M2 L1 Knowledge Check", "Thu, Oct 8, 2026", false],
+                ["M2 L2 Knowledge Check", "Fri, Oct 9, 2026", false],
+                ["M2 L4 Knowledge Check", "Wed, Oct 14, 2026", false],
+                ["M2 L5 Quiz", "Thu, Oct 15, 2026", false],
+                ["M2 L6 Knowledge Check", "Fri, Oct 16, 2026", false],
+                ["M2 Sun Patterns PBL SS Sundial Activity", "Fri, Oct 16, 2026", false],
+                ["M2 L3-7 Homework: European Explorers Chart", "Mon, Oct 19, 2026", false],
+                ["M2 L7 Knowledge Check", "Mon, Oct 19, 2026", false],
+                ["M2 L8 Assignment: Columbian Exchange", "Wed, Oct 21, 2026", false],
+                ["M2 L9 Knowledge Check", "Thu, Oct 22, 2026", false],
+                ["M2 L10 Knowledge Check", "Mon, Oct 26, 2026", false],
+                ["Module 2 Exam: The Age of Exploration", "Wed, Oct 28, 2026", false],
+                ["M4 L1 Assignment: Colonial Economy", "N/A", false],
+                ["Module 6 Exam: The US Constitution", "N/A", false],
+                ["M3 L1-4 Assignment: Colony Comparison Chart", "N/A", false],
+                ["M3 L10 Knowledge Check", "N/A", false],
+                ["M3 L2 Knowledge Check", "N/A", false],
+                ["M3 L3 Knowledge Check", "N/A", false],
+                ["M3 L4 Knowledge Check", "N/A", false],
+                ["M3 L5 Quiz", "N/A", false],
+                ["M3 L6 Knowledge Check", "N/A", false],
+                ["M3 L7 Knowledge Check", "N/A", false],
+                ["M3 L8 Knowledge Check", "N/A", false],
+                ["M3 L9 Knowledge Check", "N/A", false],
+                ["M4 L2 Homework: Wants vs. Needs", "N/A", false],
+                ["M4 L3 Knowledge Check", "N/A", false],
+                ["M4 L4 Knowledge Check", "N/A", false],
+                ["M4 L5 Quiz", "N/A", false],
+                ["M4 L6 Knowledge Check", "N/A", false],
+                ["M4 L7 Knowledge Check", "N/A", false],
+                ["M4 L8 Knowledge Check", "N/A", false],
+                ["M4 L9 Knowledge Check", "N/A", false],
+                ["M5 L1 Knowledge Check", "N/A", false],
+                ["M5 L10 Homework: Northwest Ordinance", "N/A", false],
+                ["M5 L2 Knowledge Check", "N/A", false],
+                ["M5 L2-4 Homework: Events that Led to Revolution", "N/A", false],
+                ["M5 L3 Knowledge Check", "N/A", false],
+                ["M5 L5 Quiz", "N/A", false],
+                ["M5 L6 Knowledge Check", "N/A", false],
+                ["M5 L7 Knowledge Check", "N/A", false],
+                ["M5 L8 Knowledge Check", "N/A", false],
+                ["M5 L9 Knowledge Check", "N/A", false],
+                ["M6 L1 Knowledge Check", "N/A", false],
+                ["M6 L10 Homework: Constitutional Comparison", "N/A", false],
+                ["M6 L2 Knowledge Check", "N/A", false],
+                ["M6 L3 Knowledge Check", "N/A", false],
+                ["M6 L4 Knowledge Check", "N/A", false],
+                ["M6 L5 Quiz", "N/A", false],
+                ["M6 L6 Knowledge Check", "N/A", false],
+                ["M6 L7 Knowledge Check", "N/A", false],
+                ["M6 L8 Knowledge Check", "N/A", false],
+                ["M6 L9 Homework: Key Figures", "N/A", false],
+                ["Module 2 Movie Trailer", "N/A", false],
+                ["Module 3 Exam: The Colonial Age", "N/A", false],
+                ["Module 4 Exam: The American Economy", "N/A", false],
+                ["Module 5 Exam: The American Revolution", "N/A", false]
+            ],
+            stem: [
+                ["STEM 2.0 Assignment", "Wed, Sep 16, 2026", true],
+                ["Engineering Design Process Mini-Challenge", "Wed, Sep 23, 2026", true],
+                ["📐⚙️ Rube Blueprint Lab: Plan the Reaction 🔗✏️", "Mon, Oct 5, 2026", false],
+                ["⚙️🔗 Chain Reaction Build Lab 🚀🛠️", "Wed, Oct 7, 2026", false],
+                ["🧪🔧 Rube Test Lab: Test, Tweak, Repeat 🔁⚙️", "Wed, Oct 14, 2026", false],
+                ["🧪 Crack the Plant Growth Code", "Mon, Nov 2, 2026", false],
+                ["💧 Engineer Your Hydroponic System", "Wed, Nov 4, 2026", false],
+                ["🔧 Test, Tweak & Grow Smarter", "Mon, Nov 9, 2026", false],
+                ["Overfishing Simulation CodeLab: Try It, Test It, Debug It!", "Mon, Nov 23, 2026", false],
+                ["Balance the Ecosystem CodeLab: Try It, Test It, Debug It!", "Wed, Dec 2, 2026", false],
+                ["Code My Ecosystem CodeLab: Try It, Test It, Debug It!", "Wed, Dec 9, 2026", false],
+                ["📐 Blueprint Lab: Design Your Solution", "Mon, Dec 21, 2026", false],
+                ["🛠️ Prototype Lab: Build Version 1.0", "Wed, Dec 23, 2026", false],
+                ["🧪 Stress Test: Test, Tweak, Repeat", "Mon, Jan 4, 2027", false],
+                ["Smart Futures Create a Career Plan (Activity B13)", "Wed, Jan 20, 2027", false],
+                ["Smart Futures Develop a Positive Work Ethic (Activity B5)", "Wed, Jan 20, 2027", false]
+            ]
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // To ensure color coding works based on the requested date context
+            const currentDate = new Date('2026-09-23T00:00:00');
+            currentDate.setHours(0,0,0,0);
+
+            // Populate lists dynamically
+            Object.keys(assignmentsData).forEach(subject => {
+                const container = document.getElementById(`${subject}-list`);
+                let html = '';
+                assignmentsData[subject].forEach((item, index) => {
+                    const id = `leon-${subject}-${index}`;
+                    const isHardCompleted = item[2]; 
+                    
+                    // Allow localStorage to keep user checks, but default to the hardcoded completions
+                    const savedState = localStorage.getItem(id);
+                    const isCompleted = savedState !== null ? savedState === 'true' : isHardCompleted;
+
+                    let dateColorClass = 'text-slate-500 font-bold';
+                    let dateTag = '';
+                    let dueText = item[1] === "N/A" ? "No Due Date" : `Due: ${item[1]}`;
+
+                    // Evaluate tags and colors based on the current context date
+                    if (item[1] === "N/A") {
+                        dateColorClass = 'text-emerald-500 font-bold'; // Green for N/A
+                    } else {
+                        const dueDate = new Date(item[1]);
+                        dueDate.setHours(0,0,0,0);
+                        
+                        const diffTime = dueDate.getTime() - currentDate.getTime();
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                        if (diffDays < 0) {
+                            dateColorClass = 'text-red-500 font-bold'; // Red for past due
+                            dateTag = '<span class="date-tag ml-2 bg-red-100 text-red-700 px-2 py-0.5 rounded text-xs font-bold uppercase border border-red-200">Past Due</span>';
+                        } else if (diffDays >= 0 && diffDays <= 3) {
+                            dateColorClass = 'text-amber-500 font-bold'; // Yellow for approaching soon
+                            dateTag = '<span class="date-tag ml-2 bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-xs font-bold uppercase border border-amber-200">Due Soon</span>';
+                        }
+                    }
+
+                    const checkedAttr = isCompleted ? 'checked' : '';
+                    const completedClass = isCompleted ? 'completed' : '';
+
+                    html += `
+                        <label class="task-row ${completedClass} flex items-start gap-3 p-3 rounded-lg hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-0">
+                            <input type="checkbox" id="${id}" class="checkbox-custom task-checkbox" ${checkedAttr}>
+                            <div class="flex flex-col">
+                                <span class="task-text text-slate-700 font-semibold text-sm sm:text-base">${item[0]}[cite: 3]</span>
+                                <div class="flex items-center mt-1">
+                                    <span class="due-text text-xs ${dateColorClass}">${dueText}[cite: 3]</span>
+                                    ${dateTag}
+                                </div>
+                            </div>
+                        </label>
+                    `;
+                });
+                if(container) container.innerHTML = html;
+            });
+
+            // Tracking elements
+            const checkboxes = document.querySelectorAll('.task-checkbox');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const cheerMessage = document.getElementById('cheer-message');
+            const totalTasks = checkboxes.length;
+            
+            const cheers = [
+                "10%", 
+                "20%", 
+                "30%", 
+                "40%", 
+                "50%",
+                "60%",
+                "70%",
+                "80%",
+                "90%",
+                "99.9%",
+                "100%"
+            ];
+
+            function updateProgress() {
+                const completedTasks = document.querySelectorAll('.task-checkbox:checked').length;
+                const percentage = (completedTasks / totalTasks) * 100;
+                
+                // Update bar and text
+                progressBar.style.width = `${percentage}%`;
+                progressText.textContent = `${completedTasks} / ${totalTasks} Completed`;
+                
+                // Show cheer message based on progress
+                if (completedTasks > 0) {
+                    const cheerIndex = Math.min(Math.floor((completedTasks / totalTasks) * 10), cheers.length - 1);
+                    // Force the "all done" message if perfectly finished
+                    if (completedTasks === totalTasks) {
+                        cheerMessage.textContent = cheers[cheers.length - 1];
+                        cheerMessage.classList.add('text-2xl', 'animate-pulse');
+                    } else {
+                        cheerMessage.textContent = cheers[cheerIndex];
+                        cheerMessage.classList.remove('text-2xl', 'animate-pulse');
+                    }
+                } else {
+                    cheerMessage.textContent = "";
+                }
+            }
+
+            // Restore saved states from localStorage
+            checkboxes.forEach(box => {
+                box.addEventListener('change', function() {
+                    const row = this.closest('.task-row');
+                    if (this.checked) {
+                        row.classList.add('completed');
+                        // Pop effect
+                        this.style.transform = "scale(1.2)";
+                        setTimeout(() => this.style.transform = "scale(1)", 200);
+                        localStorage.setItem(this.id, 'true');
+                    } else {
+                        row.classList.remove('completed');
+                        localStorage.setItem(this.id, 'false');
+                    }
+                    updateProgress();
+                });
+            });
+
+            // Initialize progress on load
+            updateProgress();
+        });
+    </script>
+</body>
+</html>
