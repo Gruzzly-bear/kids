@@ -354,6 +354,55 @@ button,.button,.button.light,.person,.task-view button{box-shadow:none!important
     }
   }
 </style>
+<style>
+  /* The add row is a toolbar; its controls still need to read as individual fields. */
+  .parent-page form:not(.password-form) input:not([type="checkbox"]),
+  .parent-page form:not(.password-form) select {
+    border: 1px solid color-mix(in srgb, var(--line) 72%, var(--ink)) !important;
+    background: var(--surface) !important;
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--ink) 8%, transparent) !important;
+  }
+
+  .parent-page form:not(.password-form) input:not([type="checkbox"]):hover,
+  .parent-page form:not(.password-form) select:hover {
+    border-color: color-mix(in srgb, var(--navy) 45%, var(--line)) !important;
+  }
+
+  .parent-page form:not(.password-form) input:not([type="checkbox"]):focus-visible,
+  .parent-page form:not(.password-form) select:focus-visible {
+    border-color: var(--navy) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--navy) 15%, transparent) !important;
+  }
+
+  /* Curated palette themes. */
+  [data-theme="coastal"]{--navy:#0077b6;--ink:#023047;--muted:#527082;--line:#b9dce9;--mint:#009688;--sun:#ffb703;--coral:#e76f51;--sky:#caf0f8;--surface:#fff;--surface-2:#eaf8fc;--positive:#16835d}
+  [data-theme="coastal"] body{background:#e6f6fb}
+  [data-theme="sunset"]{--navy:#7b2cbf;--ink:#3c174f;--muted:#755d7f;--line:#e5cceb;--mint:#2a9d8f;--sun:#ff9f1c;--coral:#e63946;--sky:#f6e8fa;--surface:#fffafd;--surface-2:#f6e8fa;--positive:#2f855a}
+  [data-theme="sunset"] body{background:#fff1e8}
+  [data-theme="berry"]{--navy:#5b21b6;--ink:#2e1065;--muted:#706080;--line:#ddd0ef;--mint:#0f9f83;--sun:#d97706;--coral:#be185d;--sky:#ede9fe;--surface:#fff;--surface-2:#f5f3ff;--positive:#15803d}
+  [data-theme="berry"] body{background:#f5f3ff}
+  [data-theme="mint"]{--navy:#006d77;--ink:#173f43;--muted:#5f7779;--line:#c7dfdc;--mint:#00856f;--sun:#d79b00;--coral:#c8553d;--sky:#dff4f1;--surface:#fff;--surface-2:#edf8f6;--positive:#157347}
+  [data-theme="mint"] body{background:#eaf7f4}
+  [data-theme="rose"]{--navy:#9d174d;--ink:#4a1830;--muted:#806472;--line:#ecd1dc;--mint:#2f855a;--sun:#b7791f;--coral:#e11d48;--sky:#fce7f3;--surface:#fff;--surface-2:#fff1f6;--positive:#25834e}
+  [data-theme="rose"] body{background:#fff1f5}
+  [data-theme="citrus"]{--navy:#5f6f00;--ink:#374018;--muted:#72775b;--line:#dce2b8;--mint:#3d7d54;--sun:#d99b00;--coral:#c85a34;--sky:#f1f5cf;--surface:#fffef7;--surface-2:#f7f9e5;--positive:#387044}
+  [data-theme="citrus"] body{background:#fbf8dd}
+  [data-theme="arctic"]{--navy:#2563a6;--ink:#17324d;--muted:#60788e;--line:#cfdfec;--mint:#198f83;--sun:#ca8a04;--coral:#d14f5c;--sky:#e4f1fa;--surface:#fff;--surface-2:#eff6fb;--positive:#18794e}
+  [data-theme="arctic"] body{background:#eef7fc}
+  [data-theme="coral"]{--navy:#c2410c;--ink:#542713;--muted:#826958;--line:#ead4c7;--mint:#2a7f62;--sun:#d68a00;--coral:#dc2626;--sky:#ffeadf;--surface:#fffdfa;--surface-2:#fff1e9;--positive:#237a50}
+  [data-theme="coral"] body{background:#fff4ed}
+  [data-theme="midnight"]{color-scheme:dark;--navy:#2563eb;--ink:#f1f5f9;--muted:#a8b5c5;--line:#334155;--mint:#34d399;--sun:#fbbf24;--coral:#fb7185;--sky:#1e293b;--surface:#111827;--surface-2:#1f2937;--positive:#34d399}
+  [data-theme="midnight"] body{background:#0f172a}
+  [data-theme="dracula"]{color-scheme:dark;--navy:#7c3aed;--ink:#f8f8f2;--muted:#b9b8c4;--line:#44475a;--mint:#50fa7b;--sun:#f1fa8c;--coral:#ff5555;--sky:#44475a;--surface:#282a36;--surface-2:#343746;--positive:#50fa7b}
+  [data-theme="dracula"] body{background:#1e1f29}
+
+  [data-theme="midnight"] .brand-mark,[data-theme="midnight"] .button,
+  [data-theme="dracula"] .brand-mark,[data-theme="dracula"] .button{background:var(--navy);box-shadow:none}
+  [data-theme="midnight"] .parent-page,[data-theme="midnight"] .parent-side,[data-theme="midnight"] .card,[data-theme="midnight"] .monitor-child,
+  [data-theme="dracula"] .parent-page,[data-theme="dracula"] .parent-side,[data-theme="dracula"] .card,[data-theme="dracula"] .monitor-child{background:var(--surface);border-color:var(--line)}
+  [data-theme="midnight"] .hero,[data-theme="midnight"] .monitor-heading,
+  [data-theme="dracula"] .hero,[data-theme="dracula"] .monitor-heading{background:var(--surface-2);border:1px solid var(--line);box-shadow:none}
+</style>
 <script>
 const LABELS={ela:'Language Arts',math:'Math',science:'Science',social:'Social Studies',stem:'STEM',tech:'Technology'};
 const state={view:null,assignments:null,schedules:{leon:[],logan:[]},scheduleTemplates:{leon:[],logan:[]},scheduledDays:{leon:{},logan:{}},scheduleDates:{leon:'',logan:''},displayCards:{leon:[],logan:[],monitor:[]},scheduleMessage:'',showEditor:false,auth:null};
@@ -452,11 +501,11 @@ function classBrowserEnabled(){return localStorage.getItem('show-class-browser')
 function setClassBrowser(enabled){localStorage.setItem('show-class-browser',String(enabled));render()}
 const dashboardCardRender=render;render=()=>{dashboardCardRender();if(!['leon','logan'].includes(state.view)||state.subjectView)return;const top=document.querySelector('.student-top');if(top)top.insertAdjacentHTML('beforeend',displayCards(state.view));if(!classBrowserEnabled())for(const heading of document.querySelectorAll('section>h2'))if(heading.textContent.trim()==='Choose a class')heading.parentElement.remove()}
 
-const themeKey='family-assignment-theme',THEMES=['material','facebook','forest','sand','dark'];
+const themeKey='family-assignment-theme',THEMES=['material','facebook','forest','sand','dark','coastal','sunset','berry','mint','rose','citrus','arctic','coral','midnight','dracula'];
 function savedTheme(){const saved=localStorage.getItem(themeKey);return saved==='indigo'?'facebook':THEMES.includes(saved)?saved:'material'}
 function applyTheme(theme){document.documentElement.dataset.theme=theme}
 function setTheme(theme){localStorage.setItem(themeKey,theme);applyTheme(theme);state.view==='monitor'?monitorPage():state.view==='parent'?editor():render()}
-const boardMast=mast;mast=()=>boardMast().replace('</header>',`${['leon','logan'].includes(state.view)?`<label class="top-toggle"><input type="checkbox" ${classBrowserEnabled()?'checked':''} onchange="setClassBrowser(this.checked)"><span>Class browser</span></label>`:''}<label class="theme-picker"><span>Theme</span><select onchange="setTheme(this.value)" aria-label="Choose appearance theme"><option value="material" ${savedTheme()==='material'?'selected':''}>Material</option><option value="facebook" ${savedTheme()==='facebook'?'selected':''}>Blue</option><option value="forest" ${savedTheme()==='forest'?'selected':''}>Forest</option><option value="sand" ${savedTheme()==='sand'?'selected':''}>Coffee</option><option value="dark" ${savedTheme()==='dark'?'selected':''}>Dark</option></select></label></header>`);
+const boardMast=mast;mast=()=>boardMast().replace('</header>',`${['leon','logan'].includes(state.view)?`<label class="top-toggle"><input type="checkbox" ${classBrowserEnabled()?'checked':''} onchange="setClassBrowser(this.checked)"><span>Class browser</span></label>`:''}<label class="theme-picker"><span>Theme</span><select onchange="setTheme(this.value)" aria-label="Choose appearance theme"><option value="material" ${savedTheme()==='material'?'selected':''}>Material</option><option value="facebook" ${savedTheme()==='facebook'?'selected':''}>Blue</option><option value="forest" ${savedTheme()==='forest'?'selected':''}>Forest</option><option value="sand" ${savedTheme()==='sand'?'selected':''}>Coffee</option><option value="dark" ${savedTheme()==='dark'?'selected':''}>Discord Dark</option><option value="coastal" ${savedTheme()==='coastal'?'selected':''}>Coastal</option><option value="sunset" ${savedTheme()==='sunset'?'selected':''}>Sunset</option><option value="berry" ${savedTheme()==='berry'?'selected':''}>Berry</option><option value="mint" ${savedTheme()==='mint'?'selected':''}>Fresh Mint</option><option value="rose" ${savedTheme()==='rose'?'selected':''}>Rose</option><option value="citrus" ${savedTheme()==='citrus'?'selected':''}>Citrus</option><option value="arctic" ${savedTheme()==='arctic'?'selected':''}>Arctic</option><option value="coral" ${savedTheme()==='coral'?'selected':''}>Coral</option><option value="midnight" ${savedTheme()==='midnight'?'selected':''}>Midnight</option><option value="dracula" ${savedTheme()==='dracula'?'selected':''}>Dracula</option></select></label></header>`);
 applyTheme(savedTheme());
 bootstrap();
 </script></body></html>
