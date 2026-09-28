@@ -230,6 +230,126 @@ button,.button,.button.light,.person,.task-view button{box-shadow:none!important
     }
   }
 </style>
+<style>
+  /* Editing links should look actionable without returning to heavy borders. */
+  .parent-side .side-edit,
+  .parent-side .edit-cards-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border: 0 !important;
+    background: color-mix(in srgb, var(--navy) 13%, var(--surface)) !important;
+    color: var(--navy) !important;
+    box-shadow: none !important;
+    font-weight: 800;
+  }
+
+  .parent-side .side-edit::before,
+  .parent-side .edit-cards-link::before {
+    content: "✎";
+    display: inline-grid;
+    place-items: center;
+    width: 21px;
+    height: 21px;
+    border-radius: 6px;
+    background: var(--navy);
+    color: var(--surface);
+    font-size: .8rem;
+    line-height: 1;
+  }
+
+  .parent-side .side-edit:hover,
+  .parent-side .edit-cards-link:hover {
+    background: color-mix(in srgb, var(--navy) 20%, var(--surface)) !important;
+    transform: translateY(-1px);
+  }
+
+  .parent-side .side-edit:active,
+  .parent-side .edit-cards-link:active {
+    transform: translateY(0);
+  }
+</style>
+<style>
+  /* Consistent, quiet button affordance throughout the parent workspace. */
+  .parent-shell .button.light {
+    border: 0 !important;
+    background: color-mix(in srgb, var(--navy) 10%, var(--surface)) !important;
+    color: var(--ink) !important;
+    box-shadow: none !important;
+  }
+
+  .parent-shell .button.light:hover {
+    background: color-mix(in srgb, var(--navy) 17%, var(--surface)) !important;
+    transform: translateY(-1px);
+  }
+
+  .parent-shell .button.light:active {
+    background: color-mix(in srgb, var(--navy) 22%, var(--surface)) !important;
+    transform: translateY(0);
+  }
+
+  @media (min-width: 1451px) {
+    .shell.parent-shell {
+      height: 100vh;
+      padding-top: 12px;
+      padding-bottom: 14px;
+      grid-template-rows: auto minmax(0, 1fr);
+      row-gap: 10px;
+      overflow: hidden;
+    }
+
+    .parent-shell .mast {
+      min-height: 44px;
+      margin-bottom: 0;
+    }
+
+    .parent-shell .parent-page {
+      display: flex;
+      min-height: 0;
+      padding: 22px 28px;
+      overflow: hidden;
+      flex-direction: column;
+    }
+
+    .parent-shell .parent-page > .hero-row {
+      padding-bottom: 12px;
+    }
+
+    .parent-shell .parent-modes {
+      margin: 10px 0;
+    }
+
+    .parent-shell .parent-page > .small {
+      margin: 7px 0 9px !important;
+    }
+
+    .parent-shell .parent-page > .notice {
+      margin: 9px 0;
+      padding: 11px 14px;
+    }
+
+    .parent-shell .parent-page > .actions {
+      margin: 9px 0;
+    }
+
+    .parent-shell .parent-page form:not(.password-form) {
+      margin: 9px 0 12px;
+      padding: 12px;
+    }
+
+    .parent-shell .editor-list {
+      flex: 1 1 auto;
+      min-height: 180px;
+      max-height: none;
+    }
+
+    .parent-shell .parent-side {
+      max-height: 100%;
+      overflow-y: auto;
+    }
+  }
+</style>
 <script>
 const LABELS={ela:'Language Arts',math:'Math',science:'Science',social:'Social Studies',stem:'STEM',tech:'Technology'};
 const state={view:null,assignments:null,schedules:{leon:[],logan:[]},scheduleTemplates:{leon:[],logan:[]},scheduledDays:{leon:{},logan:{}},scheduleDates:{leon:'',logan:''},displayCards:{leon:[],logan:[],monitor:[]},scheduleMessage:'',showEditor:false,auth:null};
