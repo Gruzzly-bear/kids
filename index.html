@@ -161,6 +161,75 @@ button,.button,.button.light,.person,.task-view button{box-shadow:none!important
     color: var(--due-tomorrow) !important;
   }
 </style>
+<style>
+  /* Give the desktop parent tools enough horizontal room for native date/time fields. */
+  @media (min-width: 1451px) {
+    .shell.parent-shell {
+      width: min(1720px, calc(100% - 48px));
+      max-width: 1720px;
+      grid-template-columns: 250px minmax(0, 1fr) 250px;
+      gap: 24px;
+    }
+  }
+
+  .assignment-column-guide,
+  .editor-subject .edit-row {
+    grid-template-columns: 28px minmax(220px, 1.65fr) minmax(154px, .82fr) minmax(150px, .9fr) 84px !important;
+  }
+
+  .editor-subject .edit-row input[type="date"] {
+    min-width: 154px;
+    width: 100%;
+  }
+
+  .schedule-editor.open {
+    inset: 5vh max(20px, calc((100vw - 1100px) / 2));
+  }
+
+  .schedule-row {
+    grid-template-columns: minmax(150px, .8fr) minmax(300px, 2fr) 150px 86px;
+    gap: 10px;
+  }
+
+  .schedule-row > select,
+  .schedule-row > input {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .schedule-row > input[type="time"] {
+    min-width: 150px;
+  }
+
+  .schedule-date input[type="date"] {
+    min-width: 180px;
+  }
+
+  @media (max-width: 760px) {
+    .schedule-editor.open {
+      inset: 12px;
+    }
+
+    .schedule-row {
+      grid-template-columns: minmax(0, 1fr) 150px;
+    }
+
+    .schedule-row > input:not([type="time"]) {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+
+    .schedule-row > input[type="time"] {
+      grid-column: 1;
+      grid-row: 3;
+    }
+
+    .schedule-row > button {
+      grid-column: 2;
+      grid-row: 3;
+    }
+  }
+</style>
 <script>
 const LABELS={ela:'Language Arts',math:'Math',science:'Science',social:'Social Studies',stem:'STEM',tech:'Technology'};
 const state={view:null,assignments:null,schedules:{leon:[],logan:[]},scheduleTemplates:{leon:[],logan:[]},scheduledDays:{leon:{},logan:{}},scheduleDates:{leon:'',logan:''},displayCards:{leon:[],logan:[],monitor:[]},scheduleMessage:'',showEditor:false,auth:null};
