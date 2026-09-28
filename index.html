@@ -393,8 +393,8 @@ button,.button,.button.light,.person,.task-view button{box-shadow:none!important
   [data-theme="coral"] body{background:#fff4ed}
   [data-theme="midnight"]{color-scheme:dark;--navy:#2563eb;--ink:#f1f5f9;--muted:#a8b5c5;--line:#334155;--mint:#34d399;--sun:#fbbf24;--coral:#fb7185;--sky:#1e293b;--surface:#111827;--surface-2:#1f2937;--positive:#34d399}
   [data-theme="midnight"] body{background:#0f172a}
-  [data-theme="dracula"]{color-scheme:dark;--navy:#7c3aed;--ink:#f8f8f2;--muted:#b9b8c4;--line:#44475a;--mint:#50fa7b;--sun:#f1fa8c;--coral:#ff5555;--sky:#44475a;--surface:#282a36;--surface-2:#343746;--positive:#50fa7b}
-  [data-theme="dracula"] body{background:#1e1f29}
+  [data-theme="dracula"]{color-scheme:dark;--navy:#6d4a9e;--ink:#eeeef2;--muted:#aaa9b5;--line:#3c3e4e;--mint:#3dad67;--sun:#c6b85b;--coral:#d75b68;--sky:#353744;--surface:#24252f;--surface-2:#2d2f3a;--positive:#4eaf70}
+  [data-theme="dracula"] body{background:#191a22}
 
   [data-theme="midnight"] .brand-mark,[data-theme="midnight"] .button,
   [data-theme="dracula"] .brand-mark,[data-theme="dracula"] .button{background:var(--navy);box-shadow:none}
@@ -402,6 +402,42 @@ button,.button,.button.light,.person,.task-view button{box-shadow:none!important
   [data-theme="dracula"] .parent-page,[data-theme="dracula"] .parent-side,[data-theme="dracula"] .card,[data-theme="dracula"] .monitor-child{background:var(--surface);border-color:var(--line)}
   [data-theme="midnight"] .hero,[data-theme="midnight"] .monitor-heading,
   [data-theme="dracula"] .hero,[data-theme="dracula"] .monitor-heading{background:var(--surface-2);border:1px solid var(--line);box-shadow:none}
+
+  [data-theme="dracula"] .notice {
+    border-color: #355343;
+    background: #243b30;
+    color: #bcd8c6;
+  }
+
+  [data-theme="dracula"] .editor-subject h3,
+  [data-theme="dracula"] .assignment-column-guide {
+    background: #30323e !important;
+    color: #d8d4e2;
+  }
+
+  [data-theme="dracula"] .parent-page .edit-row,
+  [data-theme="dracula"] .parent-page .edit-row:hover {
+    background: var(--surface) !important;
+  }
+
+  [data-theme="dracula"] .due-chip.today {
+    background: #443b25;
+    color: #dbc66e;
+  }
+
+  .parent-shell .parent-side {
+    min-width: 0;
+    overflow-x: hidden !important;
+  }
+
+  .parent-side .side-schedule,
+  .parent-side .side-schedule-list,
+  .parent-side .schedule-item,
+  .parent-side .focus-item {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
 </style>
 <script>
 const LABELS={ela:'Language Arts',math:'Math',science:'Science',social:'Social Studies',stem:'STEM',tech:'Technology'};
