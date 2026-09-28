@@ -160,7 +160,7 @@ const themeKey='family-assignment-theme',THEMES=['material','facebook','forest',
 function savedTheme(){const saved=localStorage.getItem(themeKey);return saved==='indigo'?'facebook':THEMES.includes(saved)?saved:'material'}
 function applyTheme(theme){document.documentElement.dataset.theme=theme}
 function setTheme(theme){localStorage.setItem(themeKey,theme);applyTheme(theme);state.view==='monitor'?monitorPage():state.view==='parent'?editor():render()}
-const boardMast=mast;mast=()=>boardMast().replace('</header>',`<label class="theme-picker"><span>Theme</span><select onchange="setTheme(this.value)" aria-label="Choose appearance theme"><option value="material" ${savedTheme()==='material'?'selected':''}>Material 3</option><option value="facebook" ${savedTheme()==='facebook'?'selected':''}>Facebook Blue</option><option value="forest" ${savedTheme()==='forest'?'selected':''}>Coolors Forest</option><option value="sand" ${savedTheme()==='sand'?'selected':''}>Coolors Coffee</option><option value="dark" ${savedTheme()==='dark'?'selected':''}>Discord Dark</option></select></label></header>`);
+const boardMast=mast;mast=()=>boardMast().replace('</header>',`<label class="theme-picker"><span>Theme</span><select onchange="setTheme(this.value)" aria-label="Choose appearance theme"><option value="material" ${savedTheme()==='material'?'selected':''}>Material</option><option value="facebook" ${savedTheme()==='facebook'?'selected':''}>Blue</option><option value="forest" ${savedTheme()==='forest'?'selected':''}>Forest</option><option value="sand" ${savedTheme()==='sand'?'selected':''}>Coffee</option><option value="dark" ${savedTheme()==='dark'?'selected':''}>Dark</option></select></label></header>`);
 applyTheme(savedTheme());
 bootstrap();
 </script></body></html>
