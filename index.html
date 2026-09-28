@@ -491,6 +491,68 @@ button,.button,.button.light,.person,.task-view button{box-shadow:none!important
     background: var(--surface-2) !important;
     color: var(--ink) !important;
   }
+
+  [data-theme="github-dark"]{color-scheme:dark;--navy:#2f81f7;--ink:#e6edf3;--muted:#8b949e;--line:#30363d;--mint:#3fb950;--sun:#d29922;--coral:#f85149;--sky:#161b22;--surface:#0d1117;--surface-2:#161b22;--positive:#3fb950}
+  [data-theme="github-dark"] body{background:#010409}
+  [data-theme="nord"]{color-scheme:dark;--navy:#5e81ac;--ink:#eceff4;--muted:#aeb8c5;--line:#4c566a;--mint:#8fbcbb;--sun:#ebcb8b;--coral:#bf616a;--sky:#3b4252;--surface:#2e3440;--surface-2:#3b4252;--positive:#a3be8c}
+  [data-theme="nord"] body{background:#242933}
+  [data-theme="monokai"]{color-scheme:dark;--navy:#75715e;--ink:#f8f8f2;--muted:#b7b5aa;--line:#49483e;--mint:#a6e22e;--sun:#e6db74;--coral:#f92672;--sky:#36352f;--surface:#272822;--surface-2:#34352e;--positive:#a6e22e}
+  [data-theme="monokai"] body{background:#1e1f1b}
+  [data-theme="oled"]{color-scheme:dark;--navy:#3b82f6;--ink:#f5f5f5;--muted:#a3a3a3;--line:#292929;--mint:#22c55e;--sun:#eab308;--coral:#ef4444;--sky:#141414;--surface:#080808;--surface-2:#151515;--positive:#22c55e}
+  [data-theme="oled"] body{background:#000}
+  [data-theme="slate"]{color-scheme:dark;--navy:#64748b;--ink:#f1f5f9;--muted:#a8b4c3;--line:#475569;--mint:#2dd4bf;--sun:#fbbf24;--coral:#fb7185;--sky:#334155;--surface:#1e293b;--surface-2:#293548;--positive:#4ade80}
+  [data-theme="slate"] body{background:#111827}
+  [data-theme="espresso"]{color-scheme:dark;--navy:#8b6f5a;--ink:#f4ece6;--muted:#bbaa9e;--line:#514137;--mint:#729b79;--sun:#d0a85c;--coral:#c66d62;--sky:#3c3029;--surface:#2a211c;--surface-2:#382c25;--positive:#79a881}
+  [data-theme="espresso"] body{background:#1c1613}
+  [data-theme="aubergine"]{color-scheme:dark;--navy:#76528b;--ink:#f4edf6;--muted:#b9a9bf;--line:#57405f;--mint:#62a87c;--sun:#d1ac62;--coral:#d06976;--sky:#422d49;--surface:#2d1f32;--surface-2:#3b2941;--positive:#69ad80}
+  [data-theme="aubergine"] body{background:#211624}
+  [data-theme="ocean-night"]{color-scheme:dark;--navy:#277da1;--ink:#eaf6f8;--muted:#9db8bd;--line:#294c56;--mint:#43aa8b;--sun:#f9c74f;--coral:#f07167;--sky:#163944;--surface:#102a32;--surface-2:#173842;--positive:#43aa8b}
+  [data-theme="ocean-night"] body{background:#091d23}
+  [data-theme="emerald-night"]{color-scheme:dark;--navy:#28765a;--ink:#edf7f1;--muted:#a1b9ac;--line:#36594a;--mint:#3ba776;--sun:#c6a84f;--coral:#d26868;--sky:#234538;--surface:#183329;--surface-2:#224237;--positive:#4bb681}
+  [data-theme="emerald-night"] body{background:#10241d}
+
+  [data-mode="dark"] .monitor-assignment,
+  [data-mode="dark"] .focus,
+  [data-mode="dark"] .focus-item,
+  [data-mode="dark"] .due-class,
+  [data-mode="dark"] .due-task .task,
+  [data-mode="dark"] .dashboard-note,
+  [data-mode="dark"] .card-editor-panel,
+  [data-mode="dark"] .parent-page,
+  [data-mode="dark"] .parent-side,
+  [data-mode="dark"] .card,
+  [data-mode="dark"] .monitor-child {
+    border-color: var(--line) !important;
+    background: var(--surface) !important;
+    color: var(--ink) !important;
+  }
+
+  [data-mode="dark"] .due-class h3,
+  [data-mode="dark"] .card h2,
+  [data-mode="dark"] .editor-subject h3,
+  [data-mode="dark"] .assignment-column-guide {
+    border-color: var(--line) !important;
+    background: var(--surface-2) !important;
+    color: var(--ink) !important;
+  }
+
+  [data-mode="dark"] .monitor-assignment strong,
+  [data-mode="dark"] .task-name { color: var(--ink) !important; }
+  [data-mode="dark"] .monitor-meta,
+  [data-mode="dark"] .due,
+  [data-mode="dark"] .small { color: var(--muted); }
+  [data-mode="dark"] .import-box,
+  [data-mode="dark"] .schedule-editor { border-color:var(--line);background:var(--surface);color:var(--ink); }
+  [data-mode="dark"] .card-edit-grid input,
+  [data-mode="dark"] .import-box textarea,
+  [data-mode="dark"] .schedule-editor input,
+  [data-mode="dark"] .schedule-editor select { border-color:var(--line)!important;background:var(--surface-2)!important;color:var(--ink)!important; }
+  [data-mode="dark"] .hero,
+  [data-mode="dark"] .monitor-heading { border:1px solid var(--line);background:var(--surface-2);box-shadow:none; }
+  [data-mode="dark"] .hero::after,
+  [data-mode="dark"] .monitor-heading::after { opacity:.35; }
+  [data-mode="dark"] .theme-picker select,
+  [data-mode="dark"] .button.light { border-color:var(--line)!important;background:var(--surface-2);color:var(--ink); }
 </style>
 <script>
 const LABELS={ela:'Language Arts',math:'Math',science:'Science',social:'Social Studies',stem:'STEM',tech:'Technology'};
@@ -590,11 +652,12 @@ function classBrowserEnabled(){return localStorage.getItem('show-class-browser')
 function setClassBrowser(enabled){localStorage.setItem('show-class-browser',String(enabled));render()}
 const dashboardCardRender=render;render=()=>{dashboardCardRender();if(!['leon','logan'].includes(state.view)||state.subjectView)return;const top=document.querySelector('.student-top');if(top)top.insertAdjacentHTML('beforeend',displayCards(state.view));if(!classBrowserEnabled())for(const heading of document.querySelectorAll('section>h2'))if(heading.textContent.trim()==='Choose a class')heading.parentElement.remove()}
 
-const themeKey='family-assignment-theme',THEMES=['material','facebook','forest','sand','dark','coastal','sunset','berry','mint','rose','citrus','arctic','coral','midnight','dracula'];
+const themeKey='family-assignment-theme',LIGHT_THEMES=[['material','Material'],['facebook','Blue'],['forest','Forest'],['sand','Coffee'],['coastal','Coastal'],['sunset','Sunset'],['berry','Berry'],['mint','Fresh Mint'],['rose','Rose'],['citrus','Citrus'],['arctic','Arctic'],['coral','Coral']],DARK_THEMES=[['dark','Discord Dark'],['midnight','Midnight'],['dracula','Dracula'],['github-dark','GitHub Dark'],['nord','Nord'],['monokai','Monokai'],['oled','OLED Black'],['slate','Slate'],['espresso','Espresso'],['aubergine','Aubergine'],['ocean-night','Ocean Night'],['emerald-night','Emerald Night']],THEMES=[...LIGHT_THEMES,...DARK_THEMES].map(([value])=>value);
 function savedTheme(){const saved=localStorage.getItem(themeKey);return saved==='indigo'?'facebook':THEMES.includes(saved)?saved:'material'}
-function applyTheme(theme){document.documentElement.dataset.theme=theme}
+function applyTheme(theme){document.documentElement.dataset.theme=theme;document.documentElement.dataset.mode=DARK_THEMES.some(([value])=>value===theme)?'dark':'light'}
 function setTheme(theme){localStorage.setItem(themeKey,theme);applyTheme(theme);state.view==='monitor'?monitorPage():state.view==='parent'?editor():render()}
-const boardMast=mast;mast=()=>boardMast().replace('</header>',`${['leon','logan'].includes(state.view)?`<label class="top-toggle"><input type="checkbox" ${classBrowserEnabled()?'checked':''} onchange="setClassBrowser(this.checked)"><span>Class browser</span></label>`:''}<label class="theme-picker"><span>Theme</span><select onchange="setTheme(this.value)" aria-label="Choose appearance theme"><option value="material" ${savedTheme()==='material'?'selected':''}>Material</option><option value="facebook" ${savedTheme()==='facebook'?'selected':''}>Blue</option><option value="forest" ${savedTheme()==='forest'?'selected':''}>Forest</option><option value="sand" ${savedTheme()==='sand'?'selected':''}>Coffee</option><option value="dark" ${savedTheme()==='dark'?'selected':''}>Discord Dark</option><option value="coastal" ${savedTheme()==='coastal'?'selected':''}>Coastal</option><option value="sunset" ${savedTheme()==='sunset'?'selected':''}>Sunset</option><option value="berry" ${savedTheme()==='berry'?'selected':''}>Berry</option><option value="mint" ${savedTheme()==='mint'?'selected':''}>Fresh Mint</option><option value="rose" ${savedTheme()==='rose'?'selected':''}>Rose</option><option value="citrus" ${savedTheme()==='citrus'?'selected':''}>Citrus</option><option value="arctic" ${savedTheme()==='arctic'?'selected':''}>Arctic</option><option value="coral" ${savedTheme()==='coral'?'selected':''}>Coral</option><option value="midnight" ${savedTheme()==='midnight'?'selected':''}>Midnight</option><option value="dracula" ${savedTheme()==='dracula'?'selected':''}>Dracula</option></select></label></header>`);
+function themeOptions(themes){return themes.map(([value,label])=>`<option value="${value}" ${savedTheme()===value?'selected':''}>${label}</option>`).join('')}
+const boardMast=mast;mast=()=>boardMast().replace('</header>',`${['leon','logan'].includes(state.view)?`<label class="top-toggle"><input type="checkbox" ${classBrowserEnabled()?'checked':''} onchange="setClassBrowser(this.checked)"><span>Class browser</span></label>`:''}<label class="theme-picker"><span>Theme</span><select onchange="setTheme(this.value)" aria-label="Choose appearance theme"><optgroup label="☀ Light themes">${themeOptions(LIGHT_THEMES)}</optgroup><optgroup label="────────────"></optgroup><optgroup label="☾ Dark themes">${themeOptions(DARK_THEMES)}</optgroup></select></label></header>`);
 applyTheme(savedTheme());
 bootstrap();
 </script></body></html>
