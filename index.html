@@ -442,6 +442,55 @@ button,.button,.button.light,.person,.task-view button{box-shadow:none!important
   .due > .due-chip:only-child {
     margin-left: 0;
   }
+
+  /* Every dark palette shares the same surface treatment; only its colors vary. */
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .monitor-assignment,
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .focus,
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .focus-item,
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .due-class,
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .due-task .task,
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .dashboard-note,
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .card-editor-panel {
+    border-color: var(--line) !important;
+    background: var(--surface-2) !important;
+    color: var(--ink) !important;
+  }
+
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .monitor-assignment strong,
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .task-name,
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .due-class h3 {
+    color: var(--ink) !important;
+  }
+
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .due-class h3,
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .card h2,
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .editor-subject h3,
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .assignment-column-guide {
+    border-color: var(--line) !important;
+    background: color-mix(in srgb, var(--navy) 10%, var(--surface-2)) !important;
+  }
+
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .monitor-meta,
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .due,
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .small {
+    color: var(--muted);
+  }
+
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .import-box,
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .schedule-editor {
+    border-color: var(--line);
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .card-edit-grid input,
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .import-box textarea,
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .schedule-editor input,
+  :is([data-theme="dark"],[data-theme="midnight"],[data-theme="dracula"]) .schedule-editor select {
+    border-color: var(--line) !important;
+    background: var(--surface-2) !important;
+    color: var(--ink) !important;
+  }
 </style>
 <script>
 const LABELS={ela:'Language Arts',math:'Math',science:'Science',social:'Social Studies',stem:'STEM',tech:'Technology'};
