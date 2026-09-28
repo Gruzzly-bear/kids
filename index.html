@@ -90,6 +90,11 @@ button,.button,.button.light,.person,.task-view button{box-shadow:none!important
 [data-theme="dark"] .button.light{background:#313338;color:#f2f3f5}[data-theme="dark"] .button.light:hover{background:#3f4147}[data-theme="dark"] .parent-page input:not([type="checkbox"]),[data-theme="dark"] .parent-page select,[data-theme="dark"] .edit-row input:not([type="checkbox"]),[data-theme="dark"] .edit-row select,[data-theme="dark"] .theme-picker select{background:#1e1f22;border-color:transparent!important}[data-theme="dark"] .parent-page input:not([type="checkbox"]):hover,[data-theme="dark"] .parent-page select:hover,[data-theme="dark"] .theme-picker select:hover{background:#232428}
 @media(max-width:900px){.parent-page .edit-row,.parent-page .assignment-column-guide{grid-template-columns:28px minmax(0,1.4fr) minmax(104px,.8fr) minmax(110px,.85fr) 68px!important}}
 </style>
+<style>
+/* Keep the add-assignment action contained at medium desktop widths. */
+.parent-page form:not(.password-form){grid-template-columns:minmax(0,1.35fr) minmax(112px,.8fr) minmax(130px,.95fr) 68px!important;width:100%;overflow:hidden}.parent-page form:not(.password-form) button{width:100%;min-width:0;padding-left:8px;padding-right:8px}
+@media(max-width:650px){.parent-page form:not(.password-form){grid-template-columns:1fr!important;overflow:visible}.parent-page form:not(.password-form) button{width:100%}}
+</style>
 <script>
 const LABELS={ela:'Language Arts',math:'Math',science:'Science',social:'Social Studies',stem:'STEM',tech:'Technology'};
 const state={view:null,assignments:null,schedules:{leon:[],logan:[]},scheduleTemplates:{leon:[],logan:[]},scheduledDays:{leon:{},logan:{}},scheduleDates:{leon:'',logan:''},displayCards:{leon:[],logan:[],monitor:[]},scheduleMessage:'',showEditor:false,auth:null};
