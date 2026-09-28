@@ -553,6 +553,122 @@ button,.button,.button.light,.person,.task-view button{box-shadow:none!important
   [data-mode="dark"] .monitor-heading::after { opacity:.35; }
   [data-mode="dark"] .theme-picker select,
   [data-mode="dark"] .button.light { border-color:var(--line)!important;background:var(--surface-2);color:var(--ink); }
+
+  /* Final semantic color layer: every theme supplies tokens, every component uses them. */
+  body { color: var(--ink); }
+  .brand,
+  .brand-copy b,
+  .login h1,
+  .person,
+  .person b,
+  .parent-page,
+  .parent-side,
+  .monitor-child,
+  .card,
+  .dashboard-note { color: var(--ink); }
+  .brand-copy small,
+  .login p,
+  .person small,
+  .small,
+  .due,
+  .monitor-meta { color: var(--muted); }
+  .eyebrow { color: var(--positive, var(--mint)); }
+  .parent-link { color: var(--navy); }
+
+  .brand-mark,
+  .button:not(.light) {
+    background: var(--navy);
+    color: #fff;
+  }
+
+  .person,
+  .card,
+  .parent-page,
+  .parent-side,
+  .monitor-child,
+  .kid-column,
+  .dashboard-note,
+  .card-editor-panel {
+    border-color: var(--line);
+    background: var(--surface);
+  }
+
+  .person .emoji,
+  .focus-item,
+  .monitor-assignment,
+  .due-task .task,
+  .editor-list,
+  .parent-page form:not(.password-form) {
+    border-color: var(--line);
+    background: var(--surface-2);
+  }
+
+  .focus,
+  .ahead,
+  .due-class {
+    border-color: var(--line);
+    background: color-mix(in srgb, var(--sun) 5%, var(--surface));
+  }
+
+  .card h2,
+  .due-class h3,
+  .editor-subject h3,
+  .assignment-column-guide {
+    border-color: var(--line);
+    background: color-mix(in srgb, var(--navy) 7%, var(--surface));
+    color: var(--ink);
+  }
+
+  .schedule {
+    border-color: color-mix(in srgb, var(--mint) 35%, var(--line));
+    background: color-mix(in srgb, var(--mint) 8%, var(--surface));
+    color: var(--ink);
+  }
+  .schedule h2,
+  .side-schedule h3 { color: var(--ink); }
+  .schedule-item { color: var(--ink); }
+  .schedule-item time {
+    background: color-mix(in srgb, var(--mint) 13%, var(--surface));
+    color: var(--ink);
+  }
+
+  .theme-picker select,
+  .button.light,
+  .task-view button,
+  select option,
+  select optgroup {
+    border-color: var(--line) !important;
+    background-color: var(--surface-2);
+    color: var(--ink);
+  }
+
+  .import-box,
+  .schedule-editor {
+    border-color: var(--line);
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  [data-mode="dark"] .login h1 { color: var(--ink) !important; }
+  [data-mode="dark"] .person {
+    border-color: var(--line) !important;
+    background: var(--surface) !important;
+  }
+  [data-mode="dark"] .person .emoji { background: var(--surface-2); }
+  [data-mode="dark"] .focus,
+  [data-mode="dark"] .ahead,
+  [data-mode="dark"] .due-class {
+    background: color-mix(in srgb, var(--sun) 4%, var(--surface)) !important;
+  }
+  [data-mode="dark"] .monitor-assignment,
+  [data-mode="dark"] .focus-item,
+  [data-mode="dark"] .due-task .task {
+    background: var(--surface-2) !important;
+  }
+  [data-mode="dark"] .schedule {
+    border-color: var(--line);
+    background: var(--surface);
+  }
 </style>
 <script>
 const LABELS={ela:'Language Arts',math:'Math',science:'Science',social:'Social Studies',stem:'STEM',tech:'Technology'};
