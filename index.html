@@ -312,6 +312,10 @@ button,.button,.button.light,.person,.task-view button{box-shadow:none!important
       flex-direction: column;
     }
 
+    .parent-shell .parent-page > *:not(.editor-list):not(.schedule-editor) {
+      flex: 0 0 auto;
+    }
+
     .parent-shell .parent-page > .hero-row {
       padding-bottom: 12px;
     }
@@ -340,7 +344,7 @@ button,.button,.button.light,.person,.task-view button{box-shadow:none!important
 
     .parent-shell .editor-list {
       flex: 1 1 auto;
-      min-height: 180px;
+      min-height: 140px;
       max-height: none;
     }
 
