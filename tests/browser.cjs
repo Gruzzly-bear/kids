@@ -88,11 +88,13 @@ const fs = require('node:fs');
   assert.equal(await page.getByRole('link',{name:'Support Portal',exact:false}).count(),0);assert.equal(await page.getByRole('link',{name:'Focus Parent Portal',exact:false}).count(),1);
   assert.equal(await page.locator('.completion input:not([disabled])').count(),0);
   await page.evaluate(()=>{for(const rows of Object.values(state.assignments.leon))for(const task of rows)task.done=true;state.preferences.monitor={...DEFAULT_PREFS,appearance:'dark',darkTheme:'dracula'};render();});
-  const alignment=await page.evaluate(()=>{
+  const columns=await page.evaluate(()=>{
     const kids=[...document.querySelectorAll('.shared-child')];
-    return ['.late','.today','.ahead','.schedule'].map(selector=>kids.map(kid=>{const box=kid.querySelector(selector).getBoundingClientRect();return {top:Math.round(box.top),height:Math.round(box.height)};}));
+    return kids.map(kid=>['h2','.late','.today','.ahead','.schedule'].map(selector=>{const box=kid.querySelector(selector).getBoundingClientRect();return {top:Math.round(box.top),bottom:Math.round(box.bottom)};}));
   });
-  for(const pair of alignment)assert.equal(pair[0].top,pair[1].top,'Matching sections align despite unequal assignment counts');
+  assert.equal(columns[0][0].top,columns[1][0].top,'Child headings align');
+  for(const column of columns)for(let i=1;i<column.length;i++)assert(column[i].top-column[i-1].bottom<=16&&column[i].top>=column[i-1].bottom,'Sections stack compactly without waiting for the other child');
+  assert(columns[0][3].top<columns[1][3].top,'The child with less due reaches working ahead sooner');
   assert.equal(await page.locator('.daily-schedule[open]').count(),2,'Both schedules stay open by default');
   assert(await page.locator('.schedule-item.elapsed').count()>0,'Earlier classes remain visible and grayed out');
   assert.equal(await page.locator('.mast .reminder').count(),4,'Reminder tabs are in the header');
