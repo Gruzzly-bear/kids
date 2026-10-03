@@ -134,13 +134,13 @@ function studentPage(){
 }
 function loginPage(){return mast()+`<section class="login"><p class="eyebrow">Your day, organized</p><h1>Ready for your school day?</h1><p class="small">Choose your profile to see classes and assignments.</p><div class="people">${['leon','logan'].map(student=>`<button class="person" onclick="signIn('${student}')"><span class="emoji">${iconOf(student)}</span><b>${nameOf(student)}</b><span class="small">Open my dashboard</span></button>`).join('')}</div><div class="home-actions"><button class="button" onclick="openMonitor()">Shared school dashboard</button><button class="button light" onclick="signIn('parent')">Parent sign in</button></div>${state.loadError?`<p class="form-error" role="alert">${esc(state.loadError)}</p><button class="button light" onclick="restoreSession()">Retry connection</button>`:''}</section>`;}
 function render(){
-  const expanded=new Set([...app.querySelectorAll('details.work-section[open]')].map(node=>node.id));
+  const expanded=new Map([...app.querySelectorAll('details.work-section')].map(node=>[node.id,node.open]));
   applyPreferences();app.className='shell'+(state.view==='parent'?' parent-workspace':state.view==='monitor'?' shared-workspace':['leon','logan'].includes(state.view)?' student-workspace':'');
   if(!state.view)app.innerHTML=loginPage();
   else if(state.view==='parent')app.innerHTML=parentPage();
   else if(state.view==='monitor')app.innerHTML=sharedPage();
   else app.innerHTML=studentPage();
-  for(const node of app.querySelectorAll('details.work-section')){node.open=expanded.has(node.id);node.addEventListener('toggle',updateWorkOverflow);}
+  for(const node of app.querySelectorAll('details.work-section')){node.open=expanded.get(node.id)??['leon','logan'].includes(state.view);node.addEventListener('toggle',updateWorkOverflow);}
   updateSyncStatus();updateWorkOverflow();
 }
 function updateWorkOverflow(){for(const list of document.querySelectorAll('.work-board .due-list'))list.closest('.work-section').classList.toggle('has-more-work',list.closest('.work-section').open&&list.scrollHeight>list.clientHeight+1);}
