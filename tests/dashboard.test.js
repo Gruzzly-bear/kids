@@ -77,4 +77,14 @@ test('weekday defaults, explicit weekend days, and class end times determine Now
   let result=context.scheduleSnapshot('leon');assert.equal(result.current,0);assert.equal(result.next,1);assert.equal(result.currentLabel,'Now');
   context.schoolMinutes=()=> 590;result=context.scheduleSnapshot('leon');assert.equal(result.current,-1);assert.equal(result.next,1);
   context.schoolMinutes=()=> 700;result=context.scheduleSnapshot('leon');assert.equal(result.current,-1);assert.equal(result.next,-1);
+  context.schoolMinutes=()=> 710;result=context.scheduleSnapshot('leon');
+  assert.equal(result.visibleItems.length,1,'Classes ended over two hours ago are hidden');
+  assert.equal(result.visibleItems[0].status,'elapsed');
+  context.schoolMinutes=()=> 705;result=context.scheduleSnapshot('leon');assert.equal(result.visibleItems.length,2,'Exactly two hours remains visible');
+  context.schoolMinutes=()=> 630;result=context.scheduleSnapshot('leon');assert.equal(result.visibleItems[1].status,'current');
+  context.state.scheduleTemplates.leon[0].endTime='';
+  context.state.scheduleTemplates.leon[1].endTime='';
+  context.schoolMinutes=()=> 720;result=context.scheduleSnapshot('leon');assert.equal(result.visibleItems.length,2,'Missing end uses next start, retaining unknown final end');
+  context.schoolMinutes=()=> 721;result=context.scheduleSnapshot('leon');assert.equal(result.visibleItems.length,1);
+  assert.equal(result.currentLabel,'Latest start');
 });

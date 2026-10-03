@@ -112,12 +112,17 @@ function scheduleSnapshot(student){
   const end=started<0?-1:items[started].endTime?scheduleMinutes(items[started].endTime):items[started+1]?scheduleMinutes(items[started+1].time):-1;
   const current=started>=0&&(end<0||minutes<end)?started:-1;
   // Old schedules without a final end time retain an honest last-started label.
-  return {items,current,next,currentLabel:end<0&&started>=0?'Latest start':'Now'};
+  const visibleItems=items.flatMap((item,i)=>{
+    const itemEnd=item.endTime?scheduleMinutes(item.endTime):items[i+1]?scheduleMinutes(items[i+1].time):-1;
+    const elapsed=itemEnd>=0&&minutes>=itemEnd;
+    return elapsed&&minutes-itemEnd>120?[]:[{item,status:elapsed?'elapsed':i===current?'current':''}];
+  });
+  return {items,visibleItems,current,next,currentLabel:end<0&&started>=0?'Latest start':'Now'};
 }
 function schedulePanel(student=state.view){
-  const {items,current,next,currentLabel}=scheduleSnapshot(student);
+  const {items,visibleItems,current,next,currentLabel}=scheduleSnapshot(student);
   const slot=(index,label)=>`<div class="now-slot"><span class="small">${label}</span>${index>=0?`<strong>${esc(scheduleLabel(items[index]))}</strong><span>${formatScheduleTime(items[index].time)}${items[index].endTime?' – '+formatScheduleTime(items[index].endTime):''}</span>`:'<strong>'+(label==='Next'?'No more classes':'No class right now')+'</strong>'}</div>`;
-  return `<section class="schedule panel" data-schedule="${student}"><div class="section-heading"><h2>Now / Next</h2><span class="small">School time · ET</span></div>${items.length?`<div class="now-next">${slot(current,currentLabel)}${slot(next,'Next')}</div><details class="daily-schedule" open><summary>Today’s schedule <span class="count">${items.length}</span></summary><div class="schedule-list">${items.map((item,i)=>`<div class="schedule-item ${i===current?'current':i<current||current<0&&scheduleMinutes(item.time)<=schoolMinutes()?'elapsed':''}" style="${scheduleItemStyle(item)}"><span>${esc(scheduleLabel(item))}</span><time>${formatScheduleTime(item.time)}${item.endTime?' – '+formatScheduleTime(item.endTime):''}</time></div>`).join('')}</div></details>`:'<p class="empty">No schedule set for today.</p>'}</section>`;
+  return `<section class="schedule panel" data-schedule="${student}"><div class="section-heading"><h2>Now / Next</h2><span class="small">School time · ET</span></div>${items.length?`<div class="now-next">${slot(current,currentLabel)}${slot(next,'Next')}</div><details class="daily-schedule" open><summary>Today’s schedule <span class="count">${visibleItems.length}</span></summary><div class="schedule-list">${visibleItems.map(({item,status})=>`<div class="schedule-item ${status}" style="${scheduleItemStyle(item)}"><span>${esc(scheduleLabel(item))}</span><time>${formatScheduleTime(item.time)}${item.endTime?' – '+formatScheduleTime(item.endTime):''}</time></div>`).join('')}</div></details>`:'<p class="empty">No schedule set for today.</p>'}</section>`;
 }
 function showHub(){state.subjectView=null;render();}
 function openSubject(subject){state.subjectView=subject;state.subjectTaskView='all';render();}
