@@ -96,11 +96,11 @@ function taskGroups(subjects,filter,student=state.view,readonly=false){
 }
 function workSection(subjects,status,student=state.view,readonly=false){
   const today=scheduleDay(),filter=x=>!x.done&&x.due&&(status==='today'?x.due===today:x.due<today),count=Object.values(subjects).flat().filter(filter).length;
-  return `<section id="${student}-${status}-work" class="work-section ${status}"><div class="section-heading"><h2>${status==='today'?'Due Today':'Past Due'} <span class="count">${count}</span></h2></div>${count?`<div class="due-list" tabindex="0" role="region" aria-label="${nameOf(student)} ${status==='today'?'due today':'past due'} assignments">${taskGroups(subjects,filter,student,readonly)}</div>`:`<p class="empty">${status==='today'?'You’re caught up for today.':'No past-due assignments.'}</p>`}</section>`;
+  return `<details id="${student}-${status}-work" class="work-section ${status}"><summary class="section-heading"><h2>${status==='today'?'Due Today':'Past Due'} <span class="count">${count}</span></h2></summary>${count?`<div class="due-list" tabindex="0" role="region" aria-label="${nameOf(student)} ${status==='today'?'due today':'past due'} assignments">${taskGroups(subjects,filter,student,readonly)}</div>`:`<p class="empty">${status==='today'?'You’re caught up for today.':'No past-due assignments.'}</p>`}</details>`;
 }
 function workingAhead(subjects,student=state.view,readonly=false){
-  const date=nextDueDate(subjects);
-  return `<section id="${student}-ahead-work" class="work-section ahead"><div class="section-heading"><h2>Working Ahead</h2><span class="small">${date?'Next due · '+dateLabel(date):'Next due date'}</span></div>${date?`<div class="due-list" tabindex="0" role="region" aria-label="${nameOf(student)} working ahead assignments">${taskGroups(subjects,x=>!x.done&&x.due===date,student,readonly)}</div>`:'<p class="empty">No upcoming assignments.</p>'}</section>`;
+  const date=nextDueDate(subjects),count=Object.values(subjects).flat().filter(x=>!x.done&&date&&x.due===date).length;
+  return `<details id="${student}-ahead-work" class="work-section ahead"><summary class="section-heading"><h2>Working Ahead <span class="count">${count}</span></h2><span class="small">${date?'Next due · '+dateLabel(date):'Next due date'}</span></summary>${date?`<div class="due-list" tabindex="0" role="region" aria-label="${nameOf(student)} working ahead assignments">${taskGroups(subjects,x=>!x.done&&x.due===date,student,readonly)}</div>`:'<p class="empty">No upcoming assignments.</p>'}</details>`;
 }
 function scheduleMinutes(value){const [h,m]=String(value||'').split(':').map(Number);return Number.isInteger(h)&&Number.isInteger(m)?h*60+m:-1;}
 function formatScheduleTime(value){const minutes=scheduleMinutes(value);return minutes<0?'':`${Math.floor(minutes/60)%12||12}:${String(minutes%60).padStart(2,'0')} ${minutes<720?'AM':'PM'}`;}
@@ -134,14 +134,16 @@ function studentPage(){
 }
 function loginPage(){return mast()+`<section class="login"><p class="eyebrow">Your day, organized</p><h1>Ready for your school day?</h1><p class="small">Choose your profile to see classes and assignments.</p><div class="people">${['leon','logan'].map(student=>`<button class="person" onclick="signIn('${student}')"><span class="emoji">${iconOf(student)}</span><b>${nameOf(student)}</b><span class="small">Open my dashboard</span></button>`).join('')}</div><div class="home-actions"><button class="button" onclick="openMonitor()">Shared school dashboard</button><button class="button light" onclick="signIn('parent')">Parent sign in</button></div>${state.loadError?`<p class="form-error" role="alert">${esc(state.loadError)}</p><button class="button light" onclick="restoreSession()">Retry connection</button>`:''}</section>`;}
 function render(){
+  const expanded=new Set([...app.querySelectorAll('details.work-section[open]')].map(node=>node.id));
   applyPreferences();app.className='shell'+(state.view==='parent'?' parent-workspace':state.view==='monitor'?' shared-workspace':['leon','logan'].includes(state.view)?' student-workspace':'');
   if(!state.view)app.innerHTML=loginPage();
   else if(state.view==='parent')app.innerHTML=parentPage();
   else if(state.view==='monitor')app.innerHTML=sharedPage();
   else app.innerHTML=studentPage();
+  for(const node of app.querySelectorAll('details.work-section')){node.open=expanded.has(node.id);node.addEventListener('toggle',updateWorkOverflow);}
   updateSyncStatus();updateWorkOverflow();
 }
-function updateWorkOverflow(){for(const list of document.querySelectorAll('.work-board .due-list'))list.closest('.work-section').classList.toggle('has-more-work',list.scrollHeight>list.clientHeight+1);}
+function updateWorkOverflow(){for(const list of document.querySelectorAll('.work-board .due-list'))list.closest('.work-section').classList.toggle('has-more-work',list.closest('.work-section').open&&list.scrollHeight>list.clientHeight+1);}
 window.addEventListener('resize',updateWorkOverflow);
 document.fonts.ready.then(updateWorkOverflow);
 function editor(){render();}
