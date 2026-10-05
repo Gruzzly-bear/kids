@@ -12,7 +12,7 @@ Settings include light/dark/device appearance, theme previews and high-contrast 
 
 Assignment links, help flags, and preferences use the existing `settings` table. Existing databases need no migration. Keep the current Cloudflare Pages `DB` binding and password secrets. Upload the HTML, CSS, JavaScript, and `functions` files together when deploying.
 
-Schedules use Eastern Time. Defaults apply on weekdays; explicitly imported or edited dates can include weekends. End times are optional and retained when importing schedules. Older schedules without an end time for the last class show “Latest start” rather than claiming that class is still in session.
+Schedules use Eastern Time and are saved per student and date. Editing a schedule does not save it until “Save this day” is selected; imports save the dates found in the pasted calendar. End times are optional and retained when importing schedules. Older schedules without an end time for the last class show “Latest start” rather than claiming that class is still in session.
 
 Unsaved changes stay queued on the device and retry when connectivity returns. A failed save stays visible with a Retry control; switching accounts waits for pending changes to save.
 

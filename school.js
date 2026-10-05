@@ -58,8 +58,7 @@ function scheduleDay(){return schoolDay();}
 function cleanScheduledDays(days){const keepFrom=schoolMinutes()>=780?scheduleDay():addDays(scheduleDay(),-1);return Object.fromEntries(Object.entries(days||{}).filter(([date])=>date>=keepFrom).map(([date,items])=>[date,copySchedule(items)]));}
 function scheduleFor(student,date=scheduleDay()){
   if(Object.hasOwn(state.scheduledDays[student]||{},date))return copySchedule(state.scheduledDays[student][date]);
-  const weekday=new Date(date+'T12:00:00Z').getUTCDay();
-  return weekday===0||weekday===6?[]:copySchedule(state.scheduleTemplates[student]||[]);
+  return [];
 }
 function schoolMinutes(now=new Date()) {
   const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(now).filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));
@@ -158,7 +157,7 @@ function acceptAuth(data,session){
   state.preferences=data.preferences||{};state.auth=session;state.syncPhase='saved';state.syncError='';state.view=session.role==='monitor'?'monitor':session.role==='parent'?'parent':session.role;
   state.subjectView=null;state.loadError='';state.pending=localRead('school-pending-'+session.role,[]).filter(item=>item&&item.body&&typeof item.label==='string');
   // Replay unsaved edits into the fetched snapshot so a reload does not hide them.
-  for(const item of state.pending){const c=item.body.change;if(c){const found=findTask(c.id);if(c.type==='add'&&!found)(state.assignments[c.student][c.subject]??=[]).push({...c});else if(c.type==='remove'&&found)state.assignments[found.student][found.subject].splice(found.index,1);else if(found){const previous=found.subject;Object.assign(found.x,c);if(c.subject&&c.subject!==previous){state.assignments[found.student][previous].splice(found.index,1);(state.assignments[found.student][c.subject]??=[]).push(found.x);}}}if(item.body.preferencesOnly)state.preferences[item.body.scope]=item.body.preferences;if(item.body.scheduleOnly)loadSchedules(item.body.schedules);if(item.body.cardsOnly)loadCards(item.body.cards);}
+  for(const item of state.pending){const c=item.body.change;if(c){const found=findTask(c.id);if(c.type==='add'&&!found)(state.assignments[c.student][c.subject]??=[]).push({...c});else if(c.type==='remove'&&found)state.assignments[found.student][found.subject].splice(found.index,1);else if(found){const previous=found.subject;Object.assign(found.x,c);if(c.subject&&c.subject!==previous){state.assignments[found.student][previous].splice(found.index,1);(state.assignments[found.student][c.subject]??=[]).push(found.x);}}}if(item.body.preferencesOnly)state.preferences[item.body.scope]=item.body.preferences;if(item.body.scheduleOnly){const {student,date,items}=item.body;(state.scheduledDays[student]??={})[date]=copySchedule(items);if(state.scheduleDates[student]===date)state.schedules[student]=copySchedule(items)}if(item.body.cardsOnly)loadCards(item.body.cards);}
   localWrite(sessionKey,session);render();if(state.pending.length)pumpWrites();
 }
 async function fetchAuth(session){const r=await fetch('/api/auth',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(session)});const data=await r.json();if(!r.ok)throw Object.assign(Error(data.error||'Sign-in failed.'),{status:r.status});return data;}
@@ -214,7 +213,9 @@ function saveAssignmentChange(type,found){
   if(type==='status'){delete change.title;delete change.due;delete change.subject;delete change.url;}
   return queuedWrite({change},'Assignment');
 }
-function saveScheduleChanges(){return queuedWrite({schedules:schedulePayload(),scheduleOnly:true},'Schedule');}
+function saveScheduleChanges(student=state.editorStudent||'leon',date=state.scheduleDates[student]||scheduleDay()){
+  return queuedWrite({student,date,items:copySchedule(state.scheduledDays[student]?.[date]||[]),scheduleOnly:true},'Schedule');
+}
 function toggleTask(id,done){
   const found=findTask(id);if(!found)return;
   const previous={done:found.x.done,needsHelp:found.x.needsHelp};found.x.done=done;if(done)found.x.needsHelp=false;
@@ -305,20 +306,20 @@ async function refreshDashboard(silent=false){
 function openScheduleFor(student){state.editorStudent=student;state.scheduleDates[student]=scheduleDay();state.schedules[student]=scheduleFor(student);openScheduleEditor();}
 function openScheduleEditor(){
   const student=state.editorStudent||'leon',items=state.schedules[student]||[],subjects=Object.keys(state.assignments[student]),date=state.scheduleDates[student]||scheduleDay();
-  openDialog('schedule',`<h2>${nameOf(student)}’s schedule</h2><p class="small">All times use Eastern Time. Choose a date or save a reusable default.</p><label>Schedule date<input type="date" value="${date}" min="${scheduleDay()}" onchange="selectScheduleDate(this.value)"></label><p class="small">${esc(state.scheduleMessage||'')}</p><div class="schedule-editor">${items.map((x,i)=>`<div class="schedule-row"><label>Class<select onchange="setScheduleSubject(${i},this.value)">${[...subjects,'custom','break'].map(s=>`<option value="${s}" ${x.subject===s?'selected':''}>${esc(LABELS[s]||s)}</option>`).join('')}</select></label><label>Label<input value="${esc(x.label||'')}" onchange="editScheduleEntry(${i},'label',this.value)" ${!['custom','break'].includes(x.subject)?'disabled':''}></label><label>Start<input type="time" value="${esc(x.time||'')}" onchange="editScheduleEntry(${i},'time',this.value)"></label><label>End <span class="small">Optional</span><input type="time" value="${esc(x.endTime||'')}" onchange="editScheduleEntry(${i},'endTime',this.value)"></label><button class="text-button danger" onclick="removeScheduleEntry(${i})">Remove</button></div>`).join('')}</div><div class="toolbar"><button class="button" onclick="addScheduleEntry()">Add class or break</button><button class="button light" onclick="openScheduleImport()">Import schedule</button><button class="button light" onclick="saveScheduleAsDefault()">Save as default</button><button class="button light" onclick="resetTodaySchedule()">Use default for this day</button><button class="button light" onclick="removeScheduledDay()">Delete custom day</button></div>`);
+  openDialog('schedule',`<h2>${nameOf(student)}’s schedule</h2><p class="small">All times use Eastern Time. Choose a date, edit its schedule, then save that day.</p><label>Schedule date<input type="date" value="${date}" min="${scheduleDay()}" onchange="selectScheduleDate(this.value)"></label><p class="small">${esc(state.scheduleMessage||'')}</p><div class="schedule-editor">${items.map((x,i)=>`<div class="schedule-row"><label>Class<select onchange="setScheduleSubject(${i},this.value)">${[...subjects,'custom','break'].map(s=>`<option value="${s}" ${x.subject===s?'selected':''}>${esc(LABELS[s]||s)}</option>`).join('')}</select></label><label>Label<input value="${esc(x.label||'')}" onchange="editScheduleEntry(${i},'label',this.value)" ${!['custom','break'].includes(x.subject)?'disabled':''}></label><label>Start<input type="time" value="${esc(x.time||'')}" onchange="editScheduleEntry(${i},'time',this.value)"></label><label>End <span class="small">Optional</span><input type="time" value="${esc(x.endTime||'')}" onchange="editScheduleEntry(${i},'endTime',this.value)"></label><button class="text-button danger" onclick="removeScheduleEntry(${i})">Remove</button></div>`).join('')}</div><div class="toolbar"><button class="button" onclick="addScheduleEntry()">Add class or break</button><button class="button light" onclick="openScheduleImport()">Import schedule</button><button class="button light" onclick="clearOpenSchedule()">Clear this day</button><button class="button" onclick="saveOpenSchedule()">Save this day</button></div>`);
 }
 function closeScheduleEditor(){closeDialog();}
 function refreshScheduleEditor(){render();openScheduleEditor();}
 function addScheduleEntry(){
   const student=state.editorStudent||'leon';
   (state.schedules[student]??=[]).push({type:'class',subject:Object.keys(state.assignments[student])[0]||'custom',label:'Custom event',time:'09:00',endTime:''});
-  commitOpenSchedule();state.scheduleMessage='Added schedule item';saveScheduleChanges();refreshScheduleEditor();
+  state.scheduleMessage='Unsaved changes';refreshScheduleEditor();
 }
 function setScheduleSubject(index,subject){
   const student=state.editorStudent||'leon',item=state.schedules[student][index];
   item.subject=subject;item.type=subject==='break'?'break':'class';
   if(subject!=='custom')item.label=subject==='break'?'Break':LABELS[subject]||subject;
-  commitOpenSchedule();saveScheduleChanges();refreshScheduleEditor();
+  state.scheduleMessage='Unsaved changes';refreshScheduleEditor();
 }
 function editScheduleEntry(index,field,value){
   const student=state.editorStudent||'leon',item=state.schedules[student][index],next={...item,[field]:value};
@@ -326,7 +327,7 @@ function editScheduleEntry(index,field,value){
     if(document.activeElement instanceof HTMLInputElement)document.activeElement.value=item[field]||'';
     showToast('Choose a start time and an end time after it.');return;
   }
-  item[field]=value;commitOpenSchedule();saveScheduleChanges();
+  item[field]=value;state.scheduleMessage='Unsaved changes';
 }
 function openCardEditor(student){
   const fields=forScope=>`<div class="card-edit-grid">${state.displayCards[forScope].map((value,i)=>`<label>Reminder ${i+1}<input maxlength="120" value="${esc(value)}" onchange="editDisplayCard('${forScope}',${i},this.value)"></label>`).join('')}</div>`;

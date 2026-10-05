@@ -56,7 +56,14 @@ export async function onRequestPost({ request, env }) {
       return json({ ok: true });
     }
     if (body.scheduleOnly && role === 'parent') {
-      await env.DB.batch(['leon', 'logan'].map(student => setting(env, `${student}_schedule`, body.schedules?.[student] || [])));
+      const { student, date, items } = body;
+      if (!['leon', 'logan'].includes(student) || typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date) || isNaN(Date.parse(`${date}T12:00:00Z`)) || !Array.isArray(items)) return json({ error: 'Choose a valid student, date, and schedule.' }, 400);
+      const currentRow = await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind(`${student}_schedule`).first();
+      let current = {};
+      try { current = JSON.parse(currentRow?.value || '{}') || {}; } catch {}
+      const days = { ...(Array.isArray(current) ? {} : current.days || {}) };
+      days[date] = items;
+      await setting(env, `${student}_schedule`, { days }).run();
       return json({ ok: true });
     }
     if (body.cardsOnly && role === 'parent') {
