@@ -257,7 +257,7 @@ async function changeParentPassword(event){
 function setParentTab(tab){state.parentTab=tab;render();}
 function parentPage(){
   const tabs=[['overview','Weekly overview'],['assignments','Assignments']];
-  const editActions=state.parentTab==='assignments'?`<div class="parent-tab-actions"><button class="button light" onclick="openFamilyEditorChooser('schedule')">Edit schedule</button><button class="button light" onclick="openFamilyEditorChooser('reminders')">Edit reminders</button></div>`:'';
+  const editActions=`<div class="parent-tab-actions"><button class="button light" onclick="openFamilyEditorChooser('schedule')">Edit schedule</button><button class="button light" onclick="openFamilyEditorChooser('reminders')">Edit reminders</button></div>`;
   return mast()+`<section class="page-heading"><div><p class="small">Family workspace</p><h1>Parent dashboard</h1></div><div class="actions"><button class="button light" onclick="refreshDashboard()">Refresh</button><button class="button light" onclick="downloadBackup()">Download backup</button></div></section><nav class="parent-tabs" aria-label="Parent workspace">${tabs.map(([key,label])=>`<button class="button ${state.parentTab===key?'':'light'}" aria-current="${state.parentTab===key?'page':'false'}" onclick="setParentTab('${key}')">${label}</button>`).join('')}${editActions}</nav>`+(state.parentTab==='assignments'?assignmentEditor():weeklyOverview())+resources(false);
 }
 function weeklyOverview(){
