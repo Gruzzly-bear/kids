@@ -120,7 +120,7 @@ function scheduleSnapshot(student){
   const visibleItems=items.flatMap((item,i)=>{
     const itemEnd=item.endTime?scheduleMinutes(item.endTime):items[i+1]?scheduleMinutes(items[i+1].time):-1;
     const elapsed=itemEnd>=0&&minutes>=itemEnd;
-    return elapsed&&minutes-itemEnd>120?[]:[{item,status:elapsed?'elapsed':i===current?'current':''}];
+    return elapsed?[]:[{item,status:i===current?'current':''}];
   });
   return {items,visibleItems,current,next,currentLabel:end<0&&started>=0?'Latest start':'Now'};
 }
@@ -129,7 +129,7 @@ function schedulePanel(student=state.view){
   const slot=(index,label)=>`<div class="now-slot ${['Now','Latest start'].includes(label)&&index>=0?'current-now':''}"><span class="small">${label}</span>${index>=0?`<strong>${esc(scheduleLabel(items[index]))}</strong><span>${formatScheduleTime(items[index].time)}${items[index].endTime?' – '+formatScheduleTime(items[index].endTime):''}</span>`:'<strong>'+(label==='Next'?'No more classes':'No class right now')+'</strong>'}</div>`;
   const canPreview=state.view==='monitor'||['leon','logan'].includes(state.view)&&state.view===student;
   const previewButton=canPreview?`<button class="button light" onclick="previewTomorrowSchedule('${student}')">Preview tomorrow</button>`:'';
-  return `<div class="schedule-stack" data-schedule="${student}"><section class="schedule panel"><div class="section-heading"><h2>Now / Next</h2>${previewButton}</div>${items.length?`<div class="now-next">${slot(current,currentLabel)}${slot(next,'Next')}</div>`:'<p class="empty">No schedule set for today.</p>'}</section>${items.length?`<details class="daily-schedule panel"><summary>Today’s schedule <span class="count">${visibleItems.length}</span></summary><div class="schedule-list">${visibleItems.map(({item,status})=>`<div class="schedule-item ${status}" style="${scheduleItemStyle(item)}"><span>${esc(scheduleLabel(item))}</span><time>${formatScheduleTime(item.time)}${item.endTime?' – '+formatScheduleTime(item.endTime):''}</time></div>`).join('')}</div></details>`:''}</div>`;
+  return `<div class="schedule-stack" data-schedule="${student}"><section class="schedule panel"><div class="section-heading"><h2>Now / Next</h2>${previewButton}</div>${items.length?`<div class="now-next">${slot(current,currentLabel)}${slot(next,'Next')}</div>`:'<p class="empty">No schedule set for today.</p>'}</section>${items.length?`<details class="daily-schedule panel"><summary>Today’s schedule <span class="count">${visibleItems.length}</span></summary>${visibleItems.length?`<div class="schedule-list">${visibleItems.map(({item,status})=>`<div class="schedule-item ${status}" style="${scheduleItemStyle(item)}"><span>${esc(scheduleLabel(item))}</span><time>${formatScheduleTime(item.time)}${item.endTime?' – '+formatScheduleTime(item.endTime):''}</time></div>`).join('')}</div>`:'<p class="empty">No upcoming schedule items today.</p>'}</details>`:''}</div>`;
 }
 function previewTomorrowSchedule(student=state.view){
   if(!['leon','logan'].includes(student))return;
