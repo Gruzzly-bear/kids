@@ -3,16 +3,16 @@ const app = document.getElementById('app');
 const sessionKey = 'family-assignment-session-v1';
 const THEME_PALETTES = {
   coastal:['Coastal','#24637a','#f3f8fa'], material:['Lavender','#65509b','#f8f6fc'], facebook:['Blue','#235dc1','#f5f8ff'], paper:['Warm Paper','#79563a','#f5efe3'],
-  forest:['Forest','#316447','#f4f8f4'], sand:['Coffee','#795337','#fbf7f2'], sunset:['Sunset','#a34732','#fff7f2'],
+  forest:['Forest','#316447','#f4f8f4'], sand:['Coffee','#795337','#fbf7f2'], sunset:['Sunset','#a34732','#fff7f2'], peach:['Peach','#bd553d','#fff2eb'], meadow:['Meadow','#46754f','#f2f8ed'],
   berry:['Berry','#8d376e','#fcf5fa'], mint:['Fresh Mint','#216953','#f1faf6'], rose:['Rose','#9d3854','#fff6f8'],
   citrus:['Citrus','#79610e','#fffcef'], arctic:['Arctic','#26647d','#f3faff'], coral:['Coral','#a84942','#fff7f6'],
-  midnight:['Midnight','#8db8ff','#111b2b'], dark:['Discord Dark','#a4adff','#1e1f25'], dracula:['Dracula','#c4a7ff','#24212e'], electric:['Electric','#ff6bd6','#171023'],
+  midnight:['Midnight','#8db8ff','#111b2b'], dark:['Discord Dark','#a4adff','#1e1f25'], dracula:['Dracula','#c4a7ff','#24212e'], electric:['Electric','#ff6bd6','#171023'], aurora:['Aurora','#70e0c3','#122126'], 'plum-glow':['Plum Glow','#e5a4f5','#24152b'],
   'github-dark':['GitHub Dark','#83b8f9','#10151c'], nord:['Nord','#91c9d7','#252f3d'], monokai:['Monokai','#c4d88a','#24251f'],
   oled:['OLED Black','#b9c9ff','#000000'], slate:['Slate','#a9bcd5','#1e2530'], espresso:['Espresso','#e6b98e','#241b18'],
   aubergine:['Aubergine','#dfb1ec','#281e30'], 'ocean-night':['Ocean Night','#83cdda','#11272e'], 'emerald-night':['Emerald Night','#8cd5ad','#15271f'],
   contrast:['High Contrast','#173fb0','#ffffff'], 'contrast-dark':['High Contrast Dark','#ffe36b','#000000']
 };
-const DARK_THEME_KEYS = ['midnight','dark','dracula','electric','github-dark','nord','monokai','oled','slate','espresso','aubergine','ocean-night','emerald-night','contrast-dark'];
+const DARK_THEME_KEYS = ['midnight','dark','dracula','electric','aurora','plum-glow','github-dark','nord','monokai','oled','slate','espresso','aubergine','ocean-night','emerald-night','contrast-dark'];
 const DEFAULT_PREFS = {appearance:'system',lightTheme:'coastal',darkTheme:'midnight',visualStyle:'classic',textSize:'standard',density:'comfortable',classBrowser:false,hideCompleted:true};
 state.preferences = {};
 state.parentTab = 'overview';
@@ -31,7 +31,7 @@ function prefs(forScope = scope()) {
   const p = forScope==='monitor'||forScope==='home'?{...DEFAULT_PREFS,...legacy,...state.preferences[forScope],...local}:{...DEFAULT_PREFS,...legacy,...local,...state.preferences[forScope]};
   if (!THEME_PALETTES[p.lightTheme] || DARK_THEME_KEYS.includes(p.lightTheme)) p.lightTheme='coastal';
   if (!DARK_THEME_KEYS.includes(p.darkTheme)) p.darkTheme='midnight';
-  if (!['classic','boxy','studio','playful'].includes(p.visualStyle)) p.visualStyle='classic';
+  if (!['classic','boxy','studio','playful','glass'].includes(p.visualStyle)) p.visualStyle='classic';
   return p;
 }
 function applyPreferences() {
@@ -88,32 +88,41 @@ function updateDashboardClock(){
   const now=new Date();clock.dateTime=now.toISOString();clock.textContent=now.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit',hour12:true});
 }
 const FOCUS_TIMER_SECONDS={focus:25*60,break:5*60};
+const FOCUS_TIMER_PRESETS=[15,25,45];
+function focusTimerDuration(timer){return timer.mode==='focus'?(FOCUS_TIMER_PRESETS.includes(timer.focusMinutes)?timer.focusMinutes:25)*60:FOCUS_TIMER_SECONDS.break;}
 function focusTimerState(student=state.view){
   const value=localRead(`school-focus-timer-${student}`,null);
-  if(!value||!['focus','break'].includes(value.mode))return {mode:'focus',remaining:FOCUS_TIMER_SECONDS.focus,endsAt:0};
-  const duration=FOCUS_TIMER_SECONDS[value.mode];
-  return {mode:value.mode,remaining:Math.max(0,Math.min(duration,Number(value.remaining)||0)),endsAt:Math.max(0,Number(value.endsAt)||0)};
+  if(!value||!['focus','break'].includes(value.mode))return {mode:'focus',focusMinutes:25,remaining:FOCUS_TIMER_SECONDS.focus,endsAt:0,focusTaskId:''};
+  const focusMinutes=FOCUS_TIMER_PRESETS.includes(Number(value.focusMinutes))?Number(value.focusMinutes):25,duration=value.mode==='focus'?focusMinutes*60:FOCUS_TIMER_SECONDS.break;
+  return {mode:value.mode,focusMinutes,remaining:Math.max(0,Math.min(duration,Number(value.remaining)||0)),endsAt:Math.max(0,Number(value.endsAt)||0),focusTaskId:String(value.focusTaskId||'')};
 }
 function focusTimerRemaining(timer){return timer.endsAt?Math.max(0,Math.ceil((timer.endsAt-Date.now())/1000)):timer.remaining;}
 function formatFocusTimer(seconds){return `${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;}
 function saveFocusTimer(timer,student=state.view){localWrite(`school-focus-timer-${student}`,timer);}
-function selectFocusTimerMode(mode){if(!FOCUS_TIMER_SECONDS[mode])return;const timer={mode,remaining:FOCUS_TIMER_SECONDS[mode],endsAt:0};saveFocusTimer(timer);updateFocusTimer();}
-function startFocusTimer(){const timer=focusTimerState();if(!timer.remaining)timer.remaining=FOCUS_TIMER_SECONDS[timer.mode];timer.endsAt=Date.now()+timer.remaining*1000;saveFocusTimer(timer);updateFocusTimer();}
+function selectFocusTimerMode(mode){if(!FOCUS_TIMER_SECONDS[mode])return;const timer=focusTimerState();timer.mode=mode;timer.remaining=focusTimerDuration(timer);timer.endsAt=0;saveFocusTimer(timer);updateFocusTimer();}
+function setFocusTimerLength(minutes){if(!FOCUS_TIMER_PRESETS.includes(Number(minutes)))return;const timer=focusTimerState();timer.focusMinutes=Number(minutes);if(timer.mode==='focus'){timer.remaining=focusTimerDuration(timer);timer.endsAt=0;}saveFocusTimer(timer);updateFocusTimer();}
+function setFocusTask(id){const timer=focusTimerState();timer.focusTaskId=id;saveFocusTimer(timer);updateFocusTimer();}
+function startFocusTimer(){const timer=focusTimerState();if(!timer.remaining)timer.remaining=focusTimerDuration(timer);timer.endsAt=Date.now()+timer.remaining*1000;saveFocusTimer(timer);updateFocusTimer();}
 function pauseFocusTimer(){const timer=focusTimerState();if(!timer.endsAt)return;timer.remaining=focusTimerRemaining(timer);timer.endsAt=0;saveFocusTimer(timer);updateFocusTimer();}
-function resetFocusTimer(){const timer=focusTimerState();timer.remaining=FOCUS_TIMER_SECONDS[timer.mode];timer.endsAt=0;saveFocusTimer(timer);updateFocusTimer();}
+function resetFocusTimer(){const timer=focusTimerState();timer.remaining=focusTimerDuration(timer);timer.endsAt=0;saveFocusTimer(timer);updateFocusTimer();}
 function updateFocusTimer(){
   const output=document.getElementById('focus-time');if(!output)return;
-  const timer=focusTimerState(),remaining=focusTimerRemaining(timer),running=!!timer.endsAt;
-  if(running&&remaining===0){timer.remaining=0;timer.endsAt=0;saveFocusTimer(timer);showToast(timer.mode==='focus'?'Focus session complete. Nice work!':'Break complete. Ready to focus again?');}
+  const timer=focusTimerState(),remaining=focusTimerRemaining(timer);let running=!!timer.endsAt;
+  if(running&&remaining===0){timer.remaining=0;timer.endsAt=0;running=false;saveFocusTimer(timer);showToast(timer.mode==='focus'?'Focus session complete. Nice work!':'Break complete. Ready to focus again?');}
   else if(!running)timer.remaining=remaining;
   output.textContent=formatFocusTimer(remaining);
+  const selected=allTasks(state.view).find(task=>String(task.id)===timer.focusTaskId),taskLabel=document.getElementById('focus-task-current');
+  if(taskLabel)taskLabel.textContent=selected?`Working on: ${selected.title}`:'Choose a task, or use the timer on its own.';
   document.getElementById('focus-status').textContent=running?'In progress':remaining===0?'Complete':`Ready · ${timer.mode==='focus'?'focus session':'break'}`;
   document.querySelectorAll('[data-focus-mode]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.focusMode===timer.mode)));
+  document.querySelectorAll('[data-focus-length]').forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.focusLength)===timer.focusMinutes)));
   document.getElementById('focus-start').disabled=running;document.getElementById('focus-pause').disabled=!running;
 }
 function focusTimerPanel(){
   const timer=focusTimerState(),remaining=focusTimerRemaining(timer);
-  return `<section class="focus-timer panel" aria-label="Focus timer"><div class="focus-timer-info"><div class="section-heading"><h2>Focus timer</h2><span id="focus-status" class="small">${timer.endsAt?'In progress':remaining===0?'Complete':`Ready · ${timer.mode==='focus'?'focus session':'break'}`}</span></div><div class="segmented" aria-label="Timer mode"><button type="button" data-focus-mode="focus" aria-pressed="${timer.mode==='focus'}" onclick="selectFocusTimerMode('focus')">Focus · 25 min</button><button type="button" data-focus-mode="break" aria-pressed="${timer.mode==='break'}" onclick="selectFocusTimerMode('break')">Break · 5 min</button></div></div><output id="focus-time" class="focus-time" aria-label="Time remaining">${formatFocusTimer(remaining)}</output><div class="focus-actions"><button id="focus-start" class="button" onclick="startFocusTimer()" ${timer.endsAt?'disabled':''}>Start</button><button id="focus-pause" class="button light" onclick="pauseFocusTimer()" ${timer.endsAt?'':'disabled'}>Pause</button><button class="text-button" onclick="resetFocusTimer()">Reset</button></div></section>`;
+  const openTasks=allTasks(state.view).filter(task=>!task.done).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999'));
+  const taskOptions=timer.focusTaskId&&!openTasks.some(task=>String(task.id)===timer.focusTaskId)?`<option value="${esc(timer.focusTaskId)}" selected>Previously selected task</option>`:'';
+  return `<section class="focus-timer panel" aria-label="Focus timer"><div class="focus-timer-info"><div class="section-heading"><h2>Focus timer</h2><span id="focus-status" class="small">${timer.endsAt?'In progress':remaining===0?'Complete':`Ready · ${timer.mode==='focus'?'focus session':'break'}`}</span></div><div class="focus-controls"><div class="segmented" aria-label="Timer mode"><button type="button" data-focus-mode="focus" aria-pressed="${timer.mode==='focus'}" onclick="selectFocusTimerMode('focus')">Focus</button><button type="button" data-focus-mode="break" aria-pressed="${timer.mode==='break'}" onclick="selectFocusTimerMode('break')">Break · 5 min</button></div><div class="focus-presets" aria-label="Focus session length">${FOCUS_TIMER_PRESETS.map(minutes=>`<button type="button" data-focus-length="${minutes}" aria-pressed="${timer.focusMinutes===minutes}" onclick="setFocusTimerLength(${minutes})">${minutes} min</button>`).join('')}</div></div><label class="focus-task-picker">Working on<select onchange="setFocusTask(this.value)"><option value="">Choose a task (optional)</option>${taskOptions}${openTasks.map(task=>`<option value="${esc(task.id)}" ${String(task.id)===timer.focusTaskId?'selected':''}>${esc(LABELS[task.subject]||task.subject)} · ${esc(task.title)}</option>`).join('')}</select></label><span id="focus-task-current" class="small">${openTasks.find(task=>String(task.id)===timer.focusTaskId)?`Working on: ${esc(openTasks.find(task=>String(task.id)===timer.focusTaskId).title)}`:'Choose a task, or use the timer on its own.'}</span></div><output id="focus-time" class="focus-time" aria-label="Time remaining">${formatFocusTimer(remaining)}</output><div class="focus-actions"><button id="focus-start" class="button" onclick="startFocusTimer()" ${timer.endsAt?'disabled':''}>Start</button><button id="focus-pause" class="button light" onclick="pauseFocusTimer()" ${timer.endsAt?'':'disabled'}>Pause</button><button class="text-button" onclick="resetFocusTimer()">Reset</button></div></section>`;
 }
 function resources(student=false){
   const links=[SCHOOL_LINKS.star,SCHOOL_LINKS.horizon,student?SCHOOL_LINKS.support:SCHOOL_LINKS.focus];
@@ -159,7 +168,7 @@ function schedulePanel(student=state.view){
   const slot=(index,label)=>`<div class="now-slot ${['Now','Latest start'].includes(label)&&index>=0?'current-now':''}"><span class="small">${label}</span>${index>=0?`<strong>${esc(scheduleLabel(items[index]))}</strong><span>${formatScheduleTime(items[index].time)}${items[index].endTime?' – '+formatScheduleTime(items[index].endTime):''}</span>`:'<strong>'+(label==='Next'?'No more classes':'No class right now')+'</strong>'}</div>`;
   const canPreview=state.view==='monitor'||['leon','logan'].includes(state.view)&&state.view===student;
   const previewButton=canPreview?`<button class="button light" onclick="previewTomorrowSchedule('${student}')">Preview tomorrow</button>`:'';
-  return `<div class="schedule-stack" data-schedule="${student}"><section class="schedule panel"><div class="section-heading"><h2>Now / Next</h2>${previewButton}</div>${items.length?`<div class="now-next">${slot(current,currentLabel)}${slot(next,'Next')}</div>`:'<p class="empty">No schedule set for today.</p>'}</section>${items.length?`<details class="daily-schedule panel"><summary>Today’s schedule <span class="count">${visibleItems.length}</span></summary>${visibleItems.length?`<div class="schedule-list">${visibleItems.map(({item,status})=>`<div class="schedule-item ${status}" style="${scheduleItemStyle(item)}"><span>${esc(scheduleLabel(item))}</span><time>${formatScheduleTime(item.time)}${item.endTime?' – '+formatScheduleTime(item.endTime):''}</time></div>`).join('')}</div>`:'<p class="empty">No upcoming schedule items today.</p>'}</details>`:''}</div>`;
+  return `<div class="schedule-stack" data-schedule="${student}"><section class="schedule panel"><div class="section-heading">${previewButton}</div>${items.length?`<div class="now-next">${slot(current,currentLabel)}${slot(next,'Next')}</div>`:'<p class="empty">No schedule set for today.</p>'}</section>${items.length?`<details class="daily-schedule panel"><summary>Today’s schedule <span class="count">${visibleItems.length}</span></summary>${visibleItems.length?`<div class="schedule-list">${visibleItems.map(({item,status})=>`<div class="schedule-item ${status}" style="${scheduleItemStyle(item)}"><span>${esc(scheduleLabel(item))}</span><time>${formatScheduleTime(item.time)}${item.endTime?' – '+formatScheduleTime(item.endTime):''}</time></div>`).join('')}</div>`:'<p class="empty">No upcoming schedule items today.</p>'}</details>`:''}</div>`;
 }
 function previewTomorrowSchedule(student=state.view){
   if(!['leon','logan'].includes(student))return;
@@ -281,7 +290,7 @@ function openSettings(){
   state.settingsScope=scope();drawSettings();
 }
 function themeChoices(dark,p){const field=dark?'darkTheme':'lightTheme';return Object.entries(THEME_PALETTES).filter(([key])=>DARK_THEME_KEYS.includes(key)===dark).map(([key,[label,accent,bg]])=>`<button type="button" class="theme-swatch" data-theme-choice="${key}" data-theme-field="${field}" aria-pressed="${p[field]===key}" onclick="setPreference('${field}','${key}',state.settingsScope)"><span class="swatch" style="background:${bg};border-color:${accent}"><i style="background:${accent}"></i></span>${label}</button>`).join('');}
-function styleChoices(p){return [['classic','Classic','Keep the familiar rounded style'],['boxy','Boxy','Sharp corners and crisp edges'],['studio','Studio','Layered surfaces with a polished finish'],['playful','Playful','Bright accents and extra-round shapes']].map(([key,label,description])=>`<button type="button" class="style-choice" data-style-choice="${key}" aria-pressed="${p.visualStyle===key}" onclick="setPreference('visualStyle','${key}',state.settingsScope)"><span class="style-sample" data-preview="${key}" aria-hidden="true"><i></i><b></b><em></em></span><strong>${label}</strong><span class="small">${description}</span></button>`).join('');}
+function styleChoices(p){return [['classic','Classic','Keep the familiar rounded style'],['boxy','Boxy','Sharp corners and crisp edges'],['studio','Studio','Layered surfaces with a polished finish'],['playful','Playful','Bright accents and extra-round shapes'],['glass','Glass','Frosted layers with clear readable cards']].map(([key,label,description])=>`<button type="button" class="style-choice" data-style-choice="${key}" aria-pressed="${p.visualStyle===key}" onclick="setPreference('visualStyle','${key}',state.settingsScope)"><span class="style-sample" data-preview="${key}" aria-hidden="true"><i></i><b></b><em></em></span><strong>${label}</strong><span class="small">${description}</span></button>`).join('');}
 function drawSettings(){
   const forScope=state.settingsScope,p=prefs(forScope),parent=state.auth?.role==='parent',opt=(value,label,current)=>`<option value="${value}" ${value===current?'selected':''}>${label}</option>`;
   openDialog('settings',`<h2>Settings</h2><p class="small">${state.auth?.role==='monitor'||!state.auth?'Saved on this device.':'Saved for this profile and synced across devices.'}</p>${parent?`<label>Profile<select onchange="state.settingsScope=this.value;drawSettings()">${['parent','leon','logan','monitor'].map(s=>opt(s,s==='parent'?'Parent':s==='monitor'?'Shared dashboard':nameOf(s),forScope)).join('')}</select></label>`:''}<div class="settings-grid"><label>Appearance<select onchange="setPreference('appearance',this.value,state.settingsScope)">${['system','light','dark'].map(v=>opt(v,v==='system'?'Follow device':v==='light'?'Light':'Dark',p.appearance)).join('')}</select></label><label>Text size<select onchange="setPreference('textSize',this.value,state.settingsScope)">${opt('standard','Standard',p.textSize)+opt('large','Large',p.textSize)}</select></label><label>Spacing<select onchange="setPreference('density',this.value,state.settingsScope)">${opt('comfortable','Comfortable',p.density)+opt('compact','Compact',p.density)}</select></label></div><h3>Interface style</h3><div class="style-grid">${styleChoices(p)}</div>${['leon','logan'].includes(forScope)?`<label class="switch"><input type="checkbox" ${p.classBrowser?'checked':''} onchange="setPreference('classBrowser',this.checked,state.settingsScope)">Show class browser on dashboard</label><label class="switch"><input type="checkbox" ${p.hideCompleted?'checked':''} onchange="setPreference('hideCompleted',this.checked,state.settingsScope)">Hide completed in class lists</label>`:''}<h3>Light theme</h3><div class="theme-grid">${themeChoices(false,p)}</div><h3>Dark theme</h3><div class="theme-grid">${themeChoices(true,p)}</div><p class="small">Subject and assignment status colors stay consistent in every theme.</p>`);
