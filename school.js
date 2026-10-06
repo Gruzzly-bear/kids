@@ -2,17 +2,17 @@
 const app = document.getElementById('app');
 const sessionKey = 'family-assignment-session-v1';
 const THEME_PALETTES = {
-  coastal:['Coastal','#24637a','#f3f8fa'], material:['Lavender','#65509b','#f8f6fc'], facebook:['Blue','#235dc1','#f5f8ff'],
+  coastal:['Coastal','#24637a','#f3f8fa'], material:['Lavender','#65509b','#f8f6fc'], facebook:['Blue','#235dc1','#f5f8ff'], paper:['Warm Paper','#79563a','#f5efe3'],
   forest:['Forest','#316447','#f4f8f4'], sand:['Coffee','#795337','#fbf7f2'], sunset:['Sunset','#a34732','#fff7f2'],
   berry:['Berry','#8d376e','#fcf5fa'], mint:['Fresh Mint','#216953','#f1faf6'], rose:['Rose','#9d3854','#fff6f8'],
   citrus:['Citrus','#79610e','#fffcef'], arctic:['Arctic','#26647d','#f3faff'], coral:['Coral','#a84942','#fff7f6'],
-  midnight:['Midnight','#8db8ff','#111b2b'], dark:['Discord Dark','#a4adff','#1e1f25'], dracula:['Dracula','#c4a7ff','#24212e'],
+  midnight:['Midnight','#8db8ff','#111b2b'], dark:['Discord Dark','#a4adff','#1e1f25'], dracula:['Dracula','#c4a7ff','#24212e'], electric:['Electric','#ff6bd6','#171023'],
   'github-dark':['GitHub Dark','#83b8f9','#10151c'], nord:['Nord','#91c9d7','#252f3d'], monokai:['Monokai','#c4d88a','#24251f'],
   oled:['OLED Black','#b9c9ff','#000000'], slate:['Slate','#a9bcd5','#1e2530'], espresso:['Espresso','#e6b98e','#241b18'],
   aubergine:['Aubergine','#dfb1ec','#281e30'], 'ocean-night':['Ocean Night','#83cdda','#11272e'], 'emerald-night':['Emerald Night','#8cd5ad','#15271f'],
   contrast:['High Contrast','#173fb0','#ffffff'], 'contrast-dark':['High Contrast Dark','#ffe36b','#000000']
 };
-const DARK_THEME_KEYS = ['midnight','dark','dracula','github-dark','nord','monokai','oled','slate','espresso','aubergine','ocean-night','emerald-night','contrast-dark'];
+const DARK_THEME_KEYS = ['midnight','dark','dracula','electric','github-dark','nord','monokai','oled','slate','espresso','aubergine','ocean-night','emerald-night','contrast-dark'];
 const DEFAULT_PREFS = {appearance:'system',lightTheme:'coastal',darkTheme:'midnight',visualStyle:'classic',textSize:'standard',density:'comfortable',classBrowser:false,hideCompleted:true};
 state.preferences = {};
 state.parentTab = 'overview';
@@ -31,7 +31,7 @@ function prefs(forScope = scope()) {
   const p = forScope==='monitor'||forScope==='home'?{...DEFAULT_PREFS,...legacy,...state.preferences[forScope],...local}:{...DEFAULT_PREFS,...legacy,...local,...state.preferences[forScope]};
   if (!THEME_PALETTES[p.lightTheme] || DARK_THEME_KEYS.includes(p.lightTheme)) p.lightTheme='coastal';
   if (!DARK_THEME_KEYS.includes(p.darkTheme)) p.darkTheme='midnight';
-  if (!['classic','boxy','studio'].includes(p.visualStyle)) p.visualStyle='classic';
+  if (!['classic','boxy','studio','playful'].includes(p.visualStyle)) p.visualStyle='classic';
   return p;
 }
 function applyPreferences() {
@@ -86,6 +86,34 @@ function dashboardClock(){return '<time class="dashboard-clock" id="dashboard-cl
 function updateDashboardClock(){
   const clock=document.getElementById('dashboard-clock');if(!clock)return;
   const now=new Date();clock.dateTime=now.toISOString();clock.textContent=now.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit',hour12:true});
+}
+const FOCUS_TIMER_SECONDS={focus:25*60,break:5*60};
+function focusTimerState(student=state.view){
+  const value=localRead(`school-focus-timer-${student}`,null);
+  if(!value||!['focus','break'].includes(value.mode))return {mode:'focus',remaining:FOCUS_TIMER_SECONDS.focus,endsAt:0};
+  const duration=FOCUS_TIMER_SECONDS[value.mode];
+  return {mode:value.mode,remaining:Math.max(0,Math.min(duration,Number(value.remaining)||0)),endsAt:Math.max(0,Number(value.endsAt)||0)};
+}
+function focusTimerRemaining(timer){return timer.endsAt?Math.max(0,Math.ceil((timer.endsAt-Date.now())/1000)):timer.remaining;}
+function formatFocusTimer(seconds){return `${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;}
+function saveFocusTimer(timer,student=state.view){localWrite(`school-focus-timer-${student}`,timer);}
+function selectFocusTimerMode(mode){if(!FOCUS_TIMER_SECONDS[mode])return;const timer={mode,remaining:FOCUS_TIMER_SECONDS[mode],endsAt:0};saveFocusTimer(timer);updateFocusTimer();}
+function startFocusTimer(){const timer=focusTimerState();if(!timer.remaining)timer.remaining=FOCUS_TIMER_SECONDS[timer.mode];timer.endsAt=Date.now()+timer.remaining*1000;saveFocusTimer(timer);updateFocusTimer();}
+function pauseFocusTimer(){const timer=focusTimerState();if(!timer.endsAt)return;timer.remaining=focusTimerRemaining(timer);timer.endsAt=0;saveFocusTimer(timer);updateFocusTimer();}
+function resetFocusTimer(){const timer=focusTimerState();timer.remaining=FOCUS_TIMER_SECONDS[timer.mode];timer.endsAt=0;saveFocusTimer(timer);updateFocusTimer();}
+function updateFocusTimer(){
+  const output=document.getElementById('focus-time');if(!output)return;
+  const timer=focusTimerState(),remaining=focusTimerRemaining(timer),running=!!timer.endsAt;
+  if(running&&remaining===0){timer.remaining=0;timer.endsAt=0;saveFocusTimer(timer);showToast(timer.mode==='focus'?'Focus session complete. Nice work!':'Break complete. Ready to focus again?');}
+  else if(!running)timer.remaining=remaining;
+  output.textContent=formatFocusTimer(remaining);
+  document.getElementById('focus-status').textContent=running?'In progress':remaining===0?'Complete':`Ready · ${timer.mode==='focus'?'focus session':'break'}`;
+  document.querySelectorAll('[data-focus-mode]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.focusMode===timer.mode)));
+  document.getElementById('focus-start').disabled=running;document.getElementById('focus-pause').disabled=!running;
+}
+function focusTimerPanel(){
+  const timer=focusTimerState(),remaining=focusTimerRemaining(timer);
+  return `<section class="focus-timer panel" aria-label="Focus timer"><div class="focus-timer-info"><div class="section-heading"><h2>Focus timer</h2><span id="focus-status" class="small">${timer.endsAt?'In progress':remaining===0?'Complete':`Ready · ${timer.mode==='focus'?'focus session':'break'}`}</span></div><div class="segmented" aria-label="Timer mode"><button type="button" data-focus-mode="focus" aria-pressed="${timer.mode==='focus'}" onclick="selectFocusTimerMode('focus')">Focus · 25 min</button><button type="button" data-focus-mode="break" aria-pressed="${timer.mode==='break'}" onclick="selectFocusTimerMode('break')">Break · 5 min</button></div></div><output id="focus-time" class="focus-time" aria-label="Time remaining">${formatFocusTimer(remaining)}</output><div class="focus-actions"><button id="focus-start" class="button" onclick="startFocusTimer()" ${timer.endsAt?'disabled':''}>Start</button><button id="focus-pause" class="button light" onclick="pauseFocusTimer()" ${timer.endsAt?'':'disabled'}>Pause</button><button class="text-button" onclick="resetFocusTimer()">Reset</button></div></section>`;
 }
 function resources(student=false){
   const links=[SCHOOL_LINKS.star,SCHOOL_LINKS.horizon,student?SCHOOL_LINKS.support:SCHOOL_LINKS.focus];
@@ -150,7 +178,7 @@ function studentPage(){
     const subject=state.subjectView,items=subjects[subject]||[],filter=x=>(!prefs().hideCompleted||!x.done)&&(state.subjectTaskView!=='soon'||x.due&&x.due<=addDays(today,7));
     return mast()+`<section class="page-heading"><div><button class="text-button" onclick="showHub()">← Back to dashboard</button><h1>${esc(LABELS[subject]||subject)}</h1></div></section><div class="toolbar"><label class="switch"><input type="checkbox" ${prefs().hideCompleted?'checked':''} onchange="setPreference('hideCompleted',this.checked)">Hide completed</label><div class="segmented"><button aria-pressed="${state.subjectTaskView!=='soon'}" onclick="state.subjectTaskView='all';render()">All work</button><button aria-pressed="${state.subjectTaskView==='soon'}" onclick="state.subjectTaskView='soon';render()">Due within a week</button></div></div><section class="panel assignment-list">${items.filter(filter).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999')).map(x=>task(x)).join('')||'<p class="empty">No assignments in this view.</p>'}</section>`;
   }
-  return mast()+hero+`<div class="work-board">${workSection(subjects,'late')}${workSection(subjects,'today')}${workingAhead(subjects)}</div>`+schedulePanel()+(prefs().classBrowser?classBrowser():'');
+  return mast()+hero+`<div class="work-board">${workSection(subjects,'late')}${workSection(subjects,'today')}${workingAhead(subjects)}</div>`+focusTimerPanel()+schedulePanel()+(prefs().classBrowser?classBrowser():'');
 }
 function loginPage(){return mast()+`<section class="login"><p class="eyebrow">Your day, organized</p><h1>Ready for your school day?</h1><p class="small">Choose your profile to see classes and assignments.</p><div class="people">${['leon','logan'].map(student=>`<button class="person" onclick="signIn('${student}')"><span class="emoji">${iconOf(student)}</span><b>${nameOf(student)}</b><span class="small">Open my dashboard</span></button>`).join('')}</div><div class="home-actions"><button class="button" onclick="openMonitor()">Shared school dashboard</button><button class="button light" onclick="signIn('parent')">Parent sign in</button></div>${state.loadError?`<p class="form-error" role="alert">${esc(state.loadError)}</p><button class="button light" onclick="restoreSession()">Retry connection</button>`:''}</section>`;}
 function render(){
@@ -160,7 +188,7 @@ function render(){
   else if(state.view==='parent')app.innerHTML=parentPage();
   else if(state.view==='monitor')app.innerHTML=sharedPage();
   else app.innerHTML=studentPage();
-  updateDashboardClock();
+  updateDashboardClock();updateFocusTimer();
   for(const node of app.querySelectorAll('details.work-section')){node.open=expanded.get(node.id)??['leon','logan'].includes(state.view);node.addEventListener('toggle',updateWorkOverflow);}
   updateSyncStatus();updateWorkOverflow();
 }
@@ -253,7 +281,7 @@ function openSettings(){
   state.settingsScope=scope();drawSettings();
 }
 function themeChoices(dark,p){const field=dark?'darkTheme':'lightTheme';return Object.entries(THEME_PALETTES).filter(([key])=>DARK_THEME_KEYS.includes(key)===dark).map(([key,[label,accent,bg]])=>`<button type="button" class="theme-swatch" data-theme-choice="${key}" data-theme-field="${field}" aria-pressed="${p[field]===key}" onclick="setPreference('${field}','${key}',state.settingsScope)"><span class="swatch" style="background:${bg};border-color:${accent}"><i style="background:${accent}"></i></span>${label}</button>`).join('');}
-function styleChoices(p){return [['classic','Classic','Keep the familiar rounded style'],['boxy','Boxy','Sharp corners and crisp edges'],['studio','Studio','Layered surfaces with a polished finish']].map(([key,label,description])=>`<button type="button" class="style-choice" data-style-choice="${key}" aria-pressed="${p.visualStyle===key}" onclick="setPreference('visualStyle','${key}',state.settingsScope)"><span class="style-sample" data-preview="${key}" aria-hidden="true"><i></i><b></b><em></em></span><strong>${label}</strong><span class="small">${description}</span></button>`).join('');}
+function styleChoices(p){return [['classic','Classic','Keep the familiar rounded style'],['boxy','Boxy','Sharp corners and crisp edges'],['studio','Studio','Layered surfaces with a polished finish'],['playful','Playful','Bright accents and extra-round shapes']].map(([key,label,description])=>`<button type="button" class="style-choice" data-style-choice="${key}" aria-pressed="${p.visualStyle===key}" onclick="setPreference('visualStyle','${key}',state.settingsScope)"><span class="style-sample" data-preview="${key}" aria-hidden="true"><i></i><b></b><em></em></span><strong>${label}</strong><span class="small">${description}</span></button>`).join('');}
 function drawSettings(){
   const forScope=state.settingsScope,p=prefs(forScope),parent=state.auth?.role==='parent',opt=(value,label,current)=>`<option value="${value}" ${value===current?'selected':''}>${label}</option>`;
   openDialog('settings',`<h2>Settings</h2><p class="small">${state.auth?.role==='monitor'||!state.auth?'Saved on this device.':'Saved for this profile and synced across devices.'}</p>${parent?`<label>Profile<select onchange="state.settingsScope=this.value;drawSettings()">${['parent','leon','logan','monitor'].map(s=>opt(s,s==='parent'?'Parent':s==='monitor'?'Shared dashboard':nameOf(s),forScope)).join('')}</select></label>`:''}<div class="settings-grid"><label>Appearance<select onchange="setPreference('appearance',this.value,state.settingsScope)">${['system','light','dark'].map(v=>opt(v,v==='system'?'Follow device':v==='light'?'Light':'Dark',p.appearance)).join('')}</select></label><label>Text size<select onchange="setPreference('textSize',this.value,state.settingsScope)">${opt('standard','Standard',p.textSize)+opt('large','Large',p.textSize)}</select></label><label>Spacing<select onchange="setPreference('density',this.value,state.settingsScope)">${opt('comfortable','Comfortable',p.density)+opt('compact','Compact',p.density)}</select></label></div><h3>Interface style</h3><div class="style-grid">${styleChoices(p)}</div>${['leon','logan'].includes(forScope)?`<label class="switch"><input type="checkbox" ${p.classBrowser?'checked':''} onchange="setPreference('classBrowser',this.checked,state.settingsScope)">Show class browser on dashboard</label><label class="switch"><input type="checkbox" ${p.hideCompleted?'checked':''} onchange="setPreference('hideCompleted',this.checked,state.settingsScope)">Hide completed in class lists</label>`:''}<h3>Light theme</h3><div class="theme-grid">${themeChoices(false,p)}</div><h3>Dark theme</h3><div class="theme-grid">${themeChoices(true,p)}</div><p class="small">Subject and assignment status colors stay consistent in every theme.</p>`);
@@ -374,6 +402,7 @@ function refreshVisibleSchedules(){
   }
 }
 setInterval(updateDashboardClock,15000);
+setInterval(updateFocusTimer,1000);
 setInterval(()=>{refreshVisibleSchedules();if(state.view==='monitor'&&!document.hidden&&!document.getElementById('app-dialog'))refreshDashboard(true);},60000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshVisibleSchedules();});
 applyPreferences();restoreSession();
