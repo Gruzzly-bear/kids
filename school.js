@@ -13,7 +13,7 @@ const THEME_PALETTES = {
   contrast:['High Contrast','#173fb0','#ffffff'], 'contrast-dark':['High Contrast Dark','#ffe36b','#000000']
 };
 const DARK_THEME_KEYS = ['midnight','dark','dracula','github-dark','nord','monokai','oled','slate','espresso','aubergine','ocean-night','emerald-night','contrast-dark'];
-const DEFAULT_PREFS = {appearance:'system',lightTheme:'coastal',darkTheme:'midnight',textSize:'standard',density:'comfortable',classBrowser:false,hideCompleted:true};
+const DEFAULT_PREFS = {appearance:'system',lightTheme:'coastal',darkTheme:'midnight',visualStyle:'classic',textSize:'standard',density:'comfortable',classBrowser:false,hideCompleted:true};
 state.preferences = {};
 state.parentTab = 'overview';
 state.pending = [];
@@ -31,12 +31,13 @@ function prefs(forScope = scope()) {
   const p = forScope==='monitor'||forScope==='home'?{...DEFAULT_PREFS,...legacy,...state.preferences[forScope],...local}:{...DEFAULT_PREFS,...legacy,...local,...state.preferences[forScope]};
   if (!THEME_PALETTES[p.lightTheme] || DARK_THEME_KEYS.includes(p.lightTheme)) p.lightTheme='coastal';
   if (!DARK_THEME_KEYS.includes(p.darkTheme)) p.darkTheme='midnight';
+  if (!['classic','boxy','studio'].includes(p.visualStyle)) p.visualStyle='classic';
   return p;
 }
 function applyPreferences() {
   const p=prefs(), dark=p.appearance==='dark'||p.appearance==='system'&&matchMedia('(prefers-color-scheme: dark)').matches;
   const theme=dark?p.darkTheme:p.lightTheme, palette=THEME_PALETTES[theme], root=document.documentElement;
-  root.dataset.theme=theme; root.dataset.mode=dark?'dark':'light'; root.dataset.size=p.textSize; root.dataset.density=p.density;
+  root.dataset.theme=theme; root.dataset.mode=dark?'dark':'light'; root.dataset.style=p.visualStyle; root.dataset.size=p.textSize; root.dataset.density=p.density;
   root.dataset.contrast=theme.startsWith('contrast')?'high':'normal';
   root.style.setProperty('--accent',palette[1]); root.style.setProperty('--page',palette[2]);
   document.querySelector('meta[name="theme-color"]').content=palette[2];
@@ -48,6 +49,7 @@ function setPreference(field, value, forScope=scope()) {
   if(state.auth&&state.auth.role!=='monitor')queuedWrite({preferencesOnly:true,scope:forScope,preferences:p},'Preferences');
   if(field==='classBrowser'||field==='hideCompleted')render();
   document.querySelectorAll('[data-theme-choice]').forEach(button=>button.setAttribute('aria-pressed',String(p[button.dataset.themeField]===button.dataset.themeChoice)));
+  document.querySelectorAll('[data-style-choice]').forEach(button=>button.setAttribute('aria-pressed',String(p.visualStyle===button.dataset.styleChoice)));
 }
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>applyPreferences());
 function schoolDay(now=new Date()) {
@@ -251,9 +253,10 @@ function openSettings(){
   state.settingsScope=scope();drawSettings();
 }
 function themeChoices(dark,p){const field=dark?'darkTheme':'lightTheme';return Object.entries(THEME_PALETTES).filter(([key])=>DARK_THEME_KEYS.includes(key)===dark).map(([key,[label,accent,bg]])=>`<button type="button" class="theme-swatch" data-theme-choice="${key}" data-theme-field="${field}" aria-pressed="${p[field]===key}" onclick="setPreference('${field}','${key}',state.settingsScope)"><span class="swatch" style="background:${bg};border-color:${accent}"><i style="background:${accent}"></i></span>${label}</button>`).join('');}
+function styleChoices(p){return [['classic','Classic','Keep the familiar rounded style'],['boxy','Boxy','Sharp corners and crisp edges'],['studio','Studio','Layered surfaces with a polished finish']].map(([key,label,description])=>`<button type="button" class="style-choice" data-style-choice="${key}" aria-pressed="${p.visualStyle===key}" onclick="setPreference('visualStyle','${key}',state.settingsScope)"><span class="style-sample" data-preview="${key}" aria-hidden="true"><i></i><b></b><em></em></span><strong>${label}</strong><span class="small">${description}</span></button>`).join('');}
 function drawSettings(){
   const forScope=state.settingsScope,p=prefs(forScope),parent=state.auth?.role==='parent',opt=(value,label,current)=>`<option value="${value}" ${value===current?'selected':''}>${label}</option>`;
-  openDialog('settings',`<h2>Settings</h2><p class="small">${state.auth?.role==='monitor'||!state.auth?'Saved on this device.':'Saved for this profile and synced across devices.'}</p>${parent?`<label>Profile<select onchange="state.settingsScope=this.value;drawSettings()">${['parent','leon','logan','monitor'].map(s=>opt(s,s==='parent'?'Parent':s==='monitor'?'Shared dashboard':nameOf(s),forScope)).join('')}</select></label>`:''}<div class="settings-grid"><label>Appearance<select onchange="setPreference('appearance',this.value,state.settingsScope)">${['system','light','dark'].map(v=>opt(v,v==='system'?'Follow device':v==='light'?'Light':'Dark',p.appearance)).join('')}</select></label><label>Text size<select onchange="setPreference('textSize',this.value,state.settingsScope)">${opt('standard','Standard',p.textSize)+opt('large','Large',p.textSize)}</select></label><label>Spacing<select onchange="setPreference('density',this.value,state.settingsScope)">${opt('comfortable','Comfortable',p.density)+opt('compact','Compact',p.density)}</select></label></div>${['leon','logan'].includes(forScope)?`<label class="switch"><input type="checkbox" ${p.classBrowser?'checked':''} onchange="setPreference('classBrowser',this.checked,state.settingsScope)">Show class browser on dashboard</label><label class="switch"><input type="checkbox" ${p.hideCompleted?'checked':''} onchange="setPreference('hideCompleted',this.checked,state.settingsScope)">Hide completed in class lists</label>`:''}<h3>Light theme</h3><div class="theme-grid">${themeChoices(false,p)}</div><h3>Dark theme</h3><div class="theme-grid">${themeChoices(true,p)}</div><p class="small">Subject and assignment status colors stay consistent in every theme.</p>`);
+  openDialog('settings',`<h2>Settings</h2><p class="small">${state.auth?.role==='monitor'||!state.auth?'Saved on this device.':'Saved for this profile and synced across devices.'}</p>${parent?`<label>Profile<select onchange="state.settingsScope=this.value;drawSettings()">${['parent','leon','logan','monitor'].map(s=>opt(s,s==='parent'?'Parent':s==='monitor'?'Shared dashboard':nameOf(s),forScope)).join('')}</select></label>`:''}<div class="settings-grid"><label>Appearance<select onchange="setPreference('appearance',this.value,state.settingsScope)">${['system','light','dark'].map(v=>opt(v,v==='system'?'Follow device':v==='light'?'Light':'Dark',p.appearance)).join('')}</select></label><label>Text size<select onchange="setPreference('textSize',this.value,state.settingsScope)">${opt('standard','Standard',p.textSize)+opt('large','Large',p.textSize)}</select></label><label>Spacing<select onchange="setPreference('density',this.value,state.settingsScope)">${opt('comfortable','Comfortable',p.density)+opt('compact','Compact',p.density)}</select></label></div><h3>Interface style</h3><div class="style-grid">${styleChoices(p)}</div>${['leon','logan'].includes(forScope)?`<label class="switch"><input type="checkbox" ${p.classBrowser?'checked':''} onchange="setPreference('classBrowser',this.checked,state.settingsScope)">Show class browser on dashboard</label><label class="switch"><input type="checkbox" ${p.hideCompleted?'checked':''} onchange="setPreference('hideCompleted',this.checked,state.settingsScope)">Hide completed in class lists</label>`:''}<h3>Light theme</h3><div class="theme-grid">${themeChoices(false,p)}</div><h3>Dark theme</h3><div class="theme-grid">${themeChoices(true,p)}</div><p class="small">Subject and assignment status colors stay consistent in every theme.</p>`);
   if(parent&&forScope==='parent')document.getElementById('app-dialog').insertAdjacentHTML('beforeend','<button class="button light" onclick="openPasswordSettings()">Change parent password</button>');
 }
 function openPasswordSettings(){openDialog('password',`<h2>Change parent password</h2><form onsubmit="changeParentPassword(event)"><label>Current password<input name="current" type="password" autocomplete="current-password" required></label><label>New password<input name="next" type="password" autocomplete="new-password" minlength="4" required></label><label>Confirm new password<input name="confirm" type="password" autocomplete="new-password" minlength="4" required></label><p id="password-error" class="form-error" role="alert"></p><button class="button" type="submit">Save password</button></form>`);}
