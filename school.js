@@ -80,6 +80,11 @@ function mast(){
   const student=['leon','logan'].includes(state.view);
   return `<header class="mast"><a href="#" class="brand" onclick="event.preventDefault();${student?'showHub()':state.view==='parent'?"setParentTab('overview')":'render()'}"><span class="brand-mark">${student?iconOf(state.view):'S'}</span><span><b>School Dashboard</b><small>${student?nameOf(state.view)+'’s school day':state.view==='parent'?'Parent workspace':'Your family’s school day'}</small></span></a>${student||state.view==='monitor'?displayCards(state.view):''}<div class="header-actions">${student||state.view==='monitor'||state.view==='parent'?'<button class="button light" onclick="openResources()">School Resources</button>':''}<button class="button light" onclick="openSettings()">Settings</button>${state.view?'<button class="button light" onclick="goHome()">'+(state.view==='monitor'?'Close dashboard':'Sign out')+'</button>':''}</div></header>`;
 }
+function dashboardClock(){return '<time class="dashboard-clock" id="dashboard-clock" aria-label="Current time"></time>';}
+function updateDashboardClock(){
+  const clock=document.getElementById('dashboard-clock');if(!clock)return;
+  const now=new Date();clock.dateTime=now.toISOString();clock.textContent=now.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit',hour12:true});
+}
 function resources(student=false){
   const links=[SCHOOL_LINKS.star,SCHOOL_LINKS.horizon,student?SCHOOL_LINKS.support:SCHOOL_LINKS.focus];
   return `<section class="resources panel"><div class="section-heading"><h2>School Resources</h2><span class="small">Opens in a new tab</span></div><nav aria-label="School resources">${links.map(([label,url])=>`<a class="resource-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${label}<span aria-hidden="true">↗</span></a>`).join('')}</nav></section>`;
@@ -138,7 +143,7 @@ function classBrowser(){const subjects=state.assignments[state.view];return `<se
 function studentPage(){
   const subjects=state.assignments[state.view],today=scheduleDay(),rows=Object.values(subjects).flat(),due=rows.filter(x=>x.due===today),complete=due.filter(x=>x.done).length;
   const overdue=rows.filter(x=>!x.done&&x.due&&x.due<today).length,nextDate=nextDueDate(subjects),ahead=rows.filter(x=>!x.done&&nextDate&&x.due===nextDate).length;
-  const hero=`<section class="page-heading"><div><p class="small">${dateLabel(today)}</p><h1>${nameOf(state.view)}’s school day</h1></div><div class="heading-summary"><nav class="work-shortcuts" aria-label="Jump to assignments"><a class="late" href="#${state.view}-late-work">Past Due <b>${overdue}</b></a><a href="#${state.view}-today-work">Today <b>${due.length-complete}</b></a><a href="#${state.view}-ahead-work">Next <b>${ahead}</b></a></nav><span class="progress-caption">${due.length?complete+' of '+due.length+' due today completed':'A fresh day to learn'}</span></div></section>`;
+  const hero=`<section class="page-heading"><div><p class="small">${dateLabel(today)}</p><h1>${nameOf(state.view)}’s school day</h1></div>${dashboardClock()}<div class="heading-summary"><nav class="work-shortcuts" aria-label="Jump to assignments"><a class="late" href="#${state.view}-late-work">Past Due <b>${overdue}</b></a><a href="#${state.view}-today-work">Today <b>${due.length-complete}</b></a><a href="#${state.view}-ahead-work">Next <b>${ahead}</b></a></nav><span class="progress-caption">${due.length?complete+' of '+due.length+' due today completed':'A fresh day to learn'}</span></div></section>`;
   if(state.subjectView){
     const subject=state.subjectView,items=subjects[subject]||[],filter=x=>(!prefs().hideCompleted||!x.done)&&(state.subjectTaskView!=='soon'||x.due&&x.due<=addDays(today,7));
     return mast()+`<section class="page-heading"><div><button class="text-button" onclick="showHub()">← Back to dashboard</button><h1>${esc(LABELS[subject]||subject)}</h1></div></section><div class="toolbar"><label class="switch"><input type="checkbox" ${prefs().hideCompleted?'checked':''} onchange="setPreference('hideCompleted',this.checked)">Hide completed</label><div class="segmented"><button aria-pressed="${state.subjectTaskView!=='soon'}" onclick="state.subjectTaskView='all';render()">All work</button><button aria-pressed="${state.subjectTaskView==='soon'}" onclick="state.subjectTaskView='soon';render()">Due within a week</button></div></div><section class="panel assignment-list">${items.filter(filter).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999')).map(x=>task(x)).join('')||'<p class="empty">No assignments in this view.</p>'}</section>`;
@@ -153,6 +158,7 @@ function render(){
   else if(state.view==='parent')app.innerHTML=parentPage();
   else if(state.view==='monitor')app.innerHTML=sharedPage();
   else app.innerHTML=studentPage();
+  updateDashboardClock();
   for(const node of app.querySelectorAll('details.work-section')){node.open=expanded.get(node.id)??['leon','logan'].includes(state.view);node.addEventListener('toggle',updateWorkOverflow);}
   updateSyncStatus();updateWorkOverflow();
 }
@@ -300,7 +306,7 @@ function removeTask(id){
 }
 function confirmRemove(id){const found=findTask(id);if(!found)return;state.assignments[found.student][found.subject].splice(found.index,1);saveAssignmentChange('remove',found);closeDialog();render();showToast('Assignment removed',()=>{state.assignments[found.student][found.subject].push(found.x);saveAssignmentChange('add',found);render();});}
 function downloadBackup(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({assignments:state.assignments,schedules:schedulePayload(),cards:state.displayCards,preferences:state.preferences},null,2)],{type:'application/json'}));a.download='school-dashboard-backup-'+scheduleDay()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
-function sharedPage(){return mast()+`<section class="page-heading"><div><p class="small">${dateLabel(scheduleDay())}</p><h1>Our school day</h1></div><button class="button light" onclick="refreshDashboard()">Refresh</button></section><p id="shared-refresh-status" class="small" role="status">${esc(state.refreshError||'')}</p><div class="shared-grid">${['leon','logan'].map(student=>`<article class="shared-child"><h2>${iconOf(student)} ${nameOf(student)}</h2><div class="work-board">${workSection(state.assignments[student],'late',student,true)}${workSection(state.assignments[student],'today',student,true)}${workingAhead(state.assignments[student],student,true)}</div>${schedulePanel(student)}</article>`).join('')}</div>`;}
+function sharedPage(){return mast()+`<section class="page-heading"><div><p class="small">${dateLabel(scheduleDay())}</p><h1>Our school day</h1></div>${dashboardClock()}<button class="button light" onclick="refreshDashboard()">Refresh</button></section><p id="shared-refresh-status" class="small" role="status">${esc(state.refreshError||'')}</p><div class="shared-grid">${['leon','logan'].map(student=>`<article class="shared-child"><h2>${iconOf(student)} ${nameOf(student)}</h2><div class="work-board">${workSection(state.assignments[student],'late',student,true)}${workSection(state.assignments[student],'today',student,true)}${workingAhead(state.assignments[student],student,true)}</div>${schedulePanel(student)}</article>`).join('')}</div>`;}
 async function refreshDashboard(silent=false){
   if(!state.auth||state.pending.length||pumping){if(!silent)showToast('Save your pending changes before refreshing.');return;}
   if(state.refreshing)return;state.refreshing=true;
@@ -364,6 +370,7 @@ function refreshVisibleSchedules(){
     const replacement=document.createElement('div');replacement.innerHTML=schedulePanel(student);if(open)replacement.querySelector('details').open=true;node.replaceWith(replacement.firstElementChild);
   }
 }
+setInterval(updateDashboardClock,15000);
 setInterval(()=>{refreshVisibleSchedules();if(state.view==='monitor'&&!document.hidden&&!document.getElementById('app-dialog'))refreshDashboard(true);},60000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshVisibleSchedules();});
 applyPreferences();restoreSession();
