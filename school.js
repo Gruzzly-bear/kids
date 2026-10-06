@@ -121,13 +121,15 @@ function scheduleSnapshot(student){
 function schedulePanel(student=state.view){
   const {items,visibleItems,current,next,currentLabel}=scheduleSnapshot(student);
   const slot=(index,label)=>`<div class="now-slot"><span class="small">${label}</span>${index>=0?`<strong>${esc(scheduleLabel(items[index]))}</strong><span>${formatScheduleTime(items[index].time)}${items[index].endTime?' – '+formatScheduleTime(items[index].endTime):''}</span>`:'<strong>'+(label==='Next'?'No more classes':'No class right now')+'</strong>'}</div>`;
-  const previewButton=['leon','logan'].includes(state.view)&&state.view===student?'<button class="button light" onclick="previewTomorrowSchedule()">Preview tomorrow</button>':'';
+  const canPreview=state.view==='monitor'||['leon','logan'].includes(state.view)&&state.view===student;
+  const previewButton=canPreview?`<button class="button light" onclick="previewTomorrowSchedule('${student}')">Preview tomorrow</button>`:'';
   return `<section class="schedule panel" data-schedule="${student}"><div class="section-heading"><h2>Now / Next</h2>${previewButton}<span class="small">School time · ET</span></div>${items.length?`<div class="now-next">${slot(current,currentLabel)}${slot(next,'Next')}</div><details class="daily-schedule" open><summary>Today’s schedule <span class="count">${visibleItems.length}</span></summary><div class="schedule-list">${visibleItems.map(({item,status})=>`<div class="schedule-item ${status}" style="${scheduleItemStyle(item)}"><span>${esc(scheduleLabel(item))}</span><time>${formatScheduleTime(item.time)}${item.endTime?' – '+formatScheduleTime(item.endTime):''}</time></div>`).join('')}</div></details>`:'<p class="empty">No schedule set for today.</p>'}</section>`;
 }
-function previewTomorrowSchedule(){
-  const student=state.view,date=addDays(scheduleDay(),1),items=scheduleFor(student,date).filter(x=>scheduleMinutes(x.time)>=0).sort((a,b)=>scheduleMinutes(a.time)-scheduleMinutes(b.time));
+function previewTomorrowSchedule(student=state.view){
+  if(!['leon','logan'].includes(student))return;
+  const date=addDays(scheduleDay(),1),items=scheduleFor(student,date).filter(x=>scheduleMinutes(x.time)>=0).sort((a,b)=>scheduleMinutes(a.time)-scheduleMinutes(b.time));
   const content=items.length?`<div class="schedule-list">${items.map(item=>`<div class="schedule-item" style="${scheduleItemStyle(item)}"><span>${esc(scheduleLabel(item))}</span><time>${formatScheduleTime(item.time)}${item.endTime?' – '+formatScheduleTime(item.endTime):''}</time></div>`).join('')}</div>`:'<p class="empty">No schedule is set for tomorrow.</p>';
-  openDialog('tomorrow-schedule',`<h2>Tomorrow’s schedule</h2><p class="small">${dateLabel(date)} · Preview only</p>${content}`);
+  openDialog('tomorrow-schedule',`<h2>${nameOf(student)}’s schedule for tomorrow</h2><p class="small">${dateLabel(date)} · Preview only</p>${content}`);
 }
 function showHub(){state.subjectView=null;render();}
 function openSubject(subject){state.subjectView=subject;state.subjectTaskView='all';render();}
