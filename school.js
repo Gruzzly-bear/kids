@@ -161,14 +161,22 @@ function scheduleSnapshot(student){
     const elapsed=itemEnd>=0&&minutes>=itemEnd;
     return elapsed?[]:[{item,status:i===current?'current':''}];
   });
-  return {items,visibleItems,current,next,currentLabel:end<0&&started>=0?'Latest start':'Now'};
+  const previous=started>=0?(current>=0?started-1:started):-1;
+  return {items,visibleItems,previous,current,next,currentLabel:end<0&&started>=0?'Latest start':'Now'};
 }
-function schedulePanel(student=state.view){
+function classTimeline(student=state.view){
+  const {items,previous,current,next,currentLabel}=scheduleSnapshot(student);
+  const card=(index,label,kind)=>`<div class="class-timeline-card ${kind}"><span class="small">${label}</span>${index>=0?`<strong>${esc(scheduleLabel(items[index]))}</strong><time>${formatScheduleTime(items[index].time)}${items[index].endTime?' – '+formatScheduleTime(items[index].endTime):''}</time>`:`<strong>${kind==='previous'?'No previous class':kind==='current'?'No class right now':'No more classes'}</strong>`}</div>`;
+  return `<div class="class-orbit">${card(previous,'Previous','previous')}<div class="class-orbit-center">${dashboardClock()}${card(current,'Current','current')}</div>${card(next,'Next','next')}</div>`;
+}
+function schedulePanel(student=state.view,showNowNext=true){
   const {items,visibleItems,current,next,currentLabel}=scheduleSnapshot(student);
   const slot=(index,label)=>`<div class="now-slot ${['Now','Latest start'].includes(label)&&index>=0?'current-now':''}"><span class="small">${label}</span>${index>=0?`<strong>${esc(scheduleLabel(items[index]))}</strong><span>${formatScheduleTime(items[index].time)}${items[index].endTime?' – '+formatScheduleTime(items[index].endTime):''}</span>`:'<strong>'+(label==='Next'?'No more classes':'No class right now')+'</strong>'}</div>`;
   const canPreview=state.view==='monitor'||['leon','logan'].includes(state.view)&&state.view===student;
   const previewButton=canPreview?`<button class="button light" onclick="previewTomorrowSchedule('${student}')">Preview tomorrow</button>`:'';
-  return `<div class="schedule-stack" data-schedule="${student}"><section class="schedule panel"><div class="section-heading">${previewButton}</div>${items.length?`<div class="now-next">${slot(current,currentLabel)}${slot(next,'Next')}</div>`:'<p class="empty">No schedule set for today.</p>'}</section>${items.length?`<details class="daily-schedule panel"><summary>Today’s schedule <span class="count">${visibleItems.length}</span></summary>${visibleItems.length?`<div class="schedule-list">${visibleItems.map(({item,status})=>`<div class="schedule-item ${status}" style="${scheduleItemStyle(item)}"><span>${esc(scheduleLabel(item))}</span><time>${formatScheduleTime(item.time)}${item.endTime?' – '+formatScheduleTime(item.endTime):''}</time></div>`).join('')}</div>`:'<p class="empty">No upcoming schedule items today.</p>'}</details>`:''}</div>`;
+  const scheduleDetails=items.length?`<details class="daily-schedule ${showNowNext?'panel':''}"><summary>Today’s schedule <span class="count">${visibleItems.length}</span></summary>${visibleItems.length?`<div class="schedule-list">${visibleItems.map(({item,status})=>`<div class="schedule-item ${status}" style="${scheduleItemStyle(item)}"><span>${esc(scheduleLabel(item))}</span><time>${formatScheduleTime(item.time)}${item.endTime?' – '+formatScheduleTime(item.endTime):''}</time></div>`).join('')}</div>`:'<p class="empty">No upcoming schedule items today.</p>'}</details>`:'';
+  if(!showNowNext)return `<div class="schedule-stack" data-schedule="${student}"><section class="schedule panel"><div class="section-heading">${previewButton}</div>${scheduleDetails||`<details class="daily-schedule"><summary>Today’s schedule <span class="count">0</span></summary><p class="empty">No schedule set for today.</p></details>`}</section></div>`;
+  return `<div class="schedule-stack" data-schedule="${student}"><section class="schedule panel"><div class="section-heading">${previewButton}</div>${items.length?`<div class="now-next">${slot(current,currentLabel)}${slot(next,'Next')}</div>`:'<p class="empty">No schedule set for today.</p>'}</section>${scheduleDetails}</div>`;
 }
 function previewTomorrowSchedule(student=state.view){
   if(!['leon','logan'].includes(student))return;
@@ -182,12 +190,12 @@ function classBrowser(){const subjects=state.assignments[state.view];return `<se
 function studentPage(){
   const subjects=state.assignments[state.view],today=scheduleDay(),rows=Object.values(subjects).flat(),due=rows.filter(x=>x.due===today),complete=due.filter(x=>x.done).length;
   const overdue=rows.filter(x=>!x.done&&x.due&&x.due<today).length,nextDate=nextDueDate(subjects),ahead=rows.filter(x=>!x.done&&nextDate&&x.due===nextDate).length;
-  const hero=`<section class="page-heading"><div><p class="small">${dateLabel(today)}</p><h1>${nameOf(state.view)}’s school day</h1></div>${dashboardClock()}<div class="heading-summary"><nav class="work-shortcuts" aria-label="Jump to assignments"><a class="late" href="#${state.view}-late-work">Past Due <b>${overdue}</b></a><a href="#${state.view}-today-work">Today <b>${due.length-complete}</b></a><a href="#${state.view}-ahead-work">Next <b>${ahead}</b></a></nav><span class="progress-caption">${due.length?complete+' of '+due.length+' due today completed':'A fresh day to learn'}</span></div></section>`;
+  const hero=`<section class="page-heading student-page-heading"><div class="student-date"><p class="small">${dateLabel(today)}</p></div>${classTimeline(state.view)}<div class="heading-summary"><nav class="work-shortcuts" aria-label="Jump to assignments"><a class="late" href="#${state.view}-late-work">Past Due <b>${overdue}</b></a><a href="#${state.view}-today-work">Today <b>${due.length-complete}</b></a><a href="#${state.view}-ahead-work">Next <b>${ahead}</b></a></nav><span class="progress-caption">${due.length?complete+' of '+due.length+' due today completed':'A fresh day to learn'}</span></div></section>`;
   if(state.subjectView){
     const subject=state.subjectView,items=subjects[subject]||[],filter=x=>(!prefs().hideCompleted||!x.done)&&(state.subjectTaskView!=='soon'||x.due&&x.due<=addDays(today,7));
     return mast()+`<section class="page-heading"><div><button class="text-button" onclick="showHub()">← Back to dashboard</button><h1>${esc(LABELS[subject]||subject)}</h1></div></section><div class="toolbar"><label class="switch"><input type="checkbox" ${prefs().hideCompleted?'checked':''} onchange="setPreference('hideCompleted',this.checked)">Hide completed</label><div class="segmented"><button aria-pressed="${state.subjectTaskView!=='soon'}" onclick="state.subjectTaskView='all';render()">All work</button><button aria-pressed="${state.subjectTaskView==='soon'}" onclick="state.subjectTaskView='soon';render()">Due within a week</button></div></div><section class="panel assignment-list">${items.filter(filter).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999')).map(x=>task(x)).join('')||'<p class="empty">No assignments in this view.</p>'}</section>`;
   }
-  return mast()+hero+`<div class="student-dashboard-grid"><div class="work-board">${workSection(subjects,'late')}${workSection(subjects,'today')}${workingAhead(subjects)}</div>${schedulePanel()}</div>`/* Focus timer parked for later: +focusTimerPanel() */+(prefs().classBrowser?classBrowser():'');
+  return mast()+hero+`<div class="student-dashboard-grid"><div class="work-board">${workSection(subjects,'late')}${workSection(subjects,'today')}${workingAhead(subjects)}</div>${schedulePanel(state.view,false)}</div>`/* Focus timer parked for later: +focusTimerPanel() */+(prefs().classBrowser?classBrowser():'');
 }
 function loginPage(){return mast()+`<section class="login"><p class="eyebrow">Your day, organized</p><h1>Ready for your school day?</h1><p class="small">Choose your profile to see classes and assignments.</p><div class="people">${['leon','logan'].map(student=>`<button class="person" onclick="signIn('${student}')"><span class="emoji">${iconOf(student)}</span><b>${nameOf(student)}</b><span class="small">Open my dashboard</span></button>`).join('')}</div><div class="home-actions"><button class="button" onclick="openMonitor()">Shared school dashboard</button><button class="button light" onclick="signIn('parent')">Parent sign in</button></div>${state.loadError?`<p class="form-error" role="alert">${esc(state.loadError)}</p><button class="button light" onclick="restoreSession()">Retry connection</button>`:''}</section>`;}
 function render(){
@@ -405,9 +413,11 @@ openScheduleImport=()=>{scheduleImportContent();const legacy=document.getElement
 closeScheduleImport=()=>closeDialog();
 
 function refreshVisibleSchedules(){
+  const orbit=document.querySelector('.student-page-heading .class-orbit');
+  if(orbit){const replacement=document.createElement('div');replacement.innerHTML=classTimeline(state.view);orbit.replaceWith(replacement.firstElementChild);}
   for(const node of document.querySelectorAll('[data-schedule]')){
     const open=node.querySelector('details')?.open,student=node.dataset.schedule;
-    const replacement=document.createElement('div');replacement.innerHTML=schedulePanel(student);if(open)replacement.querySelector('details').open=true;node.replaceWith(replacement.firstElementChild);
+    const replacement=document.createElement('div');replacement.innerHTML=schedulePanel(student,state.view==='monitor');if(open)replacement.querySelector('details').open=true;node.replaceWith(replacement.firstElementChild);
   }
 }
 setInterval(updateDashboardClock,15000);
