@@ -207,9 +207,10 @@ function render(){
   else app.innerHTML=studentPage();
   updateDashboardClock();updateFocusTimer();
   for(const node of app.querySelectorAll('details.work-section')){node.open=expanded.get(node.id)??['leon','logan'].includes(state.view);node.addEventListener('toggle',updateWorkOverflow);}
+  for(const node of app.querySelectorAll('details.subject-group'))node.addEventListener('toggle',updateWorkOverflow);
   updateSyncStatus();updateWorkOverflow();
 }
-function updateWorkOverflow(){for(const list of document.querySelectorAll('.work-board .due-list'))list.closest('.work-section').classList.toggle('has-more-work',list.closest('.work-section').open&&list.scrollHeight>list.clientHeight+1);}
+function updateWorkOverflow(){for(const list of document.querySelectorAll('.work-board .due-list')){const section=list.closest('.work-section'),tasks=[...list.querySelectorAll('.subject-group[open] .task')];if(!section.open||tasks.length<=2){list.style.maxHeight='';list.style.overflowY='';section.classList.remove('has-more-work');continue;}const height=Math.ceil(tasks[1].getBoundingClientRect().bottom-list.getBoundingClientRect().top+list.scrollTop);list.style.maxHeight=`${height}px`;list.style.overflowY='auto';section.classList.add('has-more-work');}}
 window.addEventListener('resize',updateWorkOverflow);
 document.fonts.ready.then(updateWorkOverflow);
 function editor(){render();}
