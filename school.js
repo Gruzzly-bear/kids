@@ -431,6 +431,6 @@ function refreshVisibleSchedules(){
 }
 setInterval(updateDashboardClock,15000);
 setInterval(updateFocusTimer,1000);
-setInterval(()=>{refreshVisibleSchedules();if(state.view==='monitor'&&!document.hidden&&!document.getElementById('app-dialog'))refreshDashboard(true);},60000);
+setInterval(()=>{refreshVisibleSchedules();if(['monitor','parent'].includes(state.view)&&!document.hidden&&!document.getElementById('app-dialog'))refreshDashboard(true);},60000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshVisibleSchedules();});
 applyPreferences();restoreSession();
