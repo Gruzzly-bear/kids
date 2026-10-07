@@ -413,10 +413,10 @@ closeScheduleImport=()=>closeDialog();
 
 function refreshVisibleSchedules(){
   const orbit=document.querySelector('.student-page-heading .class-orbit');
-  if(orbit){const replacement=document.createElement('div');replacement.innerHTML=classTimeline(state.view);orbit.replaceWith(replacement.firstElementChild);}
+  if(orbit){const replacement=document.createElement('div');replacement.innerHTML=classTimeline(state.view);const next=replacement.firstElementChild,oldClock=orbit.querySelector('#dashboard-clock'),nextClock=next.querySelector('#dashboard-clock');if(oldClock&&nextClock){nextClock.dateTime=oldClock.dateTime;nextClock.textContent=oldClock.textContent;}if(orbit.innerHTML!==next.innerHTML)orbit.replaceWith(next);}
   for(const node of document.querySelectorAll('[data-schedule]')){
-    const open=node.querySelector('details')?.open,student=node.dataset.schedule;
-    const replacement=document.createElement('div');replacement.innerHTML=schedulePanel(student,state.view==='monitor');if(open)replacement.querySelector('details').open=true;node.replaceWith(replacement.firstElementChild);
+    const details=node.querySelector('details'),open=details?.open,student=node.dataset.schedule;
+    const replacement=document.createElement('div');replacement.innerHTML=schedulePanel(student,state.view==='monitor');const next=replacement.firstElementChild;if(open)next.querySelector('details')?.setAttribute('open','');if(node.innerHTML!==next.innerHTML)node.replaceWith(next);
   }
 }
 setInterval(updateDashboardClock,15000);
