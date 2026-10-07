@@ -375,7 +375,7 @@ function openFamilyEditor(editor,student){if(editor==='schedule')openScheduleFor
 function openScheduleFor(student){state.editorStudent=student;state.scheduleDates[student]=scheduleDay();state.schedules[student]=scheduleFor(student);openScheduleEditor();}
 function openScheduleEditor(){
   const student=state.editorStudent||'leon',items=state.schedules[student]||[],subjects=Object.keys(state.assignments[student]),date=state.scheduleDates[student]||scheduleDay();
-  openDialog('schedule',`<h2>${nameOf(student)}’s schedule</h2><p class="small">All times use Eastern Time. Choose a date, edit its schedule, then save that day.</p><label>Schedule date<input type="date" value="${date}" min="${scheduleDay()}" onchange="selectScheduleDate(this.value)"></label><p class="small">${esc(state.scheduleMessage||'')}</p><div class="schedule-editor">${items.map((x,i)=>`<div class="schedule-row"><label>Class<select onchange="setScheduleSubject(${i},this.value)">${[...subjects,'custom','break'].map(s=>`<option value="${s}" ${x.subject===s?'selected':''}>${esc(LABELS[s]||s)}</option>`).join('')}</select></label><label>Label<input value="${esc(x.label||'')}" onchange="editScheduleEntry(${i},'label',this.value)" ${!['custom','break'].includes(x.subject)?'disabled':''}></label><label>Start<input type="time" value="${esc(x.time||'')}" onchange="editScheduleEntry(${i},'time',this.value)"></label><label>End <span class="small">Optional</span><input type="time" value="${esc(x.endTime||'')}" onchange="editScheduleEntry(${i},'endTime',this.value)"></label><button class="text-button danger" onclick="removeScheduleEntry(${i})">Remove</button></div>`).join('')}</div><div class="toolbar"><button class="button" onclick="addScheduleEntry()">Add class or break</button><button class="button light" onclick="openScheduleImport()">Import schedule</button><button class="button light" onclick="clearOpenSchedule()">Clear this day</button><button class="button" onclick="saveOpenSchedule()">Save this day</button></div>`);
+  openDialog('schedule',`<h2>${nameOf(student)}’s schedule</h2><p class="small">All times use Eastern Time. Time changes save as soon as you choose them. Save this day for other edits.</p><label>Schedule date<input type="date" value="${date}" min="${scheduleDay()}" onchange="selectScheduleDate(this.value)"></label><p class="small">${esc(state.scheduleMessage||'')}</p><div class="schedule-editor">${items.map((x,i)=>`<div class="schedule-row"><label>Class<select onchange="setScheduleSubject(${i},this.value)">${[...subjects,'custom','break'].map(s=>`<option value="${s}" ${x.subject===s?'selected':''}>${esc(LABELS[s]||s)}</option>`).join('')}</select></label><label>Label<input value="${esc(x.label||'')}" onchange="editScheduleEntry(${i},'label',this.value)" ${!['custom','break'].includes(x.subject)?'disabled':''}></label><label>Start<input type="time" value="${esc(x.time||'')}" onchange="editScheduleEntry(${i},'time',this.value)"></label><label>End <span class="small">Optional</span><input type="time" value="${esc(x.endTime||'')}" onchange="editScheduleEntry(${i},'endTime',this.value)"></label><button class="text-button danger" onclick="removeScheduleEntry(${i})">Remove</button></div>`).join('')}</div><div class="toolbar"><button class="button" onclick="addScheduleEntry()">Add class or break</button><button class="button light" onclick="openScheduleImport()">Import schedule</button><button class="button light" onclick="clearOpenSchedule()">Clear this day</button><button class="button" onclick="saveOpenSchedule()">Save this day</button></div>`);
 }
 function closeScheduleEditor(){closeDialog();}
 function refreshScheduleEditor(){render();openScheduleEditor();}
@@ -391,12 +391,11 @@ function setScheduleSubject(index,subject){
   state.scheduleMessage='Unsaved changes';refreshScheduleEditor();
 }
 function editScheduleEntry(index,field,value){
-  const student=state.editorStudent||'leon',item=state.schedules[student][index],next={...item,[field]:value};
-  if(!next.time||next.endTime&&scheduleMinutes(next.endTime)<=scheduleMinutes(next.time)){
-    if(document.activeElement instanceof HTMLInputElement)document.activeElement.value=item[field]||'';
-    showToast('Choose a start time and an end time after it.');return;
-  }
+  const student=state.editorStudent||'leon',item=state.schedules[student][index];
   item[field]=value;state.scheduleMessage='Unsaved changes';
+  if(field==='time'||field==='endTime'){
+    commitOpenSchedule();state.scheduleMessage='Time changes save automatically';saveScheduleChanges(student);
+  }
 }
 function openCardEditor(student){
   const fields=forScope=>`<div class="card-edit-grid">${state.displayCards[forScope].map((value,i)=>`<label>Reminder ${i+1}<input maxlength="120" value="${esc(value)}" onchange="editDisplayCard('${forScope}',${i},this.value)"></label>`).join('')}</div>`;
