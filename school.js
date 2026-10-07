@@ -132,7 +132,7 @@ function openResources(){openDialog('school-resources',`<h2>School Resources</h2
 function displayCards(forScope){return `<section class="reminders" aria-label="Reminders">${(state.displayCards[forScope]||[]).filter(Boolean).map(text=>`<article class="reminder">${esc(text)}</article>`).join('')}</section>`;}
 function task(x,student=state.view,readonly=false){
   const disabled=readonly||state.auth?.role==='monitor',id=jsArg(x.id),url=safeLink(x.url);
-  return `<article class="task ${x.done?'done':''}" data-task-id="${esc(x.id)}"><label class="completion"><input type="checkbox" ${x.done?'checked':''} ${disabled?'disabled':''} onchange="toggleTask(${id},this.checked)" aria-label="${x.done?'Reopen':'Complete'} ${esc(x.title)}"></label><div class="task-content"><span class="task-name">${esc(x.title)}</span><div class="task-meta">${dueChip(x)}${x.needsHelp&&!x.done?'<span class="status-chip help">Needs help</span>':''}</div><div class="task-actions">${url?`<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">Open assignment ↗</a>`:''}${!disabled&&!x.done?`<button class="text-button" aria-pressed="${!!x.needsHelp}" onclick="toggleHelp(${id})">${x.needsHelp?'Clear help request':'I need help'}</button>`:''}</div></div></article>`;
+  return `<article class="task ${x.done?'done':''}" data-task-id="${esc(x.id)}"><label class="completion"><input type="checkbox" ${x.done?'checked':''} ${disabled?'disabled':''} onchange="toggleTask(${id},this.checked,this)" aria-label="${x.done?'Reopen':'Complete'} ${esc(x.title)}"></label><div class="task-content"><span class="task-name">${esc(x.title)}</span><div class="task-meta">${dueChip(x)}${x.needsHelp&&!x.done?'<span class="status-chip help">Needs help</span>':''}</div><div class="task-actions">${url?`<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">Open assignment ↗</a>`:''}${!disabled&&!x.done?`<button class="text-button" aria-pressed="${!!x.needsHelp}" onclick="toggleHelp(${id})">${x.needsHelp?'Clear help request':'I need help'}</button>`:''}</div></div></article>`;
 }
 function taskGroups(subjects,filter,student=state.view,readonly=false){
   const groups=Object.entries(subjects).map(([subject,rows])=>[subject,rows.filter(filter).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999'))]).filter(([,rows])=>rows.length);
@@ -279,8 +279,17 @@ function saveAssignmentChange(type,found){
 function saveScheduleChanges(student=state.editorStudent||'leon',date=state.scheduleDates[student]||scheduleDay()){
   return queuedWrite({student,date,items:copySchedule(state.scheduledDays[student]?.[date]||[]),scheduleOnly:true},'Schedule');
 }
-function toggleTask(id,done){
+function toggleTask(id,done,checkbox){
   const found=findTask(id);if(!found)return;
+  if(done&&['leon','logan'].includes(state.auth?.role)){
+    if(checkbox)checkbox.checked=false;
+    openDialog('complete-assignment',`<h2>Mark this assignment complete?</h2><p>${esc(found.x.title)}</p><p class="small">Are you ready to mark this assignment as done?</p><div class="actions"><button class="button light" onclick="closeDialog()">Keep working</button><button class="button" onclick="confirmCompleteTask(${jsArg(id)})">Yes, mark complete</button></div>`);return;
+  }
+  saveTaskStatus(found,done);
+}
+function confirmCompleteTask(id){const found=findTask(id);closeDialog();if(found)saveTaskStatus(found,true);}
+function saveTaskStatus(found,done){
+  const id=found.x.id;
   const previous={done:found.x.done,needsHelp:found.x.needsHelp};found.x.done=done;if(done)found.x.needsHelp=false;
   saveAssignmentChange('status',found);render();
   showToast(done?'Assignment completed':'Assignment reopened',()=>{const current=findTask(id);if(!current)return;Object.assign(current.x,previous);saveAssignmentChange('status',current);render();});
