@@ -2,10 +2,21 @@
 const app = document.getElementById('app');
 const sessionKey = 'family-assignment-session-v1';
 const THEME_PALETTES = {
-  coastal:['Coastal','#24637a','#f3f8fa'], material:['Lavender','#65509b','#f8f6fc'], facebook:['Blue','#235dc1','#f5f8ff'], paper:['Warm Paper','#79563a','#f5efe3'],
-  forest:['Forest','#316447','#f4f8f4'], sand:['Coffee','#795337','#fbf7f2'], sunset:['Sunset','#a34732','#fff7f2'], peach:['Peach','#bd553d','#fff2eb'], meadow:['Meadow','#46754f','#f2f8ed'],
-  berry:['Berry','#8d376e','#fcf5fa'], mint:['Fresh Mint','#216953','#f1faf6'], rose:['Rose','#9d3854','#fff6f8'],
-  citrus:['Citrus','#79610e','#fffcef'], arctic:['Arctic','#26647d','#f3faff'], coral:['Coral','#a84942','#fff7f6'],
+  coastal:['Coastal','#005f73','#d7f5f2','#f4fffd','#bdebe5','#77bdb7','#123f46','#365e63'],
+  material:['Lavender','#5b35b5','#efe5ff','#fcf9ff','#ded0ff','#b79ceb','#30204e','#62537e'],
+  facebook:['Blue','#0d47a1','#e0ecff','#f7faff','#c9dcff','#8eb3f2','#17345e','#405b83'],
+  paper:['Warm Paper','#7a3e00','#fff0cc','#fffaf0','#f7dda3','#d7a65b','#4a2c11','#705435'],
+  forest:['Forest','#1b5e20','#e6f5d4','#f8fff0','#cdebb4','#91bc76','#213e24','#4e674b'],
+  sand:['Coffee','#704214','#fae7c8','#fff9ef','#f0d5ab','#c5a16b','#412a17','#69533a'],
+  sunset:['Sunset','#9c2f00','#ffe3c6','#fff8ef','#ffd1a6','#d78c54','#4f281b','#79513c'],
+  peach:['Peach','#a52a2a','#ffe2d5','#fff8f5','#ffcdbb','#d28775','#4a2526','#76514f'],
+  meadow:['Meadow','#3f6212','#f1f7c9','#fbffed','#e2ed9d','#a6b751','#37411c','#535d2e'],
+  berry:['Berry','#9d174d','#fce0ef','#fff7fb','#f8c9de','#d487ac','#4c1f36','#75485f'],
+  mint:['Fresh Mint','#00695c','#d7f8e9','#f3fff8','#b6eed1','#70b998','#173e34','#40675a'],
+  rose:['Rose','#9f1239','#ffe0e9','#fff7f9','#ffc6d6','#d7869c','#4b1e2d','#744653'],
+  citrus:['Citrus','#765500','#fff4a8','#fffce6','#fbe77a','#c8a33d','#493912','#6c5a2a'],
+  arctic:['Arctic','#075985','#dcefff','#f4faff','#c0e2ff','#7bafd4','#18384e','#405a68'],
+  coral:['Coral','#a82e23','#ffe0d8','#fff7f4','#ffc6b8','#d27f6d','#4d2521','#704740'],
   midnight:['Midnight','#8db8ff','#111b2b'], dark:['Discord Dark','#a4adff','#1e1f25'], dracula:['Dracula','#c4a7ff','#24212e'], electric:['Electric','#ff6bd6','#171023'], aurora:['Aurora','#70e0c3','#122126'], 'plum-glow':['Plum Glow','#e5a4f5','#24152b'],
   'github-dark':['GitHub Dark','#83b8f9','#10151c'], nord:['Nord','#91c9d7','#252f3d'], monokai:['Monokai','#c4d88a','#24251f'],
   oled:['OLED Black','#b9c9ff','#000000'], slate:['Slate','#a9bcd5','#1e2530'], espresso:['Espresso','#e6b98e','#241b18'],
@@ -42,6 +53,10 @@ function applyPreferences() {
   root.dataset.theme=theme; root.dataset.mode=dark?'dark':'light'; root.dataset.style=p.visualStyle; root.dataset.size=p.textSize; root.dataset.density=p.density;
   root.dataset.contrast=theme.startsWith('contrast')?'high':'normal';
   root.style.setProperty('--accent',palette[1]); root.style.setProperty('--page',palette[2]);
+  root.style.setProperty('--on-accent',dark?'var(--page)':'#ffffff');
+  const lightTokens=['--surface','--surface-2','--line','--ink','--muted'];
+  if(dark||theme==='contrast')lightTokens.forEach(token=>root.style.removeProperty(token));
+  else ['--surface','--surface-2','--line','--ink','--muted'].forEach((token,index)=>root.style.setProperty(token,palette[index+3]));
   document.querySelector('meta[name="theme-color"]').content=palette[2];
 }
 function setPreference(field, value, forScope=scope()) {
@@ -314,7 +329,7 @@ function closeDialog(){document.getElementById('app-dialog')?.close();}
 function openSettings(){
   state.settingsScope=scope();drawSettings();
 }
-function themeChoices(dark,p){const field=dark?'darkTheme':'lightTheme';return Object.entries(THEME_PALETTES).filter(([key])=>DARK_THEME_KEYS.includes(key)===dark).map(([key,[label,accent,bg]])=>`<button type="button" class="theme-swatch" data-theme-choice="${key}" data-theme-field="${field}" aria-pressed="${p[field]===key}" onclick="setPreference('${field}','${key}',state.settingsScope)"><span class="swatch" style="background:${bg};border-color:${accent}"><i style="background:${accent}"></i></span>${label}</button>`).join('');}
+function themeChoices(dark,p){const field=dark?'darkTheme':'lightTheme';return Object.entries(THEME_PALETTES).filter(([key])=>DARK_THEME_KEYS.includes(key)===dark).map(([key,palette])=>{const [label,accent,bg,,,line]=palette;return `<button type="button" class="theme-swatch" data-theme-choice="${key}" data-theme-field="${field}" aria-pressed="${p[field]===key}" onclick="setPreference('${field}','${key}',state.settingsScope)"><span class="swatch" style="--swatch-page:${bg};--swatch-accent:${accent};--swatch-mid:${palette[4]||bg};--swatch-line:${line||accent}"><i></i><i></i><i></i></span>${label}</button>`}).join('');}
 function styleChoices(p){return [['classic','Classic','Keep the familiar rounded style'],['boxy','Boxy','Sharp corners and crisp edges'],['studio','Studio','Layered surfaces with a polished finish'],['playful','Playful','Bright accents and extra-round shapes'],['glass','Glass','Frosted layers with clear readable cards']].map(([key,label,description])=>`<button type="button" class="style-choice" data-style-choice="${key}" aria-pressed="${p.visualStyle===key}" onclick="setPreference('visualStyle','${key}',state.settingsScope)"><span class="style-sample" data-preview="${key}" aria-hidden="true"><i></i><b></b><em></em></span><strong>${label}</strong><span class="small">${description}</span></button>`).join('');}
 function drawSettings(){
   const forScope=state.settingsScope,p=prefs(forScope),parent=state.auth?.role==='parent',opt=(value,label,current)=>`<option value="${value}" ${value===current?'selected':''}>${label}</option>`;
