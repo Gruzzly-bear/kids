@@ -19,7 +19,9 @@ state.parentTab = 'overview';
 state.pending = [];
 state.syncPhase = 'saved';
 state.syncError = '';
+state.liveSyncError = '';
 let pumping = false;
+let pumpPromise = null;
 let undoAction = null;
 
 function localRead(key, fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } }
@@ -216,9 +218,10 @@ document.fonts.ready.then(updateWorkOverflow);
 function editor(){render();}
 function monitorPage(){state.view='monitor';render();}
 function acceptAuth(data,session){
+  const nextView=session.role==='monitor'?'monitor':session.role==='parent'?'parent':session.role,subjectView=state.view===nextView?state.subjectView:null;
   state.assignments=dbData(data.assignments);loadSchedules(data.schedules);loadCards(data.cards);
-  state.preferences=data.preferences||{};state.auth=session;state.syncPhase='saved';state.syncError='';state.view=session.role==='monitor'?'monitor':session.role==='parent'?'parent':session.role;
-  state.subjectView=null;state.loadError='';state.pending=localRead('school-pending-'+session.role,[]).filter(item=>item&&item.body&&typeof item.label==='string');
+  state.preferences=data.preferences||{};state.auth=session;state.syncPhase='saved';state.syncError='';state.liveSyncError='';state.view=nextView;
+  state.subjectView=subjectView;state.sharedSnapshot=JSON.stringify(data);state.loadError='';state.pending=localRead('school-pending-'+session.role,[]).filter(item=>item&&item.body&&typeof item.label==='string');
   // Replay unsaved edits into the fetched snapshot so a reload does not hide them.
   for(const item of state.pending){const c=item.body.change;if(c){const found=findTask(c.id);if(c.type==='add'&&!found)(state.assignments[c.student][c.subject]??=[]).push({...c});else if(c.type==='remove'&&found)state.assignments[found.student][found.subject].splice(found.index,1);else if(found){const previous=found.subject;Object.assign(found.x,c);if(c.subject&&c.subject!==previous){state.assignments[found.student][previous].splice(found.index,1);(state.assignments[found.student][c.subject]??=[]).push(found.x);}}}if(item.body.preferencesOnly)state.preferences[item.body.scope]=item.body.preferences;if(item.body.scheduleOnly){const {student,date,items}=item.body;(state.scheduledDays[student]??={})[date]=copySchedule(items);if(state.scheduleDates[student]===date)state.schedules[student]=copySchedule(items)}if(item.body.cardsOnly)loadCards(item.body.cards);}
   localWrite(sessionKey,session);render();if(state.pending.length)pumpWrites();
@@ -243,9 +246,9 @@ function goHome(){
 
 function persistQueue(){if(state.auth)localWrite('school-pending-'+state.auth.role,state.pending);}
 function updateSyncStatus(){
-  const node=document.getElementById('sync-status');node.hidden=!state.auth||state.auth.role==='monitor'||state.syncPhase!=='failed'&&!state.pending.length;
-  node.className=state.syncPhase;
-  node.innerHTML=state.syncPhase==='failed'?`<span>Couldn’t save · ${esc(state.syncError)}</span><button class="text-button" onclick="retryWrites()">Retry</button>`:state.pending.length?`<span>Saving ${state.pending.length>1?state.pending.length+' changes':'changes'}…</span>`:'<span>✓ All changes saved</span>';
+  const node=document.getElementById('sync-status');node.hidden=!state.auth||state.syncPhase!=='failed'&&!state.pending.length&&!state.liveSyncError;
+  node.className=state.liveSyncError&&!state.pending.length&&state.syncPhase!=='failed'?'failed':state.syncPhase;
+  node.innerHTML=state.syncPhase==='failed'?`<span>Couldn’t save · ${esc(state.syncError)}</span><button class="text-button" onclick="retryWrites()">Retry</button>`:state.pending.length?`<span>Saving ${state.pending.length>1?state.pending.length+' changes':'changes'}…</span>`:state.liveSyncError?`<span>Couldn’t check for updates</span><button class="text-button" onclick="refreshDashboard()">Retry</button>`:'';
 }
 function showSaveStatus(message,failed=false){if(failed){state.syncPhase='failed';state.syncError=message;updateSyncStatus();}else showToast(message);}
 function queuedWrite(body,label){
@@ -254,19 +257,23 @@ function queuedWrite(body,label){
   state.pending.push({body:JSON.parse(JSON.stringify(payload)),label});persistQueue();updateSyncStatus();
   return pumpWrites();
 }
-async function pumpWrites(){
-  if(pumping||state.syncPhase==='failed')return false;
+function pumpWrites(){
+  if(pumping)return pumpPromise||Promise.resolve(false);
+  if(state.syncPhase==='failed')return Promise.resolve(false);
   pumping=true;state.syncPhase='saving';updateSyncStatus();
-  try{
-    while(state.pending.length){
-      const item=state.pending[0];
-      const r=await fetch('/api/assignments',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...item.body,role:state.auth.role,password:state.auth.password})});
-      if(!r.ok){const data=await r.json().catch(()=>({}));throw Error(data.error||'Please retry when connected.');}
-      state.pending.shift();persistQueue();updateSyncStatus();
-    }
-    state.syncPhase='saved';state.syncError='';return true;
-  }catch(error){state.syncPhase='failed';state.syncError=error.message==='Failed to fetch'?'Connection unavailable.':error.message;return false;}
-  finally{pumping=false;updateSyncStatus();}
+  pumpPromise=(async()=>{
+    try{
+      while(state.pending.length){
+        const item=state.pending[0];
+        const r=await fetch('/api/assignments',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...item.body,role:state.auth.role,password:state.auth.password})});
+        if(!r.ok){const data=await r.json().catch(()=>({}));throw Error(data.error||'Please retry when connected.');}
+        state.pending.shift();persistQueue();state.liveSyncError='';updateSyncStatus();
+      }
+      state.syncPhase='saved';state.syncError='';return true;
+    }catch(error){state.syncPhase='failed';state.syncError=error.message==='Failed to fetch'?'Connection unavailable.':error.message;return false;}
+    finally{pumping=false;updateSyncStatus();pumpPromise=null;}
+  })();
+  return pumpPromise;
 }
 function retryWrites(){state.syncPhase='saved';return pumpWrites();}
 window.addEventListener('online',()=>{if(state.pending.length)retryWrites();});
@@ -288,11 +295,11 @@ function toggleTask(id,done,checkbox){
   saveTaskStatus(found,done);
 }
 function confirmCompleteTask(id){const found=findTask(id);closeDialog();if(found)saveTaskStatus(found,true);}
-function saveTaskStatus(found,done){
+async function saveTaskStatus(found,done){
   const id=found.x.id;
   const previous={done:found.x.done,needsHelp:found.x.needsHelp};found.x.done=done;if(done)found.x.needsHelp=false;
-  saveAssignmentChange('status',found);render();
-  showToast(done?'Assignment completed':'Assignment reopened',()=>{const current=findTask(id);if(!current)return;Object.assign(current.x,previous);saveAssignmentChange('status',current);render();});
+  const saved=saveAssignmentChange('status',found);render();
+  if(await saved)showToast(done?'Assignment completed and saved':'Assignment reopened and saved',()=>{const current=findTask(id);if(!current)return;Object.assign(current.x,previous);saveAssignmentChange('status',current);render();});
 }
 function toggleHelp(id){const found=findTask(id);if(!found||found.x.done)return;found.x.needsHelp=!found.x.needsHelp;saveAssignmentChange('status',found);render();showToast(found.x.needsHelp?'Help request added for your parent':'Help request cleared');}
 function showToast(message,undo=null){const node=document.getElementById('toast');undoAction=undo;node.hidden=false;node.innerHTML=`<span>${esc(message)}</span>${undo?'<button class="text-button" onclick="undoToast()">Undo</button>':''}<button class="text-button" aria-label="Dismiss message" onclick="document.getElementById('toast').hidden=true">×</button>`;clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>{node.hidden=true;undoAction=null;},10000);}
@@ -329,15 +336,19 @@ async function changeParentPassword(event){
 
 function setParentTab(tab){state.parentTab=tab;render();}
 function parentPage(){
-  const tabs=[['overview','Weekly overview'],['assignments','Assignments']];
+  const helpCount=['leon','logan'].flatMap(student=>allTasks(student)).filter(x=>!x.done&&x.needsHelp).length,tabs=[['overview','Weekly overview'],['assignments','Assignments'],['help','Help inbox']];
   const editActions=`<div class="parent-tab-actions"><button class="button light" onclick="openFamilyEditorChooser('schedule')">Edit schedule</button><button class="button light" onclick="openFamilyEditorChooser('reminders')">Edit reminders</button></div>`;
-  return mast()+`<section class="page-heading"><div><p class="small">Family workspace</p><h1>Parent dashboard</h1></div><div class="actions"><button class="button light" onclick="refreshDashboard()">Refresh</button><button class="button light" onclick="downloadBackup()">Download backup</button></div></section><nav class="parent-tabs" aria-label="Parent workspace">${tabs.map(([key,label])=>`<button class="button ${state.parentTab===key?'':'light'}" aria-current="${state.parentTab===key?'page':'false'}" onclick="setParentTab('${key}')">${label}</button>`).join('')}${editActions}</nav>`+(state.parentTab==='assignments'?assignmentEditor():weeklyOverview());
+  return mast()+`<section class="page-heading"><div><p class="small">Family workspace</p><h1>Parent dashboard</h1></div><div class="actions"><button class="button light" onclick="refreshDashboard()">Refresh</button><button class="button light" onclick="downloadBackup()">Download backup</button></div></section><nav class="parent-tabs" aria-label="Parent workspace">${tabs.map(([key,label])=>`<button class="button ${state.parentTab===key?'':'light'}" aria-current="${state.parentTab===key?'page':'false'}" onclick="setParentTab('${key}')">${label}${key==='help'?` <span class="count">${helpCount}</span>`:''}</button>`).join('')}${editActions}</nav>`+(state.parentTab==='assignments'?assignmentEditor():state.parentTab==='help'?helpInbox():weeklyOverview());
 }
 function weeklyOverview(){
   const start=scheduleDay(),end=addDays(start,6),students=['leon','logan'];
   const summary=students.map(student=>{const rows=allTasks(student),week=rows.filter(x=>x.due>=start&&x.due<=end);return `<article class="panel summary-card"><h2>${iconOf(student)} ${nameOf(student)}</h2><div class="summary-stats"><span><b>${week.filter(x=>!x.done).length}</b>Upcoming</span><span><b>${rows.filter(x=>!x.done&&x.due&&x.due<start).length}</b>Past due</span><span><b>${rows.filter(x=>!x.done&&x.needsHelp).length}</b>Need help</span></div><button class="text-button" onclick="editStudent('${student}')">Manage ${nameOf(student)}’s assignments →</button></article>`;}).join('');
-  const help=students.flatMap(s=>allTasks(s)).filter(x=>!x.done&&x.needsHelp);
-  return `<section class="weekly"><div class="section-heading"><h2>The next seven days</h2><span class="small">${dateLabel(start,false)} – ${dateLabel(end,false)}</span></div><div class="summary-grid">${summary}</div><section class="panel help-panel"><h2>Help requests <span class="count">${help.length}</span></h2>${help.length?help.map(x=>`<div class="help-request"><div><strong>${nameOf(x.student)} · ${esc(LABELS[x.subject]||x.subject)}</strong><span>${esc(x.title)}</span></div><div class="actions"><button class="button light" onclick="editStudent('${x.student}',${jsArg(x.subject)})">View assignment</button><button class="button light" onclick="toggleHelp(${jsArg(x.id)})">Clear request</button></div></div>`).join(''):'<p class="empty">No help requests right now.</p>'}</section><div class="week-list">${Array.from({length:7},(_,i)=>{const date=addDays(start,i);return `<section class="panel week-day"><h3>${dateLabel(date)}</h3><div class="week-students">${students.map(student=>{const rows=allTasks(student).filter(x=>x.due===date),schedule=scheduleFor(student,date);return `<div class="week-student ${student}"><h4 class="child-label">${iconOf(student)} ${nameOf(student)}</h4>${rows.length?rows.map(x=>`<div class="week-task ${x.done?'done':''}"><span>${esc(x.title)}</span>${dueChip(x)}</div>`).join(''):'<p class="small">No assignments due.</p>'}<details><summary>Schedule <span class="count">${schedule.length}</span></summary>${schedule.length?schedule.map(x=>`<div class="schedule-item" style="${scheduleItemStyle(x)}"><span>${esc(scheduleLabel(x))}</span><time>${formatScheduleTime(x.time)}</time></div>`).join(''):'<p class="small">No schedule set.</p>'}</details></div>`;}).join('')}</div></section>`;}).join('')}</div></section>`;
+  const help=['leon','logan'].flatMap(s=>allTasks(s)).filter(x=>!x.done&&x.needsHelp),helpPreview=`<section class="panel help-panel"><div class="section-heading"><h2>Help requests <span class="count">${help.length}</span></h2><button class="text-button" onclick="setParentTab('help')">Open help inbox →</button></div>${help.length?help.map(x=>`<div class="help-request"><div><strong>${nameOf(x.student)} · ${esc(LABELS[x.subject]||x.subject)}</strong><span>${esc(x.title)}</span></div><div class="actions"><button class="button light" onclick="editStudent('${x.student}',${jsArg(x.subject)})">View assignment</button><button class="button light" onclick="toggleHelp(${jsArg(x.id)})">Clear request</button></div></div>`).join(''):'<p class="empty">No help requests right now.</p>'}</section>`;
+  return `<section class="weekly"><div class="section-heading"><h2>The next seven days</h2><span class="small">${dateLabel(start,false)} – ${dateLabel(end,false)}</span></div><div class="summary-grid">${summary}</div>${helpPreview}<div class="week-list">${Array.from({length:7},(_,i)=>{const date=addDays(start,i);return `<section class="panel week-day"><h3>${dateLabel(date)}</h3><div class="week-students">${students.map(student=>{const rows=allTasks(student).filter(x=>x.due===date),schedule=scheduleFor(student,date);return `<div class="week-student ${student}"><h4 class="child-label">${iconOf(student)} ${nameOf(student)}</h4>${rows.length?rows.map(x=>`<div class="week-task ${x.done?'done':''}"><span>${esc(x.title)}</span>${dueChip(x)}</div>`).join(''):'<p class="small">No assignments due.</p>'}<details><summary>Schedule <span class="count">${schedule.length}</span></summary>${schedule.length?schedule.map(x=>`<div class="schedule-item" style="${scheduleItemStyle(x)}"><span>${esc(scheduleLabel(x))}</span><time>${formatScheduleTime(x.time)}</time></div>`).join(''):'<p class="small">No schedule set.</p>'}</details></div>`;}).join('')}</div></section>`;}).join('')}</div></section>`;
+}
+function helpInbox(){
+  const requests=['leon','logan'].flatMap(student=>allTasks(student).filter(x=>!x.done&&x.needsHelp).map(x=>({...x,student}))).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999'));
+  return `<section class="panel help-panel"><div class="section-heading"><h2>Needs help <span class="count">${requests.length}</span></h2><span class="small">Requests from Leon and Logan</span></div>${requests.length?requests.map(x=>`<article class="help-request"><div><strong>${iconOf(x.student)} ${nameOf(x.student)} · ${esc(LABELS[x.subject]||x.subject)}</strong><span>${esc(x.title)}</span><div class="task-meta">${dueChip(x)}</div></div><div class="actions">${x.url?`<a class="button light" href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">Open assignment ↗</a>`:''}<button class="button light" onclick="editStudent('${x.student}',${jsArg(x.subject)})">View assignment</button><button class="button" onclick="toggleHelp(${jsArg(x.id)})">Mark handled</button></div></article>`).join(''):'<p class="empty">No open help requests. New requests from the kids will appear here.</p>'}</section>`;
 }
 function editStudent(student,subject){state.editorStudent=student;state.editorSubject=subject||Object.keys(state.assignments[student])[0];state.parentTab='assignments';render();}
 function assignmentEditor(){
@@ -369,12 +380,12 @@ async function refreshDashboard(silent=false){
   if(!state.auth||state.pending.length||pumping){if(!silent)showToast('Save your pending changes before refreshing.');return;}
   if(state.refreshing)return;state.refreshing=true;
   try{
-    const auth=state.auth,data=await fetchAuth(auth);state.refreshError='';
+    const auth=state.auth,data=await fetchAuth(auth);state.refreshError='';state.liveSyncError='';
     const snapshot=JSON.stringify(data);
     if(!silent||snapshot!==state.sharedSnapshot){acceptAuth(data,auth);state.sharedSnapshot=snapshot;}
     if(!silent)showToast('Dashboard refreshed');
-  }catch{if(!silent)showToast('Couldn’t refresh. Please try again.');else state.refreshError='Connection unavailable. Showing the last loaded data.';}
-  finally{state.refreshing=false;const status=document.getElementById('shared-refresh-status');if(status)status.textContent=state.refreshError||'';}
+  }catch{state.liveSyncError='Connection unavailable.';if(!silent)showToast('Couldn’t refresh. Please try again.');else state.refreshError='Connection unavailable. Showing the last loaded data.';}
+  finally{state.refreshing=false;updateSyncStatus();const status=document.getElementById('shared-refresh-status');if(status)status.textContent=state.refreshError||'';}
 }
 
 function openFamilyEditorChooser(editor){
@@ -431,6 +442,7 @@ function refreshVisibleSchedules(){
 }
 setInterval(updateDashboardClock,15000);
 setInterval(updateFocusTimer,1000);
-setInterval(()=>{refreshVisibleSchedules();if(['monitor','parent'].includes(state.view)&&!document.hidden&&!document.getElementById('app-dialog'))refreshDashboard(true);},60000);
+setInterval(refreshVisibleSchedules,60000);
+setInterval(()=>{if(state.auth&&!document.hidden&&!document.getElementById('app-dialog'))refreshDashboard(true);},15000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshVisibleSchedules();});
 applyPreferences();restoreSession();
