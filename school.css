@@ -300,3 +300,19 @@ body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opac
 @media(max-width:520px){.custom-background-picker{align-items:stretch;flex-direction:column}.custom-background-picker .text-button{align-self:flex-start}}
 .announcement{color:var(--ink)}
 .announcement.celebration{color:var(--ink);background:radial-gradient(circle at 8% 15%,#ffe9a8 0 5px,transparent 6px),radial-gradient(circle at 94% 28%,#f9a8c5 0 5px,transparent 6px),radial-gradient(circle at 85% 88%,#94d9ca 0 5px,transparent 6px),linear-gradient(115deg,color-mix(in srgb,#ffe9a8 18%,var(--surface)),color-mix(in srgb,#f9a8c5 15%,var(--surface)) 58%,color-mix(in srgb,#94d9ca 17%,var(--surface)))}
+
+/* Keep the appearance editor contained when theme fonts have wide glyphs. */
+.appearance-heading>div{flex:1;min-width:0}
+.appearance-current{flex:0 1 50%;min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.3}
+.appearance-editor summary{min-width:0;overflow-wrap:anywhere}
+.look-choice{min-width:0;overflow-wrap:anywhere}
+.look-choice>span:last-child{flex:1;grid-template-columns:minmax(0,1fr);overflow-wrap:anywhere}
+.look-choice strong,.look-choice small{min-width:0;max-width:100%;overflow-wrap:anywhere}
+.theme-swatch>span:last-child{flex:1;grid-template-columns:minmax(0,1fr);overflow-wrap:anywhere}
+.theme-swatch>span:last-child>*{min-width:0;max-width:100%;overflow-wrap:anywhere}
+.theme-group>summary{min-width:0;overflow-wrap:anywhere}
+
+/* Pixel display fonts need a calmer, more compact clock face. */
+:root:is([data-font="gbboot"],[data-font="gamecuben"],[data-font="pokemon-gb"],[data-font="warioland4"]) .dashboard-clock{font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;font-size:clamp(2rem,3vw,3rem);letter-spacing:0;}
+:root:is([data-font="gbboot"],[data-font="gamecuben"],[data-font="pokemon-gb"],[data-font="warioland4"]) .class-orbit-center .dashboard-clock{font-size:clamp(2.5rem,3.7vw,3.5rem);padding:12px 20px;}
+@media(max-width:700px){:root:is([data-font="gbboot"],[data-font="gamecuben"],[data-font="pokemon-gb"],[data-font="warioland4"]) .class-orbit-center .dashboard-clock{font-size:clamp(2rem,10vw,2.8rem);padding:9px 14px;}}
