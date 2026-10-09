@@ -35,15 +35,18 @@ const THEME_PALETTES = {
   dreamcast:['Dreamcast','#df5b42','#f1e9e3','#fffaf5','#e9d9cf','#cbb7a9','#3a302b','#675a53'],
   xbox:['Xbox Original','#89c541','#101a15'],saturn:['Sega Saturn','#d4d9e2','#e5e8ec','#f8fafc','#d8dce3','#a9b1bf','#252b36','#565f6d'],
   ds:['Nintendo DS','#408fc3','#e3edf7','#f8fbfe','#d3e4f3','#a6bfd5','#273947','#526676'],
-  'wow-alliance':['WoW Alliance','#1976b9','#d9ebf5','#f5fbff','#c2dfee','#8bbbd6','#173044','#4e6879'],
-  'wow-horde':['WoW Horde','#d04b32','#281817'],
+  'wow-alliance':['WoW Alliance','#efc84a','#111c27'],
+  'wow-horde':['WoW Horde','#df4934','#201416'],
   cuphead:['Cuphead','#b3262e','#f4e8c8','#fff9e8','#ead8aa','#c3a86a','#35251f','#6b5140'],
   'star-wars-sith':['Star Wars Sith','#e33232','#160f14'],
   'star-wars-jedi':['Star Wars Jedi','#4e8a59','#e5ead4','#f7f8e9','#d5ddbd','#a5b587','#26352b','#566653'],
   'star-wars':['Star Wars','#e5b84b','#111827'],
-  'legend-of-dragoon':['Legend of Dragoon','#c14338','#251718'],
+  'swtor':['Star Wars: The Old Republic','#54d7ee','#0b1722'],
+  'legend-of-dragoon':['Legend of Dragoon','#9c6029','#ead6a6','#faf0d2','#e2c584','#b98b47','#3d2b20','#70563b'],
+  'ps4':['PlayStation 4','#70bcff','#08182f'],
+  pipboy:['Fallout Pip-Boy','#78f06a','#06160d'],
   sims:['The Sims','#168aca','#dff4fc','#f8fdff','#c9eaf6','#93cde0','#19394a','#526d78'],
-  'stardew-valley':['Stardew Valley','#618b42','#e4edc7','#f7f8e8','#d4e1ac','#a8bf79','#35422a','#5f6b4d'],
+  'stardew-valley':['Stardew Valley','#a95b16','#edd8a3','#fff1ce','#e7c783','#c09142','#482c1c','#71523a'],
   'binding-of-isaac':['The Binding of Isaac','#8e542f','#f2e0b5','#fbf2d7','#e4c98b','#c09d5f','#3e2927','#72584a'],
   book:['Book','#725737','#eee3cc','#f8f1e3','#e8dcc2','#cbb992','#332a20','#665846'],
   'sepia-story':['Sepia Story','#7a4d2b','#e9d7b8','#f4e8d2','#dec6a2','#b8996e','#38291c','#685542'],
@@ -55,7 +58,7 @@ const THEME_PALETTES = {
   'space-cadet':['Space Cadet','#87aaff','#101727'],
   contrast:['High Contrast','#173fb0','#ffffff'], 'contrast-dark':['High Contrast Dark','#ffe36b','#000000']
 };
-const DARK_THEME_KEYS = ['midnight','dark','dracula','electric','aurora','plum-glow','github-dark','nord','monokai','oled','slate','espresso','aubergine','ocean-night','emerald-night','genesis','atari','arcade','chalkboard','arcade-cyan','space-cadet','ps2','psp','xbox','wow-horde','star-wars-sith','star-wars','legend-of-dragoon','contrast-dark'];
+const DARK_THEME_KEYS = ['midnight','dark','dracula','electric','aurora','plum-glow','github-dark','nord','monokai','oled','slate','espresso','aubergine','ocean-night','emerald-night','genesis','atari','arcade','chalkboard','arcade-cyan','space-cadet','ps2','psp','xbox','wow-alliance','wow-horde','star-wars-sith','star-wars','swtor','ps4','pipboy','contrast-dark'];
 const DEFAULT_PREFS = {appearance:'system',lightTheme:'coastal',darkTheme:'midnight',visualStyle:'classic',textSize:'standard',density:'comfortable',clockFormat:'12h',motion:'system',classBrowser:false,hideCompleted:true};
 state.preferences = {};
 state.parentTab = 'overview';
@@ -76,7 +79,7 @@ function prefs(forScope = scope()) {
   const p = forScope==='monitor'||forScope==='home'?{...DEFAULT_PREFS,...legacy,...state.preferences[forScope],...local}:{...DEFAULT_PREFS,...legacy,...local,...state.preferences[forScope]};
   if (!THEME_PALETTES[p.lightTheme] || DARK_THEME_KEYS.includes(p.lightTheme)) p.lightTheme='coastal';
   if (!DARK_THEME_KEYS.includes(p.darkTheme)) p.darkTheme='midnight';
-  if (!['classic','boxy','studio','playful','glass','minimal','comic','retro','pixel','book'].includes(p.visualStyle)) p.visualStyle='classic';
+  if (!['classic','boxy','studio','playful','glass','minimal','comic','retro','pixel','book','stardew','dragoon','wow-ui','isaac','swtor','ps2-ui','ps4-ui','pipboy'].includes(p.visualStyle)) p.visualStyle='classic';
   if (!['system','light','dark'].includes(p.appearance)) p.appearance='system';
   if (!['standard','large','small','extra-large'].includes(p.textSize)) p.textSize='standard';
   if (!['comfortable','compact'].includes(p.density)) p.density='comfortable';
@@ -436,7 +439,8 @@ const LOOK_PRESETS=[
   {id:'pastel',label:'Pastel Pop',note:'Lavender · playful cards',theme:'pastel-pop',style:'playful'},
   {id:'sakura',label:'Sakura Paper',note:'Blush paper · soft edges',theme:'sakura-paper',style:'studio'},
   {id:'ps1',label:'PlayStation (PS1)',note:'Cool gray · retro panels',theme:'playstation',style:'retro',group:'console'},
-  {id:'ps2',label:'PlayStation 2',note:'Deep blue · retro panels',theme:'ps2',style:'retro',group:'console'},
+  {id:'ps2',label:'PlayStation 2',note:'Indigo glow · console UI',theme:'ps2',style:'ps2-ui',group:'console'},
+  {id:'ps4',label:'PlayStation 4',note:'Blue glow · tile UI',theme:'ps4',style:'ps4-ui',group:'console'},
   {id:'psp',label:'PSP',note:'Portable blue · pixels',theme:'psp',style:'pixel',group:'console'},
   {id:'gba',label:'Game Boy Advance',note:'Violet · pixels',theme:'gba',style:'pixel',group:'console'},
   {id:'gbc',label:'Game Boy Color',note:'Classic green · pixels',theme:'gbc',style:'pixel',group:'console'},
@@ -447,21 +451,23 @@ const LOOK_PRESETS=[
   {id:'xbox',label:'Original Xbox',note:'Deep green · pixels',theme:'xbox',style:'pixel',group:'console'},
   {id:'saturn',label:'Sega Saturn',note:'Silver · retro panels',theme:'saturn',style:'retro',group:'console'},
   {id:'ds',label:'Nintendo DS',note:'Pocket blue · pixels',theme:'ds',style:'pixel',group:'console'},
-  {id:'wow-alliance',label:'WoW Alliance',note:'Alliance blue · studio',theme:'wow-alliance',style:'studio',group:'game'},
-  {id:'wow-horde',label:'WoW Horde',note:'Horde red · retro',theme:'wow-horde',style:'retro',group:'game'},
+  {id:'wow-alliance',label:'WoW Alliance',note:'Gold and steel · fantasy UI',theme:'wow-alliance',style:'wow-ui',group:'game'},
+  {id:'wow-horde',label:'WoW Horde',note:'Horde red · fantasy UI',theme:'wow-horde',style:'wow-ui',group:'game'},
   {id:'cuphead',label:'Cuphead',note:'Vintage cartoon · comic',theme:'cuphead',style:'comic',group:'game'},
   {id:'star-wars-sith',label:'Star Wars Sith',note:'Sith red · retro',theme:'star-wars-sith',style:'retro',group:'game'},
   {id:'star-wars-jedi',label:'Star Wars Jedi',note:'Jedi green · studio',theme:'star-wars-jedi',style:'studio',group:'game'},
-  {id:'star-wars',label:'Star Wars',note:'Galactic night · retro',theme:'star-wars',style:'retro',group:'game'},
-  {id:'legend-of-dragoon',label:'Legend of Dragoon',note:'Crimson · retro',theme:'legend-of-dragoon',style:'retro',group:'game'},
+  {id:'star-wars',label:'Star Wars',note:'Galactic night · retro',theme:'star-wars',style:'swtor',group:'game'},
+  {id:'swtor',label:'SWTOR',note:'Cyan holo panels · sci-fi UI',theme:'swtor',style:'swtor',group:'game'},
+  {id:'legend-of-dragoon',label:'Legend of Dragoon',note:'Parchment · RPG status cards',theme:'legend-of-dragoon',style:'dragoon',group:'game'},
   {id:'sims',label:'The Sims',note:'Plumbob blue · playful',theme:'sims',style:'playful',group:'game'},
-  {id:'stardew-valley',label:'Stardew Valley',note:'Farm green · pixels',theme:'stardew-valley',style:'pixel',group:'game'},
-  {id:'binding-of-isaac',label:'The Binding of Isaac',note:'Storybook · comic',theme:'binding-of-isaac',style:'comic',group:'game'}
+  {id:'stardew-valley',label:'Stardew Valley',note:'Wood and parchment · pixel farm',theme:'stardew-valley',style:'stardew',group:'game'},
+  {id:'binding-of-isaac',label:'The Binding of Isaac',note:'Scrap paper · inked cards',theme:'binding-of-isaac',style:'isaac',group:'game'},
+  {id:'pipboy',label:'Fallout Pip-Boy',note:'Green CRT · terminal UI',theme:'pipboy',style:'pipboy',group:'game'}
 ];
 function lookChoices(p,group='featured'){return LOOK_PRESETS.filter(look=>(look.group||'featured')===group).map(look=>{const palette=THEME_PALETTES[look.theme],selected=activeTheme(p)===look.theme&&p.visualStyle===look.style;return `<button type="button" class="look-choice" data-look-choice="${look.id}" aria-pressed="${selected}" onclick="applyLookPreset('${look.id}',state.settingsScope)"><span class="look-swatch" style="--look-page:${palette[2]};--look-accent:${palette[1]}"><i></i><b></b><em></em></span><span><strong>${look.label}</strong><small>${look.note}</small></span></button>`;}).join('');}
 function themeChoices(p,keys){const active=activeTheme(p);return keys.map(key=>{const palette=THEME_PALETTES[key],[label,accent,bg,,,line]=palette,isDark=DARK_THEME_KEYS.includes(key);return `<button type="button" class="theme-swatch" data-theme-choice="${key}" data-theme-label="${esc(label.toLowerCase())}" aria-label="Use ${esc(label)} ${isDark?'dark':'light'} palette" aria-pressed="${active===key}" onclick="selectTheme('${key}',state.settingsScope)"><span class="swatch" style="--swatch-page:${bg};--swatch-accent:${accent};--swatch-mid:${palette[4]||bg};--swatch-line:${line||accent}"><i></i><i></i><i></i></span><span>${label}<small>${isDark?'Dark':'Light'}</small></span></button>`;}).join('');}
-function themeLibrary(p){const consoles=['nes','gameboy','snes','genesis','atari','arcade','arcade-cyan','playstation','ps2','psp','gba','gbc','n64','wii','gamecube','dreamcast','xbox','saturn','ds'],gameWorlds=['wow-alliance','wow-horde','cuphead','star-wars-sith','star-wars-jedi','star-wars','legend-of-dragoon','sims','stardew-valley','binding-of-isaac'],groups=[['Paper & calm',['coastal','material','facebook','paper','sand','book','sepia-story','sakura-paper','arctic']],['Nature',['forest','meadow','mint','ocean-night','emerald-night','chalkboard']],['Bright & playful',['sunset','peach','berry','rose','citrus','coral','pastel-pop','comic-book']],['Retro consoles',consoles],['Game worlds',gameWorlds],['Night palettes',DARK_THEME_KEYS.filter(key=>!['genesis','atari','arcade','arcade-cyan','chalkboard','contrast-dark','ps2','psp','xbox','wow-horde','star-wars-sith','star-wars','legend-of-dragoon'].includes(key))],['High contrast',['contrast','contrast-dark']]],used=new Set(groups.flatMap(([,keys])=>keys)),other=Object.keys(THEME_PALETTES).filter(key=>!used.has(key));if(other.length)groups.push(['More palettes',other]);return groups.map(([label,keys],index)=>`<details class="theme-group" data-theme-group="${index}"><summary>${label}<span class="count">${keys.length}</span></summary><div class="theme-grid">${themeChoices(p,keys)}</div></details>`).join('');}
-function interfaceStyleOptions(p){return[['classic','Classic'],['boxy','Boxy'],['studio','Studio'],['playful','Playful'],['glass','Glass'],['minimal','Minimal'],['comic','Comic'],['retro','Retro'],['pixel','8-bit Console'],['book','Book · serif']].map(([key,label])=>`<option value="${key}" ${p.visualStyle===key?'selected':''}>${label}</option>`).join('');}
+function themeLibrary(p){const consoles=['nes','gameboy','snes','genesis','atari','arcade','arcade-cyan','playstation','ps2','ps4','psp','gba','gbc','n64','wii','gamecube','dreamcast','xbox','saturn','ds'],gameWorlds=['wow-alliance','wow-horde','cuphead','star-wars-sith','star-wars-jedi','star-wars','swtor','legend-of-dragoon','sims','stardew-valley','binding-of-isaac','pipboy'],groups=[['Paper & calm',['coastal','material','facebook','paper','sand','book','sepia-story','sakura-paper','arctic']],['Nature',['forest','meadow','mint','ocean-night','emerald-night','chalkboard']],['Bright & playful',['sunset','peach','berry','rose','citrus','coral','pastel-pop','comic-book']],['Retro consoles',consoles],['Game worlds',gameWorlds],['Night palettes',DARK_THEME_KEYS.filter(key=>!['genesis','atari','arcade','arcade-cyan','chalkboard','contrast-dark','ps2','ps4','psp','xbox','wow-alliance','wow-horde','star-wars-sith','star-wars','swtor','pipboy'].includes(key))],['High contrast',['contrast','contrast-dark']]],used=new Set(groups.flatMap(([,keys])=>keys)),other=Object.keys(THEME_PALETTES).filter(key=>!used.has(key));if(other.length)groups.push(['More palettes',other]);return groups.map(([label,keys],index)=>`<details class="theme-group" data-theme-group="${index}"><summary>${label}<span class="count">${keys.length}</span></summary><div class="theme-grid">${themeChoices(p,keys)}</div></details>`).join('');}
+function interfaceStyleOptions(p){return[['classic','Classic'],['boxy','Boxy'],['studio','Studio'],['playful','Playful'],['glass','Glass'],['minimal','Minimal'],['comic','Comic'],['retro','Retro'],['pixel','8-bit Console'],['book','Book · serif'],['stardew','Stardew Valley · pixel farm'],['dragoon','Legend of Dragoon · RPG'],['wow-ui','World of Warcraft · fantasy'],['isaac','Binding of Isaac · paper'],['swtor','Star Wars · sci-fi'],['ps2-ui','PlayStation 2 · glossy'],['ps4-ui','PlayStation 4 · tiles'],['pipboy','Fallout · Pip-Boy']].map(([key,label])=>`<option value="${key}" ${p.visualStyle===key?'selected':''}>${label}</option>`).join('');}
 function applyLookPreset(id,forScope=scope()){const look=LOOK_PRESETS.find(item=>item.id===id);if(!look)return;const dark=DARK_THEME_KEYS.includes(look.theme),p={...prefs(forScope),appearance:dark?'dark':'light',visualStyle:look.style,[dark?'darkTheme':'lightTheme']:look.theme};state.preferences[forScope]=p;localWrite('school-preferences-'+forScope,p);if(forScope===scope())applyPreferences();if(state.auth&&state.auth.role!=='monitor')queuedWrite({preferencesOnly:true,scope:forScope,preferences:p},'Appearance');updateAppearanceControls(p);}
 function updateAppearanceControls(p){const active=activeTheme(p);document.querySelectorAll('[data-theme-choice]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.themeChoice===active)));document.querySelectorAll('[data-style-choice]').forEach(button=>button.setAttribute('aria-pressed',String(p.visualStyle===button.dataset.styleChoice)));document.querySelectorAll('[data-look-choice]').forEach(button=>{const look=LOOK_PRESETS.find(item=>item.id===button.dataset.lookChoice);button.setAttribute('aria-pressed',String(!!look&&look.theme===active&&look.style===p.visualStyle));});document.querySelectorAll('[data-pref]').forEach(input=>{if(Object.hasOwn(p,input.dataset.pref))input.value=p[input.dataset.pref];});const mixLabel=document.querySelector('.mix-settings>summary .small');if(mixLabel)mixLabel.textContent=`${THEME_PALETTES[active][0]} · ${p.visualStyle}`;}
 function filterThemeLibrary(query){const term=String(query||'').trim().toLowerCase();let matches=0;document.querySelectorAll('.theme-group').forEach(group=>{const buttons=[...group.querySelectorAll('[data-theme-choice]')],shown=buttons.filter(button=>!term||button.dataset.themeLabel.includes(term));buttons.forEach(button=>button.hidden=!!term&&!shown.includes(button));group.hidden=!!term&&!shown.length;if(term&&shown.length)group.open=true;if(!term)group.open=false;matches+=shown.length;});const empty=document.getElementById('theme-search-empty');if(empty)empty.hidden=matches>0;}

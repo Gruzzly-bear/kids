@@ -21,7 +21,7 @@ export function preferences(value = {}) {
     appearance: ['light', 'dark', 'system'].includes(value.appearance) ? value.appearance : 'system',
     lightTheme: typeof value.lightTheme === 'string' ? value.lightTheme.slice(0, 40) : 'coastal',
     darkTheme: typeof value.darkTheme === 'string' ? value.darkTheme.slice(0, 40) : 'midnight',
-    visualStyle: ['classic', 'boxy', 'studio', 'playful', 'glass', 'minimal', 'comic', 'retro', 'pixel', 'book'].includes(value.visualStyle) ? value.visualStyle : 'classic',
+    visualStyle: ['classic', 'boxy', 'studio', 'playful', 'glass', 'minimal', 'comic', 'retro', 'pixel', 'book', 'stardew', 'dragoon', 'wow-ui', 'isaac', 'swtor', 'ps2-ui', 'ps4-ui', 'pipboy'].includes(value.visualStyle) ? value.visualStyle : 'classic',
     textSize: ['small', 'standard', 'large', 'extra-large'].includes(value.textSize) ? value.textSize : 'standard',
     density: value.density === 'compact' ? 'compact' : 'comfortable',
     clockFormat: value.clockFormat === '24h' ? '24h' : '12h',
