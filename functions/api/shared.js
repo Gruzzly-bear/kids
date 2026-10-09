@@ -22,6 +22,7 @@ export function preferences(value = {}) {
     lightTheme: typeof value.lightTheme === 'string' ? value.lightTheme.slice(0, 40) : 'coastal',
     darkTheme: typeof value.darkTheme === 'string' ? value.darkTheme.slice(0, 40) : 'midnight',
     visualStyle: ['classic', 'boxy', 'studio', 'playful', 'glass', 'minimal', 'comic', 'retro', 'pixel', 'book', 'stardew', 'dragoon', 'wow-ui', 'isaac', 'swtor', 'ps2-ui', 'ps4-ui', 'pipboy'].includes(value.visualStyle) ? value.visualStyle : 'classic',
+    fontStyle: ['theme', 'friendly', 'storybook', 'terminal', 'arcade'].includes(value.fontStyle) ? value.fontStyle : 'theme',
     cornerStyle: ['theme', 'soft', 'square', 'pill'].includes(value.cornerStyle) ? value.cornerStyle : 'theme',
     edgeStyle: ['theme', 'plain', 'outlined', 'bold', 'dashed', 'glow'].includes(value.edgeStyle) ? value.edgeStyle : 'theme',
     surfaceTexture: ['none', 'paper', 'grid', 'scanlines', 'halftone'].includes(value.surfaceTexture) ? value.surfaceTexture : 'none',
