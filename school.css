@@ -259,3 +259,5 @@ body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opac
 .background-opacity-control input[type="range"]{grid-column:1/-1;width:100%;margin:0;accent-color:var(--accent)}
 .background-opacity-control small{grid-column:1/-1;margin:0!important}
 @media(max-width:520px){.custom-background-picker{align-items:stretch;flex-direction:column}.custom-background-picker .text-button{align-self:flex-start}}
+.announcement{color:var(--ink)}
+.announcement.celebration{color:var(--ink);background:radial-gradient(circle at 8% 15%,#ffe9a8 0 5px,transparent 6px),radial-gradient(circle at 94% 28%,#f9a8c5 0 5px,transparent 6px),radial-gradient(circle at 85% 88%,#94d9ca 0 5px,transparent 6px),linear-gradient(115deg,color-mix(in srgb,#ffe9a8 18%,var(--surface)),color-mix(in srgb,#f9a8c5 15%,var(--surface)) 58%,color-mix(in srgb,#94d9ca 17%,var(--surface)))}
