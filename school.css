@@ -200,18 +200,18 @@ dialog::backdrop{background:#0d1b2d99;backdrop-filter:blur(4px);}.dialog-top{dis
 @font-face{font-family:"Modern Fantasy";src:url("assets/modern-fantasy-43456/ModernFantasyDemoRegular-4B74W.otf") format("opentype");font-weight:400;font-display:swap}
 @font-face{font-family:"Pokemon GB";src:url("assets/pokemon-gb-9621/PokemonGb-RAeo.ttf") format("truetype");font-weight:400;font-display:swap}
 @font-face{font-family:"Wario Land 4";src:url("assets/warioland4tt-30199/Warioland4chmc-VApe.ttf") format("truetype");font-weight:400;font-display:swap}
-:root[data-font="charger"] body,:root[data-font="charger"] h1,:root[data-font="charger"] h2,:root[data-font="charger"] h3,:root[data-font="charger"] h4{font-family:Charger,"Segoe UI",sans-serif}
-:root[data-font="emotion-engine"] body,:root[data-font="emotion-engine"] h1,:root[data-font="emotion-engine"] h2,:root[data-font="emotion-engine"] h3,:root[data-font="emotion-engine"] h4{font-family:"Emotion Engine",system-ui,sans-serif}
-:root[data-font="isaacsans"] body,:root[data-font="isaacsans"] h1,:root[data-font="isaacsans"] h2,:root[data-font="isaacsans"] h3,:root[data-font="isaacsans"] h4{font-family:IsaacSans,"Trebuchet MS",sans-serif}
-:root[data-font="cosmic-fantasy"] h1,:root[data-font="cosmic-fantasy"] h2,:root[data-font="cosmic-fantasy"] h3,:root[data-font="cosmic-fantasy"] h4{font-family:"Cosmic Fantasy",Georgia,serif}
-:root[data-font="dalelands"] h1,:root[data-font="dalelands"] h2,:root[data-font="dalelands"] h3,:root[data-font="dalelands"] h4{font-family:"Dalelands Uncial",Georgia,serif}
-:root[data-font="dragoon-bold"] h1,:root[data-font="dragoon-bold"] h2,:root[data-font="dragoon-bold"] h3,:root[data-font="dragoon-bold"] h4{font-family:"Dragoon Bold",Georgia,serif}
-:root[data-font="gamecuben"] h1,:root[data-font="gamecuben"] h2,:root[data-font="gamecuben"] h3,:root[data-font="gamecuben"] h4{font-family:Gamecuben,ui-monospace,monospace}
-:root[data-font="gbboot"] h1,:root[data-font="gbboot"] h2,:root[data-font="gbboot"] h3,:root[data-font="gbboot"] h4{font-family:"GB Boot",ui-monospace,monospace}
-:root[data-font="kroegbainder"] h1,:root[data-font="kroegbainder"] h2,:root[data-font="kroegbainder"] h3,:root[data-font="kroegbainder"] h4{font-family:Kroegbainder,Georgia,serif}
-:root[data-font="modern-fantasy"] h1,:root[data-font="modern-fantasy"] h2,:root[data-font="modern-fantasy"] h3,:root[data-font="modern-fantasy"] h4{font-family:"Modern Fantasy",Georgia,serif}
-:root[data-font="pokemon-gb"] h1,:root[data-font="pokemon-gb"] h2,:root[data-font="pokemon-gb"] h3,:root[data-font="pokemon-gb"] h4{font-family:"Pokemon GB",ui-monospace,monospace}
-:root[data-font="warioland4"] h1,:root[data-font="warioland4"] h2,:root[data-font="warioland4"] h3,:root[data-font="warioland4"] h4{font-family:"Wario Land 4",ui-monospace,monospace}
+:root[data-font="charger"] body,:root[data-font="charger"] body *{font-family:Charger,"Segoe UI",sans-serif}
+:root[data-font="emotion-engine"] body,:root[data-font="emotion-engine"] body *{font-family:"Emotion Engine",system-ui,sans-serif}
+:root[data-font="isaacsans"] body,:root[data-font="isaacsans"] body *{font-family:IsaacSans,"Trebuchet MS",sans-serif}
+:root[data-font="cosmic-fantasy"] body,:root[data-font="cosmic-fantasy"] body *{font-family:"Cosmic Fantasy",Georgia,serif}
+:root[data-font="dalelands"] body,:root[data-font="dalelands"] body *{font-family:"Dalelands Uncial",Georgia,serif}
+:root[data-font="dragoon-bold"] body,:root[data-font="dragoon-bold"] body *{font-family:"Dragoon Bold",Georgia,serif}
+:root[data-font="gamecuben"] body,:root[data-font="gamecuben"] body *{font-family:Gamecuben,ui-monospace,monospace}
+:root[data-font="gbboot"] body,:root[data-font="gbboot"] body *{font-family:"GB Boot",ui-monospace,monospace}
+:root[data-font="kroegbainder"] body,:root[data-font="kroegbainder"] body *{font-family:Kroegbainder,Georgia,serif}
+:root[data-font="modern-fantasy"] body,:root[data-font="modern-fantasy"] body *{font-family:"Modern Fantasy",Georgia,serif}
+:root[data-font="pokemon-gb"] body,:root[data-font="pokemon-gb"] body *{font-family:"Pokemon GB",ui-monospace,monospace}
+:root[data-font="warioland4"] body,:root[data-font="warioland4"] body *{font-family:"Wario Land 4",ui-monospace,monospace}
 dialog[data-dialog="settings"]{width:min(960px,calc(100% - 32px));max-height:92dvh;padding:clamp(18px,3vw,30px)}
 dialog[data-dialog="settings"] h2{margin:0 0 5px}
 dialog[data-dialog="settings"] .settings-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 14px;margin:14px 0 18px}
@@ -240,3 +240,22 @@ dialog[data-dialog="settings"] .settings-grid{grid-template-columns:repeat(3,min
 .appearance-editor .customizer-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:12px 14px 14px}
 @media(max-width:700px){dialog[data-dialog="settings"] .settings-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.appearance-editor{padding:12px}.appearance-current{max-width:48%;font-size:.75rem}.appearance-editor .customizer-grid{grid-template-columns:1fr}}
 @media(max-width:420px){.appearance-heading{align-items:flex-start;flex-direction:column}.appearance-current{max-width:100%}}
+@media(min-width:1200px){.shared-child{grid-template-columns:220px minmax(0,1fr)}.shared-child:last-child{grid-template-columns:minmax(0,1fr) 220px}}
+.shared-child>.schedule-stack .now-next{display:grid;grid-template-columns:minmax(0,1fr);gap:9px}
+.shared-child>.schedule-stack .now-slot{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:4px;min-width:0;padding:11px 13px;line-height:1.35;overflow-wrap:anywhere}
+.shared-child>.schedule-stack .now-slot>span,.shared-child>.schedule-stack .now-slot>strong{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere;word-break:normal}
+.shared-child>.schedule-stack .now-slot>span:last-child{font-size:.9rem;line-height:1.35}
+@media(min-width:1200px){.shared-child .schedule-item{align-items:flex-start;padding:11px 12px}.shared-child .schedule-item time{text-align:left}}
+body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:var(--custom-background-opacity,0);background-color:var(--custom-background-base,#fff);background-image:var(--custom-background-image,none);background-position:center;background-size:cover;background-repeat:no-repeat}
+:root[data-mode="dark"]{--custom-background-base:#000}
+:root[data-mode="light"]{--custom-background-base:#fff}
+.custom-background-controls{display:grid;gap:12px;padding:0 14px 14px}
+.custom-background-picker{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.custom-background-picker>label{flex:1;min-width:0}
+.custom-background-picker input[type="file"]{margin-top:6px}
+.custom-background-picker .text-button{flex:0 0 auto}
+.background-opacity-control{display:grid;grid-template-columns:1fr auto;align-items:center;gap:6px 12px;margin:0!important}
+.background-opacity-control output{font-size:.85rem;font-weight:650;color:var(--muted)}
+.background-opacity-control input[type="range"]{grid-column:1/-1;width:100%;margin:0;accent-color:var(--accent)}
+.background-opacity-control small{grid-column:1/-1;margin:0!important}
+@media(max-width:520px){.custom-background-picker{align-items:stretch;flex-direction:column}.custom-background-picker .text-button{align-self:flex-start}}
