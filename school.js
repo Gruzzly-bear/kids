@@ -106,7 +106,7 @@ function dueChip(x){const status=dueState(x);return `<span class="status-chip ${
 function nextDueDate(subjects,today=scheduleDay()){return Object.values(subjects).flat().filter(x=>!x.done&&x.due>today).map(x=>x.due).sort()[0]||'';}
 function mast(){
   const student=['leon','logan'].includes(state.view);
-  return `<header class="mast"><a href="#" class="brand" onclick="event.preventDefault();${student?'showHub()':state.view==='parent'?"setParentTab('overview')":'render()'}"><span class="brand-mark">${student?iconOf(state.view):'S'}</span><span><b>School Dashboard</b><small>${student?nameOf(state.view)+'’s school day':state.view==='parent'?'Parent workspace':'Your family’s school day'}</small></span></a>${student||state.view==='monitor'?displayCards(state.view):''}<div class="header-actions">${student||state.view==='monitor'||state.view==='parent'?'<button class="button light" onclick="openResources()">School Resources</button>':''}<button class="button light" onclick="openSettings()">Settings</button>${state.view?'<button class="button light" onclick="goHome()">'+(state.view==='monitor'?'Close dashboard':'Sign out')+'</button>':''}</div></header>`;
+  return `<header class="mast"><a href="#" class="brand" onclick="event.preventDefault();${student?'showHub()':state.view==='parent'?"setParentTab('overview')":'render()'}"><span class="brand-mark">${student?iconOf(state.view):'S'}</span><span><b>School Dashboard</b><small>${student?nameOf(state.view)+'’s school day':state.view==='parent'?'Parent workspace':'Your family’s school day'}</small></span></a>${student||state.view==='monitor'?displayCards(state.view):''}<div class="header-actions">${student||state.view==='monitor'||state.view==='parent'?'<button class="button light" onclick="openResources()">School Resources</button>':''}<button class="button light" onclick="openSettings()">Settings</button>${state.view?'<button class="button light" onclick="'+(state.view==='monitor'?'closeMonitor()':'goHome()')+'">'+(state.view==='monitor'?(state.parentReturnSession?'Back to parent':'Close dashboard'):'Sign out')+'</button>':''}</div></header>`;
 }
 function dashboardClock(){return '<time class="dashboard-clock" id="dashboard-clock" aria-label="Current time"></time>';}
 function updateDashboardClock(){
@@ -223,7 +223,7 @@ function studentPage(){
   }
   return mast()+hero+`<div class="student-dashboard-grid"><div class="work-board">${workSection(subjects,'late')}${workSection(subjects,'today')}${workingAhead(subjects)}</div>${schedulePanel(state.view,false)}</div>`/* Focus timer parked for later: +focusTimerPanel() */+(prefs().classBrowser?classBrowser():'');
 }
-function loginPage(){return mast()+`<section class="login"><p class="eyebrow">Your day, organized</p><h1>Ready for your school day?</h1><p class="small">Choose your profile to see classes and assignments.</p><div class="people">${['leon','logan'].map(student=>`<button class="person" onclick="signIn('${student}')"><span class="emoji">${iconOf(student)}</span><b>${nameOf(student)}</b><span class="small">Open my dashboard</span></button>`).join('')}</div><div class="home-actions"><button class="button" onclick="openMonitor()">Shared school dashboard</button><button class="button light" onclick="signIn('parent')">Parent sign in</button></div>${state.loadError?`<p class="form-error" role="alert">${esc(state.loadError)}</p><button class="button light" onclick="restoreSession()">Retry connection</button>`:''}</section>`;}
+function loginPage(){return mast()+`<section class="login"><p class="eyebrow">Your day, organized</p><h1>Ready for your school day?</h1><p class="small">Choose your profile to see classes and assignments.</p><div class="people">${['leon','logan'].map(student=>`<button class="person" onclick="signIn('${student}')"><span class="emoji">${iconOf(student)}</span><b>${nameOf(student)}</b><span class="small">Open my dashboard</span></button>`).join('')}</div><div class="home-actions"><button class="button light" onclick="signIn('parent')">Parent sign in</button></div>${state.loadError?`<p class="form-error" role="alert">${esc(state.loadError)}</p><button class="button light" onclick="restoreSession()">Retry connection</button>`:''}</section>`;}
 function render(){
   const expanded=new Map([...app.querySelectorAll('details.work-section')].map(node=>[node.id,node.open]));
   applyPreferences();app.className='shell'+(state.view==='parent'?' parent-workspace':state.view==='monitor'?' shared-workspace':['leon','logan'].includes(state.view)?' student-workspace':'');
@@ -262,7 +262,17 @@ async function submitSignIn(event,role){
   event.preventDefault();const form=event.target,button=form.querySelector('button'),session={role,password:new FormData(form).get('password')};button.disabled=true;button.textContent='Signing in…';
   try{const data=await fetchAuth(session);closeDialog();acceptAuth(data,session);}catch(error){document.getElementById('sign-in-error').textContent=error.status?error.message:'Couldn’t connect. Please try again.';button.disabled=false;button.textContent='Sign in';}
 }
-async function openMonitor(){try{acceptAuth(await fetchAuth({role:'monitor'}),{role:'monitor'});}catch(error){state.loadError=error.status?error.message:'Couldn’t open the dashboard. Please try again.';render();}}
+async function openMonitor(){
+  const parentSession=state.auth?.role==='parent'?{...state.auth}:null;
+  try{acceptAuth(await fetchAuth({role:'monitor'}),{role:'monitor'});state.parentReturnSession=parentSession;render();}
+  catch(error){state.loadError=error.status?error.message:'Couldn’t open the dashboard. Please try again.';render();}
+}
+async function closeMonitor(){
+  const parentSession=state.parentReturnSession;state.parentReturnSession=null;
+  if(!parentSession){goHome();return;}
+  try{acceptAuth(await fetchAuth(parentSession),parentSession);}
+  catch{state.parentReturnSession=parentSession;showToast('Couldn’t return to the parent dashboard. Please retry.');}
+}
 function goHome(){
   if(pumping||state.pending.length){openDialog('pending-sign-out','<h2>Changes are still waiting to save</h2><p>Save or retry your changes before switching profiles. This keeps your work with the correct account.</p><button class="button" onclick="retryWrites();closeDialog()">Retry saving</button>');return;}
   closeDialog();localStorage.removeItem(sessionKey);state.view=null;state.auth=null;state.subjectView=null;state.preferences={};state.loadError='';render();
@@ -362,7 +372,7 @@ function setParentTab(tab){state.parentTab=tab;render();}
 function parentPage(){
   const helpCount=['leon','logan'].flatMap(student=>allTasks(student)).filter(x=>!x.done&&x.needsHelp).length,tabs=[['overview','Weekly overview'],['assignments','Assignments'],['help','Help inbox']];
   const editActions=`<div class="parent-tab-actions"><button class="button light" onclick="openFamilyEditorChooser('schedule')">Edit schedule</button><button class="button light" onclick="openFamilyEditorChooser('reminders')">Edit reminders</button></div>`;
-  return mast()+`<section class="page-heading"><div><p class="small">Family workspace</p><h1>Parent dashboard</h1></div><div class="actions"><button class="button light" onclick="refreshDashboard()">Refresh</button><button class="button light" onclick="downloadBackup()">Download backup</button></div></section><nav class="parent-tabs" aria-label="Parent workspace">${tabs.map(([key,label])=>`<button class="button ${state.parentTab===key?'':'light'}" aria-current="${state.parentTab===key?'page':'false'}" onclick="setParentTab('${key}')">${label}${key==='help'?` <span class="count">${helpCount}</span>`:''}</button>`).join('')}${editActions}</nav>`+(state.parentTab==='assignments'?assignmentEditor():state.parentTab==='help'?helpInbox():weeklyOverview());
+  return mast()+`<section class="page-heading"><div><p class="small">Family workspace</p><h1>Parent dashboard</h1></div><div class="actions"><button class="button light" onclick="openMonitor()">Shared dashboard · read-only</button><button class="button light" onclick="refreshDashboard()">Refresh</button><button class="button light" onclick="downloadBackup()">Download backup</button></div></section><nav class="parent-tabs" aria-label="Parent workspace">${tabs.map(([key,label])=>`<button class="button ${state.parentTab===key?'':'light'}" aria-current="${state.parentTab===key?'page':'false'}" onclick="setParentTab('${key}')">${label}${key==='help'?` <span class="count">${helpCount}</span>`:''}</button>`).join('')}${editActions}</nav>`+(state.parentTab==='assignments'?assignmentEditor():state.parentTab==='help'?helpInbox():weeklyOverview());
 }
 function weeklyOverview(){
   const start=scheduleDay(),end=addDays(start,6),students=['leon','logan'];

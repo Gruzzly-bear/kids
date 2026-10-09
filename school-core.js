@@ -1,7 +1,7 @@
 // Schedule storage and school-site import helpers.
 const LABELS={ela:'Language Arts',math:'Math',science:'Science',social:'Social Studies',stem:'STEM',tech:'Technology',pe:'Physical Education',art:'Art'};
 const SCHEDULE_SUBJECTS=['ela','math','science','social','stem','tech','pe','art'];
-const state={view:null,assignments:null,schedules:{leon:[],logan:[]},scheduledDays:{leon:{},logan:{}},scheduleDates:{leon:'',logan:''},displayCards:{leon:[],logan:[],monitor:[]},scheduleMessage:'',showEditor:false,auth:null};
+const state={view:null,assignments:null,schedules:{leon:[],logan:[]},scheduledDays:{leon:{},logan:{}},scheduleDates:{leon:'',logan:''},displayCards:{leon:[],logan:[],monitor:[]},scheduleMessage:'',showEditor:false,auth:null,parentReturnSession:null};
 const esc=s=>String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 
 const SCHOOL_LINKS={
