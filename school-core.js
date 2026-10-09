@@ -19,10 +19,59 @@ function commitOpenSchedule(){const student=state.editorStudent||'leon',date=sta
 function removeScheduleEntry(index){const student=state.editorStudent||'leon';state.schedules[student].splice(index,1);state.scheduleMessage='Unsaved changes';refreshScheduleEditor()}
 function saveOpenSchedule(){const student=state.editorStudent||'leon',date=state.scheduleDates[student]||scheduleDay();commitOpenSchedule();state.scheduleMessage='Saved this day';return saveScheduleChanges(student,date)}
 function clearOpenSchedule(){const student=state.editorStudent||'leon';state.schedules[student]=[];state.scheduleMessage='Unsaved changes';refreshScheduleEditor()}
-function importModal(){return document.getElementById('import-modal')}function closeImport(){importModal()?.remove()}function normalizeTitle(value){return String(value).replace(/\*/g,'').replace(/\s+/g,' ').trim().toLowerCase()}function parsePastedAssignments(text){const lines=text.replace(/&#x9;/g,' ').split(/\r?\n/).map(x=>x.trim()).filter(Boolean),dateLine=/^(?:Sun|Mon|Tue|Wed|Thu|Fri|Sat),\s+[A-Z][a-z]{2}\s+\d{1,2},\s+\d{4},\s+\d{1,2}:\d{2}\s*(?:AM|PM)?$/;let title='',items=[];for(const line of lines){if(dateLine.test(line)){if(title){const d=new Date(line.replace(/,\s+\d{1,2}:\d{2}.*$/,''));if(!isNaN(d))items.push({title,due:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')})}title='';continue}if(/^(Submitted|Late |Assignments|Assignment Group|Score|Total:|Totals |View feedback|Out of |—|\d+ pts)/i.test(line))continue;if(!/^Brady |^Assignment\s+Due Date/i.test(line))title=line}return [...new Map(items.map(x=>[`${normalizeTitle(x.title)}|${x.due}`,x])).values()]}
-function openImport(){const student=state.editorStudent||'leon',subject=state.editorSubject;document.body.insertAdjacentHTML('beforeend',`<section id="import-modal" class="import-modal"><div class="import-box"><button class="button light" onclick="closeImport()">Close</button><h2>Import ${student==='leon'?'Leon':'Logan'}’s ${subjectLabel(subject,student)} assignments</h2><p class="small">Paste the assignment list from the school site. Submitted dates, scores, and feedback are ignored.</p><textarea id="import-text" placeholder="Paste assignments here"></textarea><div class="actions"><button class="button" onclick="previewImport()">Preview import</button></div><div id="import-preview"></div></div></section>`)}
-function previewImport(){const student=state.editorStudent||'leon',subject=state.editorSubject,parsed=parsePastedAssignments(document.getElementById('import-text').value),existing=state.assignments[student][subject],rows=parsed.map(item=>{const match=existing.find(x=>normalizeTitle(x.title)===normalizeTitle(item.title));return {...item,status:!match?'new':!match.due?'add-date':match.due===item.due?'unchanged':'review',id:match?.id}});state.importRows=rows;document.getElementById('import-preview').innerHTML=`<h3>Preview</h3><p class="small">${rows.filter(x=>x.status==='new').length} new · ${rows.filter(x=>x.status==='add-date').length} dates to add · ${rows.filter(x=>x.status==='unchanged').length} unchanged · ${rows.filter(x=>x.status==='review').length} date changes to review</p>${rows.map(x=>`<div class="import-row ${x.status}"><strong>${esc(x.title)}</strong><span>${x.due} · ${x.status.replace('-',' ')}</span></div>`).join('')}<div class="actions"><button class="button" onclick="applyImport()">Apply new items and missing dates</button></div>`}
-async function applyImport(){const student=state.editorStudent||'leon',subject=state.editorSubject;for(const row of state.importRows||[]){if(row.status==='new'){const x={id:crypto.randomUUID?.()||Date.now().toString()+Math.random(),title:row.title,due:row.due,done:false};state.assignments[student][subject].push(x);await saveAssignmentChange('add',{student,subject,x})}if(row.status==='add-date'){const found=findTask(row.id);found.x.due=row.due;await saveAssignmentChange('update',found)}}closeImport();editor()}
+function importModal(){return document.getElementById('import-modal')}function closeImport(){importModal()?.remove()}function normalizeTitle(value){return String(value).replace(/\*/g,'').replace(/\s+/g,' ').trim().toLowerCase()}
+function importedDueDate(value){
+  const iso=String(value).match(/\b(\d{4})-(\d{2})-(\d{2})\b/);
+  const us=String(value).match(/\b([A-Z][a-z]{2})\s+(\d{1,2}),\s+(\d{4})\b/);
+  const date=iso?new Date(`${iso[1]}-${iso[2]}-${iso[3]}T12:00:00`):us?new Date(`${us[1]} ${us[2]}, ${us[3]} 12:00:00`):null;
+  return date&&!isNaN(date)?`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`:'';
+}
+function importedAssignmentTitle(value){
+  return String(value).replace(/<[^>]*>/g,'').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1 ').replace(/https?:\/\/\S+/gi,'').replace(/(?:Submitted|Missing)\b[\s\S]*$/i,'').replace(/\bLate\s+[A-Z][a-z]{2},[\s\S]*$/i,'').replace(/\*/g,'').replace(/[|\t]+/g,' ').replace(/\s+/g,' ').replace(/^[-\s]+|[-\s]+$/g,'').trim();
+}
+function hasNumericAssignmentScore(value){return /^\s*\d+(?:\.\d+)?\s*pts(?=Out\b|\b)/i.test(String(value));}
+function parsePastedAssignments(text){
+  const lines=String(text).replace(/&#x9;/g,'\t').split(/\r?\n/).map(line=>line.trim()).filter(Boolean),items=[];
+  const add=(titleText,dueText,done=false)=>{const title=importedAssignmentTitle(titleText),due=importedDueDate(dueText);if(title&&due&&!/^(Assignment|Due Date|Assignment Group|Score)$/i.test(title)){const item={title,due,done:!!done};items.push(item);return item;}};
+  let title='',submitted=false,lastItem=null;
+  for(const line of lines){
+    const isMarkdown=line.includes('|'),cells=isMarkdown?line.split('|').map(cell=>cell.trim()):line.includes('\t')?line.split('\t').map(cell=>cell.trim()):null;
+    if(cells){
+      const nonempty=cells.filter(Boolean);
+      if(nonempty.length>=2){
+        const dueCell=nonempty.findIndex((cell,index)=>index>0&&importedDueDate(cell));
+        if(dueCell>0){lastItem=add(nonempty[0],nonempty[dueCell],/Submitted\b/i.test(nonempty[0])&&nonempty.some(hasNumericAssignmentScore));title='';submitted=false;continue;}
+        if(/^(?:[-: ]+)$/.test(nonempty.join('')))continue;
+        if(/Assignment/i.test(nonempty[0])&&/Due Date/i.test(nonempty[1]||''))continue;
+      }
+    }
+    if(/^Submitted\b/i.test(line)){submitted=true;continue;}
+    if(/^Missing\b/i.test(line)||/^Late\s+[A-Z][a-z]{2},/i.test(line)){submitted=false;continue;}
+    const due=importedDueDate(line);
+    if(due){lastItem=add(title,due);title='';continue;}
+    if(hasNumericAssignmentScore(line)){if(lastItem&&submitted)lastItem.done=true;continue;}
+    if(/^(Assignments|Assignment Group|Score|Total:|Totals |View feedback|Out of |—|\d+ pts)/i.test(line))continue;
+    if(!/^Brady |^Assignment\s+Due Date/i.test(line)){const candidate=importedAssignmentTitle(line);if(candidate){title=candidate;submitted=false;lastItem=null;}}
+  }
+  return [...new Map(items.map(item=>[`${normalizeTitle(item.title)}|${item.due}`,item])).values()];
+}
+function openImport(){const student=state.editorStudent||'leon',subject=state.editorSubject;document.body.insertAdjacentHTML('beforeend',`<section id="import-modal" class="import-modal"><div class="import-box"><button class="button light" onclick="closeImport()">Close</button><h2>Import ${student==='leon'?'Leon':'Logan'}’s ${subjectLabel(subject,student)} assignments</h2><p class="small">Due dates are imported. Submitted items with a numeric score are marked complete; other new items stay open. Scores and feedback are not saved.</p><textarea id="import-text" placeholder="Paste assignments here"></textarea><div class="actions"><button class="button" onclick="previewImport()">Preview import</button></div><div id="import-preview"></div></div></section>`)}
+function previewImport(){
+  const student=state.editorStudent||'leon',subject=state.editorSubject,parsed=parsePastedAssignments(document.getElementById('import-text').value),existing=state.assignments[student][subject];
+  const rows=parsed.map(item=>{const match=existing.find(x=>normalizeTitle(x.title)===normalizeTitle(item.title));let status=!match?'new':!match.due?'add-date':match.due===item.due?'unchanged':'review';if(match&&item.done&&!match.done&&status==='unchanged')status='complete';const willComplete=!!item.done&&(!match||!match.done)&&status!=='review';return {...item,status,willComplete,id:match?.id}});
+  state.importRows=rows;
+  const completions=rows.filter(x=>x.willComplete).length;
+  document.getElementById('import-preview').innerHTML=`<h3>Preview</h3><p class="small">${rows.filter(x=>x.status==='new').length} new · ${rows.filter(x=>x.status==='add-date').length} dates to add · ${rows.filter(x=>x.status==='unchanged').length} unchanged · ${rows.filter(x=>x.status==='review').length} date changes to review${completions?' · '+completions+' submitted and scored to mark complete':''}</p>${rows.map(x=>`<div class="import-row ${x.status}"><strong>${esc(x.title)}</strong><span>${x.due} · ${x.status.replace('-',' ')}${x.willComplete?' · submitted + scored → complete':''}</span></div>`).join('')}<div class="actions"><button class="button" onclick="applyImport()">Apply new items, dates, and completions</button></div>`;
+}
+async function applyImport(){
+  const student=state.editorStudent||'leon',subject=state.editorSubject;
+  for(const row of state.importRows||[]){
+    if(row.status==='new'){const x={id:crypto.randomUUID?.()||Date.now().toString()+Math.random(),title:row.title,due:row.due,done:!!row.done};state.assignments[student][subject].push(x);await saveAssignmentChange('add',{student,subject,x});}
+    else if(row.status==='add-date'){const found=findTask(row.id);if(found){found.x.due=row.due;if(row.willComplete){found.x.done=true;found.x.needsHelp=false;}await saveAssignmentChange('update',found);}}
+    else if(row.status==='complete'){const found=findTask(row.id);if(found){found.x.done=true;found.x.needsHelp=false;await saveAssignmentChange('status',found);}}
+  }
+  closeImport();editor();
+}
 function closeScheduleImport(){document.getElementById('schedule-import-modal')?.remove()}
 function openScheduleImport(){const student=state.editorStudent||'leon',studentNote=student==='leon'?'Leon’s Language Arts, Math, Science, Social Studies, STEM, and Spanish classes, plus Monday/Wednesday Physical Education':'Logan’s Language Arts, Math, Science, Social Studies, and Spanish classes, plus Tuesday/Thursday Art and Monday/Wednesday Ed Tech';closeScheduleEditor();document.body.insertAdjacentHTML('beforeend',`<section id="schedule-import-modal" class="import-modal"><div class="import-box"><button class="button light" onclick="closeScheduleImport()">Close</button><h2>Import several schedule days</h2><p class="small">Paste the calendar copied from the class site. The preview keeps ${studentNote}, removes conflicts, and adds lunch.</p><textarea id="schedule-import-text" placeholder="Paste the class calendar here"></textarea><div class="actions"><button class="button" onclick="previewScheduleImport()">Build schedule preview</button></div><div id="schedule-import-preview"></div></div></section>`)}
 function calendarISO(label){const now=new Date(),parsed=new Date(`${label}, ${now.getFullYear()} 12:00:00`);if(isNaN(parsed))return'';if(parsed<new Date(now.getTime()-120*86400000))parsed.setFullYear(parsed.getFullYear()+1);return `${parsed.getFullYear()}-${String(parsed.getMonth()+1).padStart(2,'0')}-${String(parsed.getDate()).padStart(2,'0')}`}
