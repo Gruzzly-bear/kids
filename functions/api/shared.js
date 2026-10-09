@@ -17,6 +17,7 @@ export function metadata(value = {}) {
   return { url: safeURL(value.url) || '', needsHelp: !!value.needsHelp };
 }
 export function preferences(value = {}) {
+  const avatars = ['default', '🐱', '🐶', '🦊', '🐼', '🐸', '🦄', '🐉', '🐢', '🦋', '🐙', '🦖', '🐧', '🐨', '🐺', '🦁', '🐯', '🐰', '🐹', '🐝', '🦉', '🚀', '⚡', '🤖', '👾', '🎮', '🎨', '🦈', '🐬', '🦕', '🧙', '🥷'];
   return {
     appearance: ['light', 'dark', 'system'].includes(value.appearance) ? value.appearance : 'system',
     lightTheme: typeof value.lightTheme === 'string' ? value.lightTheme.slice(0, 40) : 'coastal',
@@ -34,7 +35,9 @@ export function preferences(value = {}) {
     clockFormat: value.clockFormat === '24h' ? '24h' : '12h',
     motion: ['system', 'reduced', 'full'].includes(value.motion) ? value.motion : 'system',
     classBrowser: !!value.classBrowser,
-    hideCompleted: value.hideCompleted !== false
+    hideCompleted: value.hideCompleted !== false,
+    avatar: avatars.includes(value.avatar) ? value.avatar : 'default',
+    avatarFrame: ['circle', 'rounded', 'double', 'glow', 'sticker', 'none'].includes(value.avatarFrame) ? value.avatarFrame : 'circle'
   };
 }
 export function readJSON(value, fallback = {}) {
