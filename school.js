@@ -24,7 +24,7 @@ const THEME_PALETTES = {
   contrast:['High Contrast','#173fb0','#ffffff'], 'contrast-dark':['High Contrast Dark','#ffe36b','#000000']
 };
 const DARK_THEME_KEYS = ['midnight','dark','dracula','electric','aurora','plum-glow','github-dark','nord','monokai','oled','slate','espresso','aubergine','ocean-night','emerald-night','contrast-dark'];
-const DEFAULT_PREFS = {appearance:'system',lightTheme:'coastal',darkTheme:'midnight',visualStyle:'classic',textSize:'standard',density:'comfortable',classBrowser:false,hideCompleted:true};
+const DEFAULT_PREFS = {appearance:'system',lightTheme:'coastal',darkTheme:'midnight',visualStyle:'classic',textSize:'standard',density:'comfortable',clockFormat:'12h',motion:'system',classBrowser:false,hideCompleted:true};
 state.preferences = {};
 state.parentTab = 'overview';
 state.pending = [];
@@ -44,14 +44,19 @@ function prefs(forScope = scope()) {
   const p = forScope==='monitor'||forScope==='home'?{...DEFAULT_PREFS,...legacy,...state.preferences[forScope],...local}:{...DEFAULT_PREFS,...legacy,...local,...state.preferences[forScope]};
   if (!THEME_PALETTES[p.lightTheme] || DARK_THEME_KEYS.includes(p.lightTheme)) p.lightTheme='coastal';
   if (!DARK_THEME_KEYS.includes(p.darkTheme)) p.darkTheme='midnight';
-  if (!['classic','boxy','studio','playful','glass'].includes(p.visualStyle)) p.visualStyle='classic';
+  if (!['classic','boxy','studio','playful','glass','minimal','comic','retro'].includes(p.visualStyle)) p.visualStyle='classic';
+  if (!['system','light','dark'].includes(p.appearance)) p.appearance='system';
+  if (!['standard','large','small','extra-large'].includes(p.textSize)) p.textSize='standard';
+  if (!['comfortable','compact'].includes(p.density)) p.density='comfortable';
+  if (!['12h','24h'].includes(p.clockFormat)) p.clockFormat='12h';
+  if (!['system','reduced','full'].includes(p.motion)) p.motion='system';
   return p;
 }
 function activeTheme(p){const dark=p.appearance==='dark'||p.appearance==='system'&&matchMedia('(prefers-color-scheme: dark)').matches;return dark?p.darkTheme:p.lightTheme;}
 function applyPreferences() {
   const p=prefs(), dark=p.appearance==='dark'||p.appearance==='system'&&matchMedia('(prefers-color-scheme: dark)').matches;
   const theme=dark?p.darkTheme:p.lightTheme, palette=THEME_PALETTES[theme], root=document.documentElement;
-  root.dataset.theme=theme; root.dataset.mode=dark?'dark':'light'; root.dataset.style=p.visualStyle; root.dataset.size=p.textSize; root.dataset.density=p.density;
+  root.dataset.theme=theme; root.dataset.mode=dark?'dark':'light'; root.dataset.style=p.visualStyle; root.dataset.size=p.textSize; root.dataset.density=p.density;root.dataset.motion=p.motion;
   root.dataset.contrast=theme.startsWith('contrast')?'high':'normal';
   root.style.setProperty('--accent',palette[1]); root.style.setProperty('--page',palette[2]);
   root.style.setProperty('--on-accent',dark?'var(--page)':'#ffffff');
@@ -65,7 +70,7 @@ function setPreference(field, value, forScope=scope()) {
   state.preferences[forScope]=p; localWrite('school-preferences-'+forScope,p);
   if(forScope===scope())applyPreferences();
   if(state.auth&&state.auth.role!=='monitor')queuedWrite({preferencesOnly:true,scope:forScope,preferences:p},'Preferences');
-  if(field==='classBrowser'||field==='hideCompleted')render();
+  if(field==='classBrowser'||field==='hideCompleted'||field==='clockFormat')render();
   document.querySelectorAll('[data-theme-choice]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.themeChoice===activeTheme(p))));
   document.querySelectorAll('[data-style-choice]').forEach(button=>button.setAttribute('aria-pressed',String(p.visualStyle===button.dataset.styleChoice)));
 }
@@ -143,7 +148,7 @@ function mast(){
 function dashboardClock(){return '<time class="dashboard-clock" id="dashboard-clock" aria-label="Current time"></time>';}
 function updateDashboardClock(){
   const clock=document.getElementById('dashboard-clock');if(!clock)return;
-  const now=new Date();clock.dateTime=now.toISOString();clock.textContent=now.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit',hour12:true});
+  const now=new Date(),format=prefs().clockFormat;clock.dateTime=now.toISOString();clock.textContent=now.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit',hour12:format!=='24h'});
 }
 const FOCUS_TIMER_SECONDS={focus:25*60,break:5*60};
 const FOCUS_TIMER_PRESETS=[15,25,45];
@@ -212,7 +217,7 @@ function workingAhead(subjects,student=state.view,readonly=false){
   return `<details id="${student}-ahead-work" class="work-section ahead"><summary class="section-heading"><h2>Working Ahead <span class="count">${count}</span></h2><span class="small">${date?'Next due · '+dateLabel(date):'Next due date'}</span></summary>${date?`<div class="due-list" tabindex="0" role="region" aria-label="${nameOf(student)} working ahead assignments">${taskGroups(subjects,x=>!x.done&&x.due===date,student,readonly)}</div>`:'<p class="empty">No upcoming assignments.</p>'}</details>`;
 }
 function scheduleMinutes(value){const [h,m]=String(value||'').split(':').map(Number);return Number.isInteger(h)&&Number.isInteger(m)?h*60+m:-1;}
-function formatScheduleTime(value){const minutes=scheduleMinutes(value);return minutes<0?'':`${Math.floor(minutes/60)%12||12}:${String(minutes%60).padStart(2,'0')} ${minutes<720?'AM':'PM'}`;}
+function formatScheduleTime(value){const minutes=scheduleMinutes(value);if(minutes<0)return'';const hour=Math.floor(minutes/60),minute=minutes%60;return prefs().clockFormat==='24h'?`${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}`:`${hour%12||12}:${String(minute).padStart(2,'0')} ${hour<12?'AM':'PM'}`;}
 function scheduleLabel(item){return item.subject&&!['custom','break'].includes(item.subject)?LABELS[item.subject]||item.subject:item.label||'Break';}
 function scheduleItemStyle(item){return `--item-color:var(--subject-${item.subject},var(--accent))`;}
 function scheduleSnapshot(student){
@@ -389,10 +394,10 @@ function openSettings(){
   state.settingsScope=scope();drawSettings();
 }
 function themeChoices(p){const active=activeTheme(p);return Object.entries(THEME_PALETTES).map(([key,palette])=>{const [label,accent,bg,,,line]=palette,isDark=DARK_THEME_KEYS.includes(key);return `<button type="button" class="theme-swatch" data-theme-choice="${key}" aria-pressed="${active===key}" onclick="selectTheme('${key}',state.settingsScope)"><span class="swatch" style="--swatch-page:${bg};--swatch-accent:${accent};--swatch-mid:${palette[4]||bg};--swatch-line:${line||accent}"><i></i><i></i><i></i></span><span>${label}<small>${isDark?'Dark':'Light'} mode</small></span></button>`}).join('');}
-function styleChoices(p){return [['classic','Classic','Keep the familiar rounded style'],['boxy','Boxy','Sharp corners and crisp edges'],['studio','Studio','Layered surfaces with a polished finish'],['playful','Playful','Bright accents and extra-round shapes'],['glass','Glass','Frosted layers with clear readable cards']].map(([key,label,description])=>`<button type="button" class="style-choice" data-style-choice="${key}" aria-pressed="${p.visualStyle===key}" onclick="setPreference('visualStyle','${key}',state.settingsScope)"><span class="style-sample" data-preview="${key}" aria-hidden="true"><i></i><b></b><em></em></span><strong>${label}</strong><span class="small">${description}</span></button>`).join('');}
+function styleChoices(p){return [['classic','Classic','Keep the familiar rounded style'],['boxy','Boxy','Sharp corners and crisp edges'],['studio','Studio','Layered surfaces with a polished finish'],['playful','Playful','Bright accents and extra-round shapes'],['glass','Glass','Frosted layers with clear readable cards'],['minimal','Minimal','Quiet surfaces with less decoration'],['comic','Comic','Bold outlines and playful pop'],['retro','Retro','Monospaced type and a school planner feel']].map(([key,label,description])=>`<button type="button" class="style-choice" data-style-choice="${key}" aria-pressed="${p.visualStyle===key}" onclick="setPreference('visualStyle','${key}',state.settingsScope)"><span class="style-sample" data-preview="${key}" aria-hidden="true"><i></i><b></b><em></em></span><strong>${label}</strong><span class="small">${description}</span></button>`).join('');}
 function drawSettings(){
   const forScope=state.settingsScope,p=prefs(forScope),parent=state.auth?.role==='parent',opt=(value,label,current)=>`<option value="${value}" ${value===current?'selected':''}>${label}</option>`;
-  openDialog('settings',`<h2>Settings</h2><p class="small">${state.auth?.role==='monitor'||!state.auth?'Saved on this device.':'Saved for this profile and synced across devices.'}</p>${parent?`<label>Profile<select onchange="state.settingsScope=this.value;drawSettings()">${['parent','leon','logan','monitor'].map(s=>opt(s,s==='parent'?'Parent':s==='monitor'?'Shared dashboard':nameOf(s),forScope)).join('')}</select></label>`:''}<div class="settings-grid"><label>Text size<select onchange="setPreference('textSize',this.value,state.settingsScope)">${opt('standard','Standard',p.textSize)+opt('large','Large',p.textSize)}</select></label><label>Spacing<select onchange="setPreference('density',this.value,state.settingsScope)">${opt('comfortable','Comfortable',p.density)+opt('compact','Compact',p.density)}</select></label></div><h3>Interface style</h3><div class="style-grid">${styleChoices(p)}</div>${['leon','logan'].includes(forScope)?`<label class="switch"><input type="checkbox" ${p.classBrowser?'checked':''} onchange="setPreference('classBrowser',this.checked,state.settingsScope)">Show class browser on dashboard</label><label class="switch"><input type="checkbox" ${p.hideCompleted?'checked':''} onchange="setPreference('hideCompleted',this.checked,state.settingsScope)">Hide completed in class lists</label>`:''}<h3>Theme</h3><div class="theme-grid">${themeChoices(p)}</div><p class="small">Selecting a theme switches to its light or dark mode. Subject and assignment status colors stay consistent in every theme.</p>`);
+  openDialog('settings',`<h2>Settings</h2><p class="small">${state.auth?.role==='monitor'||!state.auth?'Saved on this device.':'Saved for this profile and synced across devices.'}</p>${parent?`<label>Profile<select onchange="state.settingsScope=this.value;drawSettings()">${['parent','leon','logan','monitor'].map(s=>opt(s,s==='parent'?'Parent':s==='monitor'?'Shared dashboard':nameOf(s),forScope)).join('')}</select></label>`:''}<div class="settings-grid"><label>Color mode<select onchange="setPreference('appearance',this.value,state.settingsScope)">${opt('system','Use device setting',p.appearance)+opt('light','Always light',p.appearance)+opt('dark','Always dark',p.appearance)}</select></label><label>Time display<select onchange="setPreference('clockFormat',this.value,state.settingsScope)">${opt('12h','12-hour (3:30 PM)',p.clockFormat)+opt('24h','24-hour (15:30)',p.clockFormat)}</select></label><label>Text size<select onchange="setPreference('textSize',this.value,state.settingsScope)">${opt('small','Small',p.textSize)+opt('standard','Standard',p.textSize)+opt('large','Large',p.textSize)+opt('extra-large','Extra large',p.textSize)}</select></label><label>Spacing<select onchange="setPreference('density',this.value,state.settingsScope)">${opt('comfortable','Comfortable',p.density)+opt('compact','Compact',p.density)}</select></label><label>Motion<select onchange="setPreference('motion',this.value,state.settingsScope)">${opt('system','Use device setting',p.motion)+opt('reduced','Reduce motion',p.motion)+opt('full','Allow full motion',p.motion)}</select></label></div><h3>Interface style</h3><div class="style-grid">${styleChoices(p)}</div>${['leon','logan'].includes(forScope)?`<label class="switch"><input type="checkbox" ${p.classBrowser?'checked':''} onchange="setPreference('classBrowser',this.checked,state.settingsScope)">Show class browser on dashboard</label><label class="switch"><input type="checkbox" ${p.hideCompleted?'checked':''} onchange="setPreference('hideCompleted',this.checked,state.settingsScope)">Hide completed in class lists</label>`:''}<h3>Theme</h3><div class="theme-grid">${themeChoices(p)}</div><p class="small">Selecting a theme sets the light or dark palette. Subject and assignment status colors stay consistent in every theme.</p>`);
   if(parent&&forScope==='parent')document.getElementById('app-dialog').insertAdjacentHTML('beforeend','<button class="button light" onclick="openPasswordSettings()">Change parent password</button>');
 }
 function openPasswordSettings(){openDialog('password',`<h2>Change parent password</h2><form onsubmit="changeParentPassword(event)"><label>Current password<input name="current" type="password" autocomplete="current-password" required></label><label>New password<input name="next" type="password" autocomplete="new-password" minlength="4" required></label><label>Confirm new password<input name="confirm" type="password" autocomplete="new-password" minlength="4" required></label><p id="password-error" class="form-error" role="alert"></p><button class="button" type="submit">Save password</button></form>`);}
