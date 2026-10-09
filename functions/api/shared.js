@@ -28,6 +28,7 @@ export function preferences(value = {}) {
     surfaceTexture: ['none', 'paper', 'grid', 'scanlines', 'halftone'].includes(value.surfaceTexture) ? value.surfaceTexture : 'none',
     backgroundImage: typeof value.backgroundImage === 'string' && value.backgroundImage.length <= 450000 && /^data:image\/webp;base64,[A-Za-z0-9+/]+=*$/.test(value.backgroundImage) ? value.backgroundImage : '',
     backgroundOpacity: Number.isFinite(Number(value.backgroundOpacity)) ? Math.max(0, Math.min(35, Math.round(Number(value.backgroundOpacity)))) : 16,
+    backgroundEffect: ['none', 'scanlines', 'grid', 'paper', 'halftone'].includes(value.backgroundEffect) ? value.backgroundEffect : 'none',
     textSize: ['small', 'standard', 'large', 'extra-large'].includes(value.textSize) ? value.textSize : 'standard',
     density: value.density === 'compact' ? 'compact' : 'comfortable',
     clockFormat: value.clockFormat === '24h' ? '24h' : '12h',

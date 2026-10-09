@@ -246,7 +246,7 @@ dialog[data-dialog="settings"] .settings-grid{grid-template-columns:repeat(3,min
 .shared-child>.schedule-stack .now-slot>span,.shared-child>.schedule-stack .now-slot>strong{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere;word-break:normal}
 .shared-child>.schedule-stack .now-slot>span:last-child{font-size:.9rem;line-height:1.35}
 @media(min-width:1200px){.shared-child .schedule-item{align-items:flex-start;padding:11px 12px}.shared-child .schedule-item time{text-align:left}}
-body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:var(--custom-background-opacity,0);background-color:var(--custom-background-base,#fff);background-image:var(--custom-background-image,none);background-position:center;background-size:cover;background-repeat:no-repeat}
+body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:var(--custom-background-opacity,0);background-color:var(--custom-background-base,#fff);background-image:var(--custom-background-effect,none),var(--custom-background-image,none);background-position:center,center;background-size:var(--custom-background-effect-size,auto),cover;background-repeat:var(--custom-background-effect-repeat,repeat),no-repeat}
 :root[data-mode="dark"]{--custom-background-base:#000}
 :root[data-mode="light"]{--custom-background-base:#fff}
 .custom-background-controls{display:grid;gap:12px;padding:0 14px 14px}
@@ -258,6 +258,9 @@ body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opac
 .background-opacity-control output{font-size:.85rem;font-weight:650;color:var(--muted)}
 .background-opacity-control input[type="range"]{grid-column:1/-1;width:100%;margin:0;accent-color:var(--accent)}
 .background-opacity-control small{grid-column:1/-1;margin:0!important}
+.background-effect-control{margin:0!important}
+.background-effect-control select{margin-top:6px}
+.background-effect-control small{display:block;margin-top:6px}
 @media(max-width:520px){.custom-background-picker{align-items:stretch;flex-direction:column}.custom-background-picker .text-button{align-self:flex-start}}
 .announcement{color:var(--ink)}
 .announcement.celebration{color:var(--ink);background:radial-gradient(circle at 8% 15%,#ffe9a8 0 5px,transparent 6px),radial-gradient(circle at 94% 28%,#f9a8c5 0 5px,transparent 6px),radial-gradient(circle at 85% 88%,#94d9ca 0 5px,transparent 6px),linear-gradient(115deg,color-mix(in srgb,#ffe9a8 18%,var(--surface)),color-mix(in srgb,#f9a8c5 15%,var(--surface)) 58%,color-mix(in srgb,#94d9ca 17%,var(--surface)))}
