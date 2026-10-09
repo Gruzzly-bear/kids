@@ -1,7 +1,7 @@
 // Schedule storage and school-site import helpers.
 const LABELS={ela:'Language Arts',math:'Math',science:'Science',social:'Social Studies',stem:'STEM',tech:'Technology',pe:'Physical Education',art:'Art',spanish:'Spanish',edtech:'Ed Tech'};
 const SCHEDULE_SUBJECTS=['ela','math','science','social','stem','tech','pe','art'];
-const state={view:null,assignments:null,schedules:{leon:[],logan:[]},scheduledDays:{leon:{},logan:{}},scheduleDates:{leon:'',logan:''},displayCards:{leon:[],logan:[],monitor:[]},scheduleMessage:'',showEditor:false,auth:null,parentReturnSession:null};
+const state={view:null,assignments:null,schedules:{leon:[],logan:[]},scheduledDays:{leon:{},logan:{}},scheduleDates:{leon:'',logan:''},displayCards:{leon:[],logan:[],monitor:[]},scheduleMessage:'',showEditor:false,auth:null,parentReturnSession:null,assignmentSubjectCatalogs:{leon:{added:[],hidden:[]},logan:{added:[],hidden:[]}}};
 const esc=s=>String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 
 const SCHOOL_LINKS={
@@ -40,7 +40,7 @@ function parsePastedAssignments(text){
       const nonempty=cells.filter(Boolean);
       if(nonempty.length>=2){
         const dueCell=nonempty.findIndex((cell,index)=>index>0&&importedDueDate(cell));
-        if(dueCell>0){lastItem=add(nonempty[0],nonempty[dueCell],/Submitted\b/i.test(nonempty[0])&&nonempty.some(hasNumericAssignmentScore));title='';submitted=false;continue;}
+        if(dueCell>0){lastItem=add(nonempty[0],nonempty[dueCell],(submitted||/Submitted\b/i.test(nonempty[0]))&&nonempty.some(hasNumericAssignmentScore));title='';continue;}
         if(/^(?:[-: ]+)$/.test(nonempty.join('')))continue;
         if(/Assignment/i.test(nonempty[0])&&/Due Date/i.test(nonempty[1]||''))continue;
       }
@@ -48,7 +48,7 @@ function parsePastedAssignments(text){
     if(/^Submitted\b/i.test(line)){submitted=true;continue;}
     if(/^Missing\b/i.test(line)||/^Late\s+[A-Z][a-z]{2},/i.test(line)){submitted=false;continue;}
     const due=importedDueDate(line);
-    if(due){lastItem=add(title,due);title='';continue;}
+    if(due){lastItem=add(title,due,submitted&&hasNumericAssignmentScore(line));title='';continue;}
     if(hasNumericAssignmentScore(line)){if(lastItem&&submitted)lastItem.done=true;continue;}
     if(/^(Assignments|Assignment Group|Score|Total:|Totals |View feedback|Out of |—|\d+ pts)/i.test(line))continue;
     if(!/^Brady |^Assignment\s+Due Date/i.test(line)){const candidate=importedAssignmentTitle(line);if(candidate){title=candidate;submitted=false;lastItem=null;}}

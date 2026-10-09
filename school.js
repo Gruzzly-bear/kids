@@ -115,6 +115,8 @@ function scheduleAssignmentSubject(item){
 function scheduledItems(student){return [...Object.values(state.scheduledDays?.[student]||{}).flat(),...(state.schedules?.[student]||[])];}
 function subjectLabel(subject,student='leon'){
   if(LABELS[subject])return LABELS[subject];
+  const added=state.assignmentSubjectCatalogs?.[student]?.added?.find(item=>item.id===subject);
+  if(added)return added.label;
   const scheduled=scheduledItems(student).find(item=>scheduleAssignmentSubject(item)===subject&&item.label);
   if(scheduled)return scheduled.label;
   return String(subject||'').replace(/[-_]+/g,' ').replace(/\b\w/g,char=>char.toUpperCase());
@@ -123,10 +125,12 @@ function ensureAssignmentSlots(){
   if(!state.assignments)return;
   for(const student of ['leon','logan']){
     state.assignments[student]??={};
+    const catalog=state.assignmentSubjectCatalogs?.[student]||{added:[],hidden:[]},hidden=new Set(catalog.hidden||[]);
     for(const item of scheduledItems(student)){
       const subject=scheduleAssignmentSubject(item);
-      if(subject)(state.assignments[student][subject]??=[]);
+      if(subject&&!subject.startsWith('custom-')&&!hidden.has(subject))(state.assignments[student][subject]??=[]);
     }
+    for(const item of catalog.added||[])if(item?.id&&!hidden.has(item.id))(state.assignments[student][item.id]??=[]);
   }
 }
 function dueState(x){return x.done?'complete':!x.due?'undated':x.due<scheduleDay()?'late':x.due===scheduleDay()?'today':'future';}
@@ -273,10 +277,10 @@ function monitorPage(){state.view='monitor';render();}
 function acceptAuth(data,session){
   const nextView=session.role==='monitor'?'monitor':session.role==='parent'?'parent':session.role,subjectView=state.view===nextView?state.subjectView:null;
   state.assignments=dbData(data.assignments);loadSchedules(data.schedules);loadCards(data.cards);
-  state.preferences=data.preferences||{};state.auth=session;state.syncPhase='saved';state.syncError='';state.liveSyncError='';state.view=nextView;
+  state.preferences=data.preferences||{};state.assignmentSubjectCatalogs={leon:{added:[],hidden:[]},logan:{added:[],hidden:[]},...(data.assignmentSubjectCatalogs||{})};state.auth=session;state.syncPhase='saved';state.syncError='';state.liveSyncError='';state.view=nextView;
   state.subjectView=subjectView;state.sharedSnapshot=JSON.stringify(data);state.loadError='';state.pending=localRead('school-pending-'+session.role,[]).filter(item=>item&&item.body&&typeof item.label==='string');
   // Replay unsaved edits into the fetched snapshot so a reload does not hide them.
-  for(const item of state.pending){const c=item.body.change;if(c){const found=findTask(c.id);if(c.type==='add'&&!found)(state.assignments[c.student][c.subject]??=[]).push({...c});else if(c.type==='remove'&&found)state.assignments[found.student][found.subject].splice(found.index,1);else if(found){const previous=found.subject;Object.assign(found.x,c);if(c.subject&&c.subject!==previous){state.assignments[found.student][previous].splice(found.index,1);(state.assignments[found.student][c.subject]??=[]).push(found.x);}}}if(item.body.preferencesOnly)state.preferences[item.body.scope]=item.body.preferences;if(item.body.scheduleOnly){const {student,date,items}=item.body;(state.scheduledDays[student]??={})[date]=copySchedule(items);if(state.scheduleDates[student]===date)state.schedules[student]=copySchedule(items)}if(item.body.cardsOnly)loadCards(item.body.cards);}
+  for(const item of state.pending){const c=item.body.change;if(c){const found=findTask(c.id);if(c.type==='add'&&!found)(state.assignments[c.student][c.subject]??=[]).push({...c});else if(c.type==='remove'&&found)state.assignments[found.student][found.subject].splice(found.index,1);else if(found){const previous=found.subject;Object.assign(found.x,c);if(c.subject&&c.subject!==previous){state.assignments[found.student][previous].splice(found.index,1);(state.assignments[found.student][c.subject]??=[]).push(found.x);}}}if(item.body.preferencesOnly)state.preferences[item.body.scope]=item.body.preferences;if(item.body.subjectsOnly)state.assignmentSubjectCatalogs[item.body.student]=item.body.catalog;if(item.body.scheduleOnly){const {student,date,items}=item.body;(state.scheduledDays[student]??={})[date]=copySchedule(items);if(state.scheduleDates[student]===date)state.schedules[student]=copySchedule(items)}if(item.body.cardsOnly)loadCards(item.body.cards);}
   localWrite(sessionKey,session);render();if(state.pending.length)pumpWrites();
 }
 async function fetchAuth(session){const r=await fetch('/api/auth',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(session)});const data=await r.json();if(!r.ok)throw Object.assign(Error(data.error||'Sign-in failed.'),{status:r.status});return data;}
@@ -414,10 +418,36 @@ function helpInbox(){
   return `<section class="panel help-panel"><div class="section-heading"><h2>Needs help <span class="count">${requests.length}</span></h2><span class="small">Requests from Leon and Logan</span></div>${requests.length?requests.map(x=>`<article class="help-request"><div><strong>${iconOf(x.student)} ${nameOf(x.student)} · ${esc(subjectLabel(x.subject,x.student))}</strong><span>${esc(x.title)}</span><div class="task-meta">${dueChip(x)}</div></div><div class="actions">${x.url?`<a class="button light" href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">Open assignment ↗</a>`:''}<button class="button light" onclick="editStudent('${x.student}',${jsArg(x.subject)})">View assignment</button><button class="button" onclick="toggleHelp(${jsArg(x.id)})">Mark handled</button></div></article>`).join(''):'<p class="empty">No open help requests. New requests from the kids will appear here.</p>'}</section>`;
 }
 function editStudent(student,subject){state.editorStudent=student;state.editorSubject=subject||Object.keys(state.assignments[student])[0];state.parentTab='assignments';render();}
+function subjectCatalog(student){const catalog=state.assignmentSubjectCatalogs[student]||{added:[],hidden:[]};return{added:[...(catalog.added||[])],hidden:[...(catalog.hidden||[])]};}
+function saveSubjectCatalog(student){const catalog=subjectCatalog(student);state.assignmentSubjectCatalogs[student]=catalog;return queuedWrite({subjectsOnly:true,student,catalog},'Subjects');}
+function openSubjectManager(){
+  const student=state.editorStudent||'leon',subjects=Object.keys(state.assignments[student]||{}).sort((a,b)=>subjectLabel(a,student).localeCompare(subjectLabel(b,student)));
+  const list=subjects.length?subjects.map(subject=>{const count=(state.assignments[student][subject]||[]).length;return `<div class="editor-assignment"><div><strong>${esc(subjectLabel(subject,student))}</strong><span class="small">${count?`${count} assignment${count===1?'':'s'}`:'No assignments'}</span></div><button class="button light" onclick="removeAssignmentSubject('${student}',${jsArg(subject)})" ${count?'disabled title="Remove assignments before removing this subject"':''}>Remove</button></div>`;}).join(''):'<p class="empty">No subjects yet. Add one below to create an assignment slot.</p>';
+  openDialog('subject-manager',`<h2>Manage ${nameOf(student)}’s subjects</h2><p class="small">Scheduled core classes are added automatically. One-off custom schedule events are skipped. You can add other subjects here.</p><div class="editor-assignments">${list}</div><form onsubmit="addAssignmentSubject(event,'${student}')"><label>New subject<input name="subject" maxlength="60" placeholder="For example, Music" required></label><p class="form-error" id="subject-error" role="alert"></p><button class="button" type="submit">Add subject</button></form>`);
+}
+function addAssignmentSubject(event,student){
+  event.preventDefault();const label=String(new FormData(event.target).get('subject')||'').trim(),subject=scheduleAssignmentSubject({subject:'custom',label});
+  if(!label||!subject||subject==='custom'){document.getElementById('subject-error').textContent='Enter a subject name with at least one letter or number.';return;}
+  const catalog=subjectCatalog(student),hidden=new Set(catalog.hidden),existing=state.assignments[student][subject];
+  if(existing?.length){document.getElementById('subject-error').textContent='That subject already has assignments.';return;}
+  if(hidden.has(subject))catalog.hidden=catalog.hidden.filter(id=>id!==subject);
+  else if(existing){document.getElementById('subject-error').textContent='That subject is already available.';return;}
+  if(!catalog.added.some(item=>item.id===subject))catalog.added.push({id:subject,label});
+  state.assignmentSubjectCatalogs[student]=catalog;state.assignments[student][subject]??=[];state.editorSubject=subject;saveSubjectCatalog(student);render();openSubjectManager();
+}
+function removeAssignmentSubject(student,subject){
+  if((state.assignments[student]?.[subject]||[]).length){showToast('Remove the subject’s assignments first.');return;}
+  const catalog=subjectCatalog(student),scheduled=scheduledItems(student).some(item=>scheduleAssignmentSubject(item)===subject&&!subject.startsWith('custom-'));
+  catalog.added=catalog.added.filter(item=>item.id!==subject);
+  if(scheduled&&!catalog.hidden.includes(subject))catalog.hidden.push(subject);
+  state.assignmentSubjectCatalogs[student]=catalog;delete state.assignments[student][subject];
+  if(state.editorSubject===subject)state.editorSubject=Object.keys(state.assignments[student])[0]||'';
+  saveSubjectCatalog(student);ensureAssignmentSlots();render();openSubjectManager();
+}
 function assignmentEditor(){
-  const student=state.editorStudent||'leon',subjects=state.assignments[student],selected=subjects[state.editorSubject]?state.editorSubject:Object.keys(subjects)[0];state.editorSubject=selected;
+  const student=state.editorStudent||'leon',subjects=state.assignments[student],selected=subjects[state.editorSubject]?state.editorSubject:Object.keys(subjects)[0]||'';state.editorSubject=selected;
   const rows=subjects[selected]||[],shown=rows.filter(x=>!state.editorHideCompleted||!x.done).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999'));
-  return `<section class="parent-page panel"><div class="editor-toolbar"><label>Child<select onchange="editStudent(this.value)">${['leon','logan'].map(s=>`<option value="${s}" ${s===student?'selected':''}>${nameOf(s)}</option>`).join('')}</select></label><label>Subject<select onchange="state.editorSubject=this.value;render()">${Object.keys(subjects).map(s=>`<option value="${s}" ${s===selected?'selected':''}>${esc(subjectLabel(s,student))}</option>`).join('')}</select></label><label class="switch"><input type="checkbox" ${state.editorHideCompleted?'checked':''} onchange="state.editorHideCompleted=this.checked;render()">Hide completed</label></div><p class="small">Changes save automatically to your family account.</p><div class="toolbar"><button class="button" onclick="openAssignmentForm()">Add assignment</button><button class="button light" onclick="openImport()">Import assignments</button></div><h2>${esc(subjectLabel(selected,student)||'Assignments')}</h2><div class="editor-assignments">${shown.map(x=>`<article class="editor-assignment"><div>${task(x,student)}<span class="small">${x.url?'Assignment link added':'No assignment link'}</span></div><div class="editor-actions"><button class="button light" onclick="openAssignmentForm(${jsArg(x.id)})">Edit</button><button class="text-button danger" onclick="removeTask(${jsArg(x.id)})">Remove</button></div></article>`).join('')||'<p class="empty">No assignments in this view.</p>'}</div></section>`;
+  return `<section class="parent-page panel"><div class="editor-toolbar"><label>Child<select onchange="editStudent(this.value)">${['leon','logan'].map(s=>`<option value="${s}" ${s===student?'selected':''}>${nameOf(s)}</option>`).join('')}</select></label><label>Subject<select onchange="state.editorSubject=this.value;render()">${Object.keys(subjects).map(s=>`<option value="${s}" ${s===selected?'selected':''}>${esc(subjectLabel(s,student))}</option>`).join('')}</select></label><label class="switch"><input type="checkbox" ${state.editorHideCompleted?'checked':''} onchange="state.editorHideCompleted=this.checked;render()">Hide completed</label></div><p class="small">Changes save automatically to your family account.</p><div class="toolbar"><button class="button" onclick="openAssignmentForm()" ${selected?'':'disabled'}>Add assignment</button><button class="button light" onclick="openImport()" ${selected?'':'disabled'}>Import assignments</button><button class="button light" onclick="openSubjectManager()">Manage subjects</button></div><h2>${esc(subjectLabel(selected,student)||'Assignments')}</h2><div class="editor-assignments">${shown.map(x=>`<article class="editor-assignment"><div>${task(x,student)}<span class="small">${x.url?'Assignment link added':'No assignment link'}</span></div><div class="editor-actions"><button class="button light" onclick="openAssignmentForm(${jsArg(x.id)})">Edit</button><button class="text-button danger" onclick="removeTask(${jsArg(x.id)})">Remove</button></div></article>`).join('')||'<p class="empty">No assignments in this view.</p>'}</div></section>`;
 }
 function openAssignmentForm(id=''){
   const found=id?findTask(id):null,student=found?.student||state.editorStudent||'leon',subject=found?.subject||state.editorSubject,x=found?.x||{};

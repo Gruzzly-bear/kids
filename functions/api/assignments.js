@@ -16,6 +16,17 @@ export async function onRequestPost({ request, env }) {
       await env.DB.prepare('UPDATE settings SET value=? WHERE key=?').bind(await hash(body.nextPassword), 'parent_password').run();
       return json({ ok: true });
     }
+    if (body.subjectsOnly) {
+      if (role !== 'parent') return json({ error: 'Only parents can manage subjects.' }, 403);
+      const { student, catalog } = body;
+      if (!['leon', 'logan'].includes(student) || !catalog || !Array.isArray(catalog.added) || !Array.isArray(catalog.hidden) || catalog.added.length > 50 || catalog.hidden.length > 50) return json({ error: 'Check the subject list.' }, 400);
+      const validId = value => typeof value === 'string' && /^[a-z][a-z0-9_-]{0,39}$/.test(value);
+      const added = catalog.added.map(item => ({ id: item?.id, label: typeof item?.label === 'string' ? item.label.trim() : '' }));
+      if (added.some(item => !validId(item.id) || !item.label || item.label.length > 60) || new Set(added.map(item => item.id)).size !== added.length || catalog.hidden.some(id => !validId(id))) return json({ error: 'Use unique subject names up to 60 characters.' }, 400);
+      const cleanCatalog = { added, hidden: [...new Set(catalog.hidden)] };
+      await setting(env, `assignment_subjects_${student}`, cleanCatalog).run();
+      return json({ ok: true });
+    }
     if (change) {
       const { id, student, type } = change;
       if (!['leon', 'logan'].includes(student) || typeof id !== 'string' || !id || id.length > 200 || (role !== 'parent' && student !== role)) return json({ error: 'Not allowed.' }, 403);
