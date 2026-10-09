@@ -193,13 +193,13 @@ dialog::backdrop{background:#0d1b2d99;backdrop-filter:blur(4px);}.dialog-top{dis
 @font-face{font-family:"Dragoon Bold";src:url("assets/dragoon-bold-43019/DragoonBold-Ea4Mj.otf") format("opentype");font-weight:700;font-display:swap}
 @font-face{font-family:"Emotion Engine";src:url("assets/emotion-engine-18002/EmotionEngine-8ynA.ttf") format("truetype");font-weight:400;font-display:swap}
 @font-face{font-family:"Emotion Engine";src:url("assets/emotion-engine-18002/EmotionEngineBold-YGnL.ttf") format("truetype");font-weight:700;font-display:swap}
-@font-face{font-family:Gamecuben;src:url("assets/gamecuben-4517/GamecubenDualset-L85D.ttf") format("truetype");font-weight:400;font-display:swap}
-@font-face{font-family:"GB Boot";src:url("assets/gbboot-2385/Gbboot-ALpM.ttf") format("truetype");font-weight:400;font-display:swap}
+@font-face{font-family:Gamecuben;src:url("assets/gamecuben-4517/GamecubenDualset-L85D.ttf") format("truetype");font-weight:400;font-display:swap;size-adjust:118%}
+@font-face{font-family:"GB Boot";src:url("assets/gbboot-2385/Gbboot-ALpM.ttf") format("truetype");font-weight:400;font-display:swap;size-adjust:138%}
 @font-face{font-family:IsaacSans;src:url("assets/isaacsans-18283/Isaacsans-lEpZ.ttf") format("truetype");font-weight:400;font-display:swap}
 @font-face{font-family:Kroegbainder;src:url("assets/kroegbainder-98598/Kroegbainder-gw07p.ttf") format("truetype");font-weight:400;font-display:swap}
 @font-face{font-family:"Modern Fantasy";src:url("assets/modern-fantasy-43456/ModernFantasyDemoRegular-4B74W.otf") format("opentype");font-weight:400;font-display:swap}
-@font-face{font-family:"Pokemon GB";src:url("assets/pokemon-gb-9621/PokemonGb-RAeo.ttf") format("truetype");font-weight:400;font-display:swap}
-@font-face{font-family:"Wario Land 4";src:url("assets/warioland4tt-30199/Warioland4chmc-VApe.ttf") format("truetype");font-weight:400;font-display:swap}
+@font-face{font-family:"Pokemon GB";src:url("assets/pokemon-gb-9621/PokemonGb-RAeo.ttf") format("truetype");font-weight:400;font-display:swap;size-adjust:128%}
+@font-face{font-family:"Wario Land 4";src:url("assets/warioland4tt-30199/Warioland4chmc-VApe.ttf") format("truetype");font-weight:400;font-display:swap;size-adjust:112%}
 :root[data-font="charger"] body,:root[data-font="charger"] body *{font-family:Charger,"Segoe UI",sans-serif}
 :root[data-font="emotion-engine"] body,:root[data-font="emotion-engine"] body *{font-family:"Emotion Engine",system-ui,sans-serif}
 :root[data-font="isaacsans"] body,:root[data-font="isaacsans"] body *{font-family:IsaacSans,"Trebuchet MS",sans-serif}
