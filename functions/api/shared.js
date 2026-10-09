@@ -18,12 +18,14 @@ export function metadata(value = {}) {
 }
 export function preferences(value = {}) {
   const avatars = ['default', '🐱', '🐶', '🦊', '🐼', '🐸', '🦄', '🐉', '🐢', '🦋', '🐙', '🦖', '🐧', '🐨', '🐺', '🦁', '🐯', '🐰', '🐹', '🐝', '🦉', '🚀', '⚡', '🤖', '👾', '🎮', '🎨', '🦈', '🐬', '🦕', '🧙', '🥷'];
+  const fontStyles = ['theme', 'charger', 'cosmic-fantasy', 'dalelands', 'dragoon-bold', 'emotion-engine', 'gamecuben', 'gbboot', 'isaacsans', 'kroegbainder', 'modern-fantasy', 'pokemon-gb', 'warioland4', 'baby-angel', 'ballkids-game', 'bravyka', 'ci-gamedev', 'fokuz', 'gamepixies', 'midnight', 'money-game', 'montserrat', 'queensides', 'retro-viber', 'rushford-clean', 'simple-people', 'soffie', 'spenbeb-game', 'super-joyful', 'tbj-margin', 'wah-iki'];
   return {
     appearance: ['light', 'dark', 'system'].includes(value.appearance) ? value.appearance : 'system',
     lightTheme: typeof value.lightTheme === 'string' ? value.lightTheme.slice(0, 40) : 'coastal',
     darkTheme: typeof value.darkTheme === 'string' ? value.darkTheme.slice(0, 40) : 'midnight',
     visualStyle: ['classic', 'boxy', 'studio', 'playful', 'glass', 'minimal', 'comic', 'retro', 'pixel', 'book', 'stardew', 'dragoon', 'wow-ui', 'isaac', 'swtor', 'ps2-ui', 'ps4-ui', 'pipboy'].includes(value.visualStyle) ? value.visualStyle : 'classic',
-    fontStyle: ['theme', 'charger', 'cosmic-fantasy', 'dalelands', 'dragoon-bold', 'emotion-engine', 'gamecuben', 'gbboot', 'isaacsans', 'kroegbainder', 'modern-fantasy', 'pokemon-gb', 'warioland4'].includes(value.fontStyle) ? value.fontStyle : 'theme',
+    fontStyle: fontStyles.includes(value.fontStyle) ? value.fontStyle : 'theme',
+    clockFont: ['system', ...fontStyles].includes(value.clockFont) ? value.clockFont : 'theme',
     cornerStyle: ['theme', 'soft', 'square', 'pill'].includes(value.cornerStyle) ? value.cornerStyle : 'theme',
     edgeStyle: ['theme', 'plain', 'outlined', 'bold', 'dashed', 'glow'].includes(value.edgeStyle) ? value.edgeStyle : 'theme',
     surfaceTexture: ['none', 'paper', 'grid', 'scanlines', 'halftone'].includes(value.surfaceTexture) ? value.surfaceTexture : 'none',

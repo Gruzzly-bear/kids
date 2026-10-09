@@ -200,6 +200,28 @@ dialog::backdrop{background:#0d1b2d99;backdrop-filter:blur(4px);}.dialog-top{dis
 @font-face{font-family:"Modern Fantasy";src:url("assets/modern-fantasy-43456/ModernFantasyDemoRegular-4B74W.otf") format("opentype");font-weight:400;font-display:swap}
 @font-face{font-family:"Pokemon GB";src:url("assets/pokemon-gb-9621/PokemonGb-RAeo.ttf") format("truetype");font-weight:400;font-display:swap;size-adjust:128%}
 @font-face{font-family:"Wario Land 4";src:url("assets/warioland4tt-30199/Warioland4chmc-VApe.ttf") format("truetype");font-weight:400;font-display:swap}
+@font-face{font-family:"Baby Angel";src:url("assets/baby-angel-170725/BabyAngel-Yq4mO.otf") format("opentype");font-weight:400;font-display:swap}
+@font-face{font-family:"Ballkids Game";src:url("assets/ballkids-game-105594/BallkidsGame-JR5w7.otf") format("opentype");font-weight:400;font-display:swap}
+@font-face{font-family:Bravyka;src:url("assets/bravyka-170739/BravykaRegular-gwVZ4.ttf") format("truetype");font-weight:400;font-display:swap}
+@font-face{font-family:"CI Gamedev";src:url("assets/ci-gamedev-16px-130458/CiGamedevRegular-ovq3z.ttf") format("truetype");font-weight:400;font-display:swap}
+@font-face{font-family:Fokuz;src:url("assets/fokuz-170716/Fokuz-5yeg8.ttf") format("truetype");font-weight:400;font-display:swap}
+@font-face{font-family:Gamepixies;src:url("assets/gamepixies-42493/Gamepixies-XGDzg.ttf") format("truetype");font-weight:400;font-display:swap}
+@font-face{font-family:Midnight;src:url("assets/midnight-7-170778/Midnight-gwV96.otf") format("opentype");font-weight:400;font-display:swap}
+@font-face{font-family:"Money Game";src:url("assets/money-game-68524/MoneyGameRegular-Yza9o.ttf") format("truetype");font-weight:400;font-display:swap}
+@font-face{font-family:Montserrat;src:url("assets/montserrat-16544/MontserratRegular-RpK6l.otf") format("opentype");font-weight:400;font-display:swap}
+@font-face{font-family:Montserrat;src:url("assets/montserrat-16544/MontserratSemibold-8M8PB.otf") format("opentype");font-weight:600;font-display:swap}
+@font-face{font-family:Montserrat;src:url("assets/montserrat-16544/MontserratBold-p781R.otf") format("opentype");font-weight:700;font-display:swap}
+@font-face{font-family:Queensides;src:url("assets/queensides-90306/Queensides-3z7Ey.ttf") format("truetype");font-weight:400;font-display:swap}
+@font-face{font-family:Queensides;src:url("assets/queensides-90306/QueensidesMedium-x30zV.ttf") format("truetype");font-weight:500;font-display:swap}
+@font-face{font-family:"Retro Viber";src:url("assets/retro-viber-156707/RetroViberRegular-6RPaM.otf") format("opentype");font-weight:400;font-display:swap}
+@font-face{font-family:"Rushford Clean";src:url("assets/rushford-clean-105444/Rushfordclean-rgz89.otf") format("opentype");font-weight:400;font-display:swap}
+@font-face{font-family:"Simple People";src:url("assets/simple-people-170773/SimplePeople-m295v.otf") format("opentype");font-weight:400;font-display:swap}
+@font-face{font-family:Soffie;src:url("assets/soffie-140110/SoffieRegular-ovOLV.otf") format("opentype");font-weight:400;font-display:swap}
+@font-face{font-family:"Spenbeb Game";src:url("assets/spenbeb-game-119715/SpenbebGame-R9q46.otf") format("opentype");font-weight:400;font-display:swap}
+@font-face{font-family:"Super Joyful";src:url("assets/super-joyful-153768/SuperJoyful-lxwPq.ttf") format("truetype");font-weight:400;font-display:swap}
+@font-face{font-family:"TBJ Margin";src:url("assets/tbj-margin-condensed-165753/TbjMarginCondensedDemoReg-ARaXg.ttf") format("truetype");font-weight:400;font-display:swap}
+@font-face{font-family:"TBJ Margin";src:url("assets/tbj-margin-condensed-165753/TbjMarginCondensedDemoBold-V46we.ttf") format("truetype");font-weight:700;font-display:swap}
+@font-face{font-family:"Wah Iki";src:url("assets/wah-iki-147402/WahIki-R9l7v.otf") format("opentype");font-weight:400;font-display:swap}
 :root[data-font="charger"] body,:root[data-font="charger"] body *{font-family:Charger,"Segoe UI",sans-serif}
 :root[data-font="emotion-engine"] body,:root[data-font="emotion-engine"] body *{font-family:"Emotion Engine",system-ui,sans-serif}
 :root[data-font="isaacsans"] body,:root[data-font="isaacsans"] body *{font-family:IsaacSans,"Trebuchet MS",sans-serif}
@@ -212,6 +234,24 @@ dialog::backdrop{background:#0d1b2d99;backdrop-filter:blur(4px);}.dialog-top{dis
 :root[data-font="modern-fantasy"] body,:root[data-font="modern-fantasy"] body *{font-family:"Modern Fantasy",Georgia,serif}
 :root[data-font="pokemon-gb"] body,:root[data-font="pokemon-gb"] body *{font-family:"Pokemon GB",ui-monospace,monospace}
 :root[data-font="warioland4"] body,:root[data-font="warioland4"] body *{font-family:"Wario Land 4",ui-monospace,monospace}
+:root[data-font="baby-angel"] body,:root[data-font="baby-angel"] body *{font-family:"Baby Angel",cursive}
+:root[data-font="ballkids-game"] body,:root[data-font="ballkids-game"] body *{font-family:"Ballkids Game",ui-monospace,monospace}
+:root[data-font="bravyka"] body,:root[data-font="bravyka"] body *{font-family:Bravyka,Georgia,serif}
+:root[data-font="ci-gamedev"] body,:root[data-font="ci-gamedev"] body *{font-family:"CI Gamedev",ui-monospace,monospace}
+:root[data-font="fokuz"] body,:root[data-font="fokuz"] body *{font-family:Fokuz,ui-monospace,monospace}
+:root[data-font="gamepixies"] body,:root[data-font="gamepixies"] body *{font-family:Gamepixies,ui-monospace,monospace}
+:root[data-font="midnight"] body,:root[data-font="midnight"] body *{font-family:Midnight,Georgia,serif}
+:root[data-font="money-game"] body,:root[data-font="money-game"] body *{font-family:"Money Game",ui-monospace,monospace}
+:root[data-font="montserrat"] body,:root[data-font="montserrat"] body *{font-family:Montserrat,"Segoe UI",sans-serif}
+:root[data-font="queensides"] body,:root[data-font="queensides"] body *{font-family:Queensides,"Segoe UI",sans-serif}
+:root[data-font="retro-viber"] body,:root[data-font="retro-viber"] body *{font-family:"Retro Viber",ui-monospace,monospace}
+:root[data-font="rushford-clean"] body,:root[data-font="rushford-clean"] body *{font-family:"Rushford Clean",Georgia,serif}
+:root[data-font="simple-people"] body,:root[data-font="simple-people"] body *{font-family:"Simple People",system-ui,sans-serif}
+:root[data-font="soffie"] body,:root[data-font="soffie"] body *{font-family:Soffie,cursive}
+:root[data-font="spenbeb-game"] body,:root[data-font="spenbeb-game"] body *{font-family:"Spenbeb Game",ui-monospace,monospace}
+:root[data-font="super-joyful"] body,:root[data-font="super-joyful"] body *{font-family:"Super Joyful",system-ui,sans-serif}
+:root[data-font="tbj-margin"] body,:root[data-font="tbj-margin"] body *{font-family:"TBJ Margin","Arial Narrow",sans-serif}
+:root[data-font="wah-iki"] body,:root[data-font="wah-iki"] body *{font-family:"Wah Iki",Georgia,serif}
 dialog[data-dialog="settings"]{width:min(960px,calc(100% - 32px));max-height:92dvh;padding:clamp(18px,3vw,30px)}
 dialog[data-dialog="settings"] h2{margin:0 0 5px}
 dialog[data-dialog="settings"] .settings-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 14px;margin:14px 0 18px}
@@ -313,6 +353,40 @@ body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opac
 .theme-group>summary{min-width:0;overflow-wrap:anywhere}
 
 /* Pixel display fonts need a calmer, more compact clock face. */
-:root:is([data-font="gbboot"],[data-font="gamecuben"],[data-font="pokemon-gb"],[data-font="warioland4"]) .dashboard-clock{font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;font-size:clamp(2rem,3vw,3rem);letter-spacing:0;}
-:root:is([data-font="gbboot"],[data-font="gamecuben"],[data-font="pokemon-gb"],[data-font="warioland4"]) .class-orbit-center .dashboard-clock{font-size:clamp(2.5rem,3.7vw,3.5rem);padding:12px 20px;}
-@media(max-width:700px){:root:is([data-font="gbboot"],[data-font="gamecuben"],[data-font="pokemon-gb"],[data-font="warioland4"]) .class-orbit-center .dashboard-clock{font-size:clamp(2rem,10vw,2.8rem);padding:9px 14px;}}
+:root[data-clock-font="theme"]:is([data-font="gbboot"],[data-font="gamecuben"],[data-font="pokemon-gb"],[data-font="warioland4"],[data-font="ci-gamedev"],[data-font="ballkids-game"],[data-font="gamepixies"],[data-font="spenbeb-game"],[data-font="retro-viber"],[data-font="money-game"]) .dashboard-clock{font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;font-size:clamp(2rem,3vw,3rem);letter-spacing:0;}
+:root[data-clock-font="theme"]:is([data-font="gbboot"],[data-font="gamecuben"],[data-font="pokemon-gb"],[data-font="warioland4"],[data-font="ci-gamedev"],[data-font="ballkids-game"],[data-font="gamepixies"],[data-font="spenbeb-game"],[data-font="retro-viber"],[data-font="money-game"]) .class-orbit-center .dashboard-clock{font-size:clamp(2.5rem,3.7vw,3.5rem);padding:12px 20px;}
+@media(max-width:700px){:root[data-clock-font="theme"]:is([data-font="gbboot"],[data-font="gamecuben"],[data-font="pokemon-gb"],[data-font="warioland4"],[data-font="ci-gamedev"],[data-font="ballkids-game"],[data-font="gamepixies"],[data-font="spenbeb-game"],[data-font="retro-viber"],[data-font="money-game"]) .class-orbit-center .dashboard-clock{font-size:clamp(2rem,10vw,2.8rem);padding:9px 14px;}}
+:root[data-clock-font="system"] .dashboard-clock{font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;}
+:root[data-clock-font="charger"] .dashboard-clock{font-family:Charger,"Segoe UI",sans-serif;}
+:root[data-clock-font="emotion-engine"] .dashboard-clock{font-family:"Emotion Engine",system-ui,sans-serif;}
+:root[data-clock-font="isaacsans"] .dashboard-clock{font-family:IsaacSans,"Trebuchet MS",sans-serif;}
+:root[data-clock-font="cosmic-fantasy"] .dashboard-clock{font-family:"Cosmic Fantasy",Georgia,serif;}
+:root[data-clock-font="dalelands"] .dashboard-clock{font-family:"Dalelands Uncial",Georgia,serif;}
+:root[data-clock-font="dragoon-bold"] .dashboard-clock{font-family:"Dragoon Bold",Georgia,serif;}
+:root[data-clock-font="gamecuben"] .dashboard-clock{font-family:Gamecuben,ui-monospace,monospace;}
+:root[data-clock-font="gbboot"] .dashboard-clock{font-family:"GB Boot",ui-monospace,monospace;}
+:root[data-clock-font="kroegbainder"] .dashboard-clock{font-family:Kroegbainder,Georgia,serif;}
+:root[data-clock-font="modern-fantasy"] .dashboard-clock{font-family:"Modern Fantasy",Georgia,serif;}
+:root[data-clock-font="pokemon-gb"] .dashboard-clock{font-family:"Pokemon GB",ui-monospace,monospace;}
+:root[data-clock-font="warioland4"] .dashboard-clock{font-family:"Wario Land 4",ui-monospace,monospace;}
+:root[data-clock-font="baby-angel"] .dashboard-clock{font-family:"Baby Angel",cursive;}
+:root[data-clock-font="ballkids-game"] .dashboard-clock{font-family:"Ballkids Game",ui-monospace,monospace;}
+:root[data-clock-font="bravyka"] .dashboard-clock{font-family:Bravyka,Georgia,serif;}
+:root[data-clock-font="ci-gamedev"] .dashboard-clock{font-family:"CI Gamedev",ui-monospace,monospace;}
+:root[data-clock-font="fokuz"] .dashboard-clock{font-family:Fokuz,ui-monospace,monospace;}
+:root[data-clock-font="gamepixies"] .dashboard-clock{font-family:Gamepixies,ui-monospace,monospace;}
+:root[data-clock-font="midnight"] .dashboard-clock{font-family:Midnight,Georgia,serif;}
+:root[data-clock-font="money-game"] .dashboard-clock{font-family:"Money Game",ui-monospace,monospace;}
+:root[data-clock-font="montserrat"] .dashboard-clock{font-family:Montserrat,"Segoe UI",sans-serif;}
+:root[data-clock-font="queensides"] .dashboard-clock{font-family:Queensides,"Segoe UI",sans-serif;}
+:root[data-clock-font="retro-viber"] .dashboard-clock{font-family:"Retro Viber",ui-monospace,monospace;}
+:root[data-clock-font="rushford-clean"] .dashboard-clock{font-family:"Rushford Clean",Georgia,serif;}
+:root[data-clock-font="simple-people"] .dashboard-clock{font-family:"Simple People",system-ui,sans-serif;}
+:root[data-clock-font="soffie"] .dashboard-clock{font-family:Soffie,cursive;}
+:root[data-clock-font="spenbeb-game"] .dashboard-clock{font-family:"Spenbeb Game",ui-monospace,monospace;}
+:root[data-clock-font="super-joyful"] .dashboard-clock{font-family:"Super Joyful",system-ui,sans-serif;}
+:root[data-clock-font="tbj-margin"] .dashboard-clock{font-family:"TBJ Margin","Arial Narrow",sans-serif;}
+:root[data-clock-font="wah-iki"] .dashboard-clock{font-family:"Wah Iki",Georgia,serif;}
+:root[data-clock-font]:not([data-clock-font="theme"]) .dashboard-clock{font-size:clamp(2rem,3vw,3rem);letter-spacing:0;}
+:root[data-clock-font]:not([data-clock-font="theme"]) .class-orbit-center .dashboard-clock{font-size:clamp(2.5rem,3.7vw,3.5rem);padding:12px 20px;}
+@media(max-width:700px){:root[data-clock-font]:not([data-clock-font="theme"]) .class-orbit-center .dashboard-clock{font-size:clamp(2rem,10vw,2.8rem);padding:9px 14px;}}
