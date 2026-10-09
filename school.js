@@ -311,7 +311,7 @@ function workingAhead(subjects,student=state.view,readonly=false){
   return `<details id="${student}-ahead-work" class="work-section ahead"><summary class="section-heading"><h2>Working Ahead <span class="count">${count}</span></h2><span class="small">${date?'Next due · '+dateLabel(date):'Next due date'}</span></summary>${date?`<div class="due-list" tabindex="0" role="region" aria-label="${nameOf(student)} working ahead assignments">${taskGroups(subjects,x=>!x.done&&x.due===date,student,readonly)}</div>`:'<p class="empty">No upcoming assignments.</p>'}</details>`;
 }
 function scheduleMinutes(value){const [h,m]=String(value||'').split(':').map(Number);return Number.isInteger(h)&&Number.isInteger(m)?h*60+m:-1;}
-function formatScheduleTime(value){const minutes=scheduleMinutes(value);if(minutes<0)return'';const hour=Math.floor(minutes/60),minute=minutes%60;return prefs().clockFormat==='24h'?`${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}`:`${hour%12||12}:${String(minute).padStart(2,'0')} ${hour<12?'AM':'PM'}`;}
+function formatScheduleTime(value){const minutes=scheduleMinutes(value);if(minutes<0)return'';const hour=Math.floor(minutes/60),minute=minutes%60;return prefs().clockFormat==='24h'?`${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}`:`${hour%12||12}:${String(minute).padStart(2,'0')}\u00a0${hour<12?'AM':'PM'}`;}
 function scheduleLabel(item){return item.subject&&!['custom','break'].includes(item.subject)?LABELS[item.subject]||item.subject:item.label||'Break';}
 function scheduleItemStyle(item){return `--item-color:var(--subject-${item.subject},var(--accent))`;}
 function scheduleSnapshot(student){

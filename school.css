@@ -183,3 +183,5 @@ dialog::backdrop{background:#0d1b2d99;backdrop-filter:blur(4px);}.dialog-top{dis
   #sync-status{bottom:10px;right:12px;max-width:calc(100% - 24px);}#toast{gap:10px;bottom:76px;}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important;}}
+:root[data-texture="scanlines"]{--surface-texture:repeating-linear-gradient(0deg,transparent 0 3px,color-mix(in srgb,var(--accent) 4%,transparent) 3px 4px);}:root[data-texture="scanlines"] .class-timeline-card{background-image:var(--surface-texture)!important;background-size:auto!important;}:root[data-style="pipboy"] body{background-image:repeating-linear-gradient(0deg,color-mix(in srgb,var(--accent) 3%,var(--page)) 0 1px,var(--page) 1px 4px);}
+.class-timeline-card{gap:5px;padding:10px 12px;line-height:1.35;}.class-timeline-card>span.small{line-height:1.25;}.class-timeline-card>time{white-space:normal;overflow-wrap:normal;word-break:keep-all;line-height:1.3;}
