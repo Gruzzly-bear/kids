@@ -130,7 +130,7 @@ const THEME_FONT_MATCHES = {
 };
 const PROFILE_AVATARS = ['default','🐱','🐶','🦊','🐼','🐸','🦄','🐉','🐢','🦋','🐙','🦖','🐧','🐨','🐺','🦁','🐯','🐰','🐹','🐝','🦉','🚀','⚡','🤖','👾','🎮','🎨','🦈','🐬','🦕','🧙','🥷'];
 const AVATAR_FRAMES = [['circle','Circle'],['rounded','Rounded'],['double','Double ring'],['glow','Glow'],['sticker','Sticker'],['none','No frame']];
-const DEFAULT_PREFS = {appearance:'system',lightTheme:'coastal',darkTheme:'midnight',visualStyle:'classic',fontStyle:'theme',cornerStyle:'theme',edgeStyle:'theme',surfaceTexture:'none',backgroundImage:'',backgroundOpacity:16,backgroundEffect:'none',textSize:'standard',density:'comfortable',clockFormat:'12h',motion:'system',classBrowser:false,hideCompleted:true,avatar:'default',avatarFrame:'circle'};
+const DEFAULT_PREFS = {appearance:'system',lightTheme:'coastal',darkTheme:'midnight',visualStyle:'classic',fontStyle:'theme',cornerStyle:'theme',edgeStyle:'theme',surfaceTexture:'none',backgroundImage:'',backgroundOpacity:16,backgroundEffect:'none',textSize:'standard',density:'comfortable',clockFormat:'12h',motion:'system',classBrowser:false,hideCompleted:true,avatar:'default',avatarImage:'',avatarFrame:'circle'};
 state.preferences = {};
 state.parentTab = 'overview';
 state.pending = [];
@@ -164,6 +164,7 @@ function prefs(forScope = scope()) {
   if (!['12h','24h'].includes(p.clockFormat)) p.clockFormat='12h';
   if (!['system','reduced','full'].includes(p.motion)) p.motion='system';
   if (!PROFILE_AVATARS.includes(p.avatar)) p.avatar='default';
+  if (typeof p.avatarImage!=='string'||!/^data:image\/webp;base64,[A-Za-z0-9+/]+=*$/.test(p.avatarImage)||p.avatarImage.length>120000) p.avatarImage='';
   if (!AVATAR_FRAMES.some(([frame])=>frame===p.avatarFrame)) p.avatarFrame='circle';
   return p;
 }
@@ -192,6 +193,24 @@ function previewCustomBackgroundOpacity(value,forScope=scope()){
   const opacity=Math.max(0,Math.min(35,Number(value)||0));document.documentElement.style.setProperty('--custom-background-opacity',String(opacity/100));
   const output=document.querySelector('[data-background-opacity-value]');if(output)output.textContent=`${opacity}%`;
 }
+async function setProfileAvatarImage(input,forScope=state.settingsScope||scope()){
+  const file=input.files?.[0];if(!file)return;
+  if(!file.type.startsWith('image/')){showToast('Choose an image file.');input.value='';return;}
+  try{
+    const bitmap=await createImageBitmap(file),canvas=document.createElement('canvas'),context=canvas.getContext('2d');
+    if(!context)throw new Error('Image editing is unavailable in this browser.');
+    let scale=Math.min(1,256/Math.max(bitmap.width,bitmap.height)),data='';
+    for(let attempt=0;attempt<10;attempt++){
+      canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));context.clearRect(0,0,canvas.width,canvas.height);context.drawImage(bitmap,0,0,canvas.width,canvas.height);
+      data=canvas.toDataURL('image/webp',Math.max(.3,.86-attempt*.07));if(data.startsWith('data:image/webp;base64,')&&data.length<=120000)break;
+      if(attempt>3)scale*=.8;
+    }
+    bitmap.close?.();if(!data.startsWith('data:image/webp;base64,')||data.length>120000)throw new Error('That picture could not be reduced enough. Try a smaller image.');
+    setPreference('avatarImage',data,forScope);showToast(`${nameOf(forScope)}’s picture saved.`);
+  }catch(error){console.error('Could not save profile picture:',error);showToast(error.message||'Could not load that picture.');}
+  input.value='';
+}
+function clearProfileAvatarImage(forScope=state.settingsScope||scope()){setPreference('avatarImage','',forScope);showToast('Profile picture removed.');}
 async function setCustomBackground(input){
   const file=input.files?.[0];if(!file)return;
   if(!file.type.startsWith('image/')){showToast('Choose an image file.');input.value='';return;}
@@ -212,11 +231,13 @@ async function setCustomBackground(input){
 function clearCustomBackground(forScope=scope()){setPreference('backgroundImage','',forScope);}
 function setPreference(field, value, forScope=scope()) {
   const p={...prefs(forScope),[field]:value};
+  if(field==='avatar')p.avatarImage='';
   state.preferences[forScope]=p; localWrite('school-preferences-'+forScope,p);
   if(forScope===scope())applyPreferences();
   if(state.auth&&state.auth.role!=='monitor')queuedWrite({preferencesOnly:true,scope:forScope,preferences:p},'Preferences');
   if(field==='classBrowser'||field==='hideCompleted'||field==='clockFormat')render();
   updateAppearanceControls(p);
+  if(['leon','logan'].includes(forScope)&&['avatar','avatarImage','avatarFrame'].includes(field))refreshProfileAvatarViews(forScope,p);
 }
 function selectTheme(theme,forScope=scope()){
   if(!THEME_PALETTES[theme])return;
@@ -246,14 +267,24 @@ function dateLabel(date, weekday=true){return date?new Date(date+'T12:00:00Z').t
 function nameOf(student){return student==='leon'?'Leon':student==='logan'?'Logan':'Family';}
 function iconOf(student){return student==='leon'?'🚀':'⚡';}
 function profileAvatarFor(student,profile=prefs(student)){return profile.avatar==='default'?iconOf(student):profile.avatar;}
+function profileAvatarContents(student,profile=prefs(student)){return profile.avatarImage?`<img class="profile-avatar-image" src="${esc(profile.avatarImage)}" alt="">`:esc(profileAvatarFor(student,profile));}
 function profileAvatarMark(student,frameOverride=''){
   const frame=frameOverride||prefs(student).avatarFrame;
-  return `<span class="profile-avatar avatar-frame-${frame}" data-profile-avatar="${student}" data-profile-avatar-frame="${frameOverride}" aria-hidden="true">${esc(profileAvatarFor(student))}</span>`;
+  return `<span class="profile-avatar avatar-frame-${frame}" data-profile-avatar="${student}" data-profile-avatar-frame="${frameOverride}" aria-hidden="true">${profileAvatarContents(student)}</span>`;
+}
+function refreshProfileAvatarViews(student,profile=prefs(student)){
+  document.querySelectorAll(`[data-profile-avatar="${student}"]`).forEach(avatar=>{const frame=avatar.dataset.profileAvatarFrame||profile.avatarFrame;avatar.innerHTML=profileAvatarContents(student,profile);avatar.className=`profile-avatar avatar-frame-${frame}`;});
+  document.querySelectorAll(`.avatar-customizer[data-student="${student}"]`).forEach(section=>{
+    section.querySelectorAll('[data-avatar-choice]').forEach(button=>button.setAttribute('aria-pressed',String(!profile.avatarImage&&button.dataset.avatarChoice===profile.avatar)));
+    section.querySelectorAll('[data-avatar-frame-choice]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.avatarFrameChoice===profile.avatarFrame)));
+    const summary=section.querySelector('.avatar-summary');if(summary)summary.textContent=`${profile.avatarImage?'Custom image':profileAvatarFor(student,profile)} · ${AVATAR_FRAMES.find(([frame])=>frame===profile.avatarFrame)?.[1]||'Circle'}`;
+    const remove=section.querySelector('[data-avatar-image-remove]');if(remove)remove.disabled=!profile.avatarImage;
+  });
 }
 function avatarCustomizer(profile,student){
-  const avatars=PROFILE_AVATARS.map(avatar=>{const shown=avatar==='default'?iconOf(student):avatar,label=avatar==='default'?'Default':shown;return `<button type="button" class="avatar-choice" data-avatar-choice="${esc(avatar)}" aria-label="${avatar==='default'?'Use default avatar':`Use ${label} avatar`}" aria-pressed="${profile.avatar===avatar}" onclick="setPreference('avatar',${jsArg(avatar)},state.settingsScope)">${shown}</button>`;}).join('');
+  const avatars=PROFILE_AVATARS.map(avatar=>{const shown=avatar==='default'?iconOf(student):avatar,label=avatar==='default'?'Default':shown;return `<button type="button" class="avatar-choice" data-avatar-choice="${esc(avatar)}" aria-label="${avatar==='default'?'Use default avatar':`Use ${label} avatar`}" aria-pressed="${!profile.avatarImage&&profile.avatar===avatar}" onclick="setPreference('avatar',${jsArg(avatar)},state.settingsScope)">${shown}</button>`;}).join('');
   const frames=AVATAR_FRAMES.map(([frame,label])=>`<button type="button" class="avatar-frame-choice" data-avatar-frame-choice="${frame}" aria-pressed="${profile.avatarFrame===frame}" onclick="setPreference('avatarFrame','${frame}',state.settingsScope)">${profileAvatarMark(student,frame)}<span>${label}</span></button>`).join('');
-  return `<details class="avatar-customizer"><summary>Profile avatar <span class="avatar-summary">${profileAvatarFor(student,profile)} · ${AVATAR_FRAMES.find(([frame])=>frame===profile.avatarFrame)?.[1]||'Circle'}</span></summary><p class="small">Choose an avatar and frame for ${nameOf(student)}’s profile.</p><div class="avatar-choice-grid" aria-label="Choose avatar">${avatars}</div><h4>Frame</h4><div class="avatar-frame-options" aria-label="Choose avatar frame">${frames}</div></details>`;
+  return `<details class="avatar-customizer"><summary>Profile avatar <span class="avatar-summary">${profile.avatarImage?'Custom image':profileAvatarFor(student,profile)} · ${AVATAR_FRAMES.find(([frame])=>frame===profile.avatarFrame)?.[1]||'Circle'}</span></summary><p class="small">Choose an avatar or use a picture for ${nameOf(student)}’s profile.</p><div class="avatar-choice-grid" aria-label="Choose avatar">${avatars}</div><div class="avatar-upload-row"><label class="avatar-upload-control">Upload a picture<input type="file" accept="image/*" onchange="setProfileAvatarImage(this,state.settingsScope)"></label><button type="button" class="text-button danger" data-avatar-image-remove ${profile.avatarImage?'':'disabled'} onclick="clearProfileAvatarImage(state.settingsScope)">Remove picture</button></div><h4>Frame</h4><div class="avatar-frame-options" aria-label="Choose avatar frame">${frames}</div></details>`;
 }
 function safeLink(value){try{const url=new URL(value);return ['https:','http:'].includes(url.protocol)?url.href:'';}catch{return '';}}
 function jsArg(value){return esc(JSON.stringify(String(value)));}

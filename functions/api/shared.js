@@ -37,6 +37,7 @@ export function preferences(value = {}) {
     classBrowser: !!value.classBrowser,
     hideCompleted: value.hideCompleted !== false,
     avatar: avatars.includes(value.avatar) ? value.avatar : 'default',
+    avatarImage: typeof value.avatarImage === 'string' && value.avatarImage.length <= 120000 && /^data:image\/webp;base64,[A-Za-z0-9+/]+=*$/.test(value.avatarImage) ? value.avatarImage : '',
     avatarFrame: ['circle', 'rounded', 'double', 'glow', 'sticker', 'none'].includes(value.avatarFrame) ? value.avatarFrame : 'circle'
   };
 }
