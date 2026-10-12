@@ -6,13 +6,13 @@
 
 The first successful sign-in imports the assignment lists into D1.
 
-The kids’ dashboard shows Now / Next, Due Today, the next unfinished due date in Working Ahead, and Past Due. Completed work can be reopened. Parents can attach a direct assignment link, manage help requests, import assignments and schedules, and review the next seven days for both children. The shared dashboard remains read-only.
+The kids’ dashboard shows Now / Next, Due Today, the next unfinished due date in Working Ahead, and Past Due. Completed work can be reopened. Completing an assignment records its completion date, and the child can record a separate submission date. Parents can add or correct both dates and keep a receipt link and note with each assignment. Parents can also attach a direct assignment link, manage help requests, import assignments and schedules, and review the next seven days for both children. The shared dashboard remains read-only.
 
 Settings include light/dark/device appearance, theme previews and high-contrast themes, text size, spacing, and an optional class browser. Signed-in profiles sync settings through D1; shared-dashboard and signed-out settings are saved on the current device. Existing theme choices carry over.
 
-Assignment links, help flags, and preferences use the existing `settings` table. Existing databases need no migration. Keep the current Cloudflare Pages `DB` binding and password secrets. Upload the HTML, CSS, JavaScript, and `functions` files together when deploying.
+Assignment links, completion and submission dates, receipt links and notes, help flags, and preferences use the existing `settings` table. Existing databases need no migration. Keep the current Cloudflare Pages `DB` binding and password secrets. Upload the HTML, CSS, JavaScript, and `functions` files together when deploying.
 
-Schedules use Eastern Time and are saved per student and date. Editing a schedule does not save it until “Save this day” is selected; imports save the dates found in the pasted calendar. Physical Education, Art, Technology, and STEM are available in the schedule class list even when there are no assignments for them. End times are optional and retained when importing schedules. Older schedules without an end time for the last class show “Latest start” rather than claiming that class is still in session.
+Schedules use Eastern Time and are saved per student and date. Editing a schedule does not save it until “Save this day” is selected; imports save the dates found in the pasted calendar. Standard class slots, including Spanish, Ed Tech, Physical Education, Art, Technology, and STEM, are available for assignments even when no assignments or schedule entries exist yet. Any other named class in a child’s saved schedule also gets an assignment slot automatically. End times are optional and retained when importing schedules. Older schedules without an end time for the last class show “Latest start” rather than claiming that class is still in session.
 
 Unsaved changes stay queued on the device and retry when connectivity returns. A failed save stays visible with a Retry control; switching accounts waits for pending changes to save.
 

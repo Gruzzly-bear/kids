@@ -14,7 +14,15 @@ export function safeURL(value) {
   catch { return null; }
 }
 export function metadata(value = {}) {
-  return { url: safeURL(value.url) || '', needsHelp: !!value.needsHelp };
+  const validDate = date => typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date) && !isNaN(Date.parse(`${date}T12:00:00Z`)) && new Date(`${date}T12:00:00Z`).toISOString().slice(0, 10) === date;
+  return {
+    url: safeURL(value.url) || '',
+    needsHelp: !!value.needsHelp,
+    completedDate: validDate(value.completedDate) ? value.completedDate : '',
+    submittedDate: validDate(value.submittedDate) ? value.submittedDate : '',
+    receiptUrl: safeURL(value.receiptUrl) || '',
+    receiptNote: typeof value.receiptNote === 'string' ? value.receiptNote.slice(0, 2000) : ''
+  };
 }
 export function preferences(value = {}) {
   const avatars = ['default', '🐱', '🐶', '🦊', '🐼', '🐸', '🦄', '🐉', '🐢', '🦋', '🐙', '🦖', '🐧', '🐨', '🐺', '🦁', '🐯', '🐰', '🐹', '🐝', '🦉', '🚀', '⚡', '🤖', '👾', '🎮', '🎨', '🦈', '🐬', '🦕', '🧙', '🥷'];

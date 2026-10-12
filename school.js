@@ -294,7 +294,7 @@ function safeLink(value){try{const url=new URL(value);return ['https:','http:'].
 function jsArg(value){return esc(JSON.stringify(String(value)));}
 function allTasks(student){return Object.entries(state.assignments?.[student]||{}).flatMap(([subject,rows])=>rows.map(x=>({...x,subject,student})));}
 function findTask(id){for(const [student,subjects] of Object.entries(state.assignments||{}))for(const [subject,rows] of Object.entries(subjects)){const index=rows.findIndex(x=>x.id===id);if(index>=0)return {student,subject,index,x:rows[index]};}}
-function dbData(rows){const out={leon:{},logan:{}};for(const row of rows||[])(out[row.student][row.subject]??=[]).push({id:row.id,title:row.title,due:row.due||'',done:!!row.done,url:safeLink(row.url),needsHelp:!!row.needsHelp});return out;}
+function dbData(rows){const out={leon:{},logan:{}};for(const row of rows||[])(out[row.student][row.subject]??=[]).push({id:row.id,title:row.title,due:row.due||'',done:!!row.done,url:safeLink(row.url),needsHelp:!!row.needsHelp,completedDate:row.completedDate||'',submittedDate:row.submittedDate||'',receiptUrl:safeLink(row.receiptUrl),receiptNote:row.receiptNote||''});return out;}
 function scheduleAssignmentSubject(item){
   if(!item||item.type==='break'||item.subject==='break')return'';
   if(item.subject&&item.subject!=='custom')return item.subject;
@@ -320,9 +320,10 @@ function ensureAssignmentSlots(){
   for(const student of ['leon','logan']){
     state.assignments[student]??={};
     const catalog=state.assignmentSubjectCatalogs?.[student]||{added:[],hidden:[]},hidden=new Set(catalog.hidden||[]);
+    for(const subject of SCHEDULE_SUBJECTS)if(!hidden.has(subject))(state.assignments[student][subject]??=[]);
     for(const item of scheduledItems(student)){
       const subject=scheduleAssignmentSubject(item);
-      if(subject&&!subject.startsWith('custom-')&&!hidden.has(subject))(state.assignments[student][subject]??=[]);
+      if(subject&&!hidden.has(subject))(state.assignments[student][subject]??=[]);
     }
     for(const item of catalog.added||[])if(item?.id&&!hidden.has(item.id))(state.assignments[student][item.id]??=[]);
   }
@@ -391,7 +392,11 @@ function refreshVisibleAnnouncements(){if(!['leon','logan'].includes(state.view)
 function dashboardCardsPayload(){return{leon:state.displayCards.leon,logan:state.displayCards.logan,announcements:state.announcements};}
 function task(x,student=state.view,readonly=false){
   const disabled=readonly||state.auth?.role==='monitor',id=jsArg(x.id),url=safeLink(x.url);
-  return `<article class="task ${x.done?'done':''}" data-task-id="${esc(x.id)}"><label class="completion"><input type="checkbox" ${x.done?'checked':''} ${disabled?'disabled':''} onchange="toggleTask(${id},this.checked,this)" aria-label="${x.done?'Reopen':'Complete'} ${esc(x.title)}"></label><div class="task-content"><span class="task-name">${esc(x.title)}</span><div class="task-meta">${dueChip(x)}${x.needsHelp&&!x.done?'<span class="status-chip help">Needs help</span>':''}</div><div class="task-actions">${url?`<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">Open assignment ↗</a>`:''}${!disabled&&!x.done?`<button class="text-button" aria-pressed="${!!x.needsHelp}" onclick="toggleHelp(${id})">${x.needsHelp?'Clear help request':'I need help'}</button>`:''}</div></div></article>`;
+  const proof=[];
+  if(x.completedDate)proof.push(`Completed ${dateLabel(x.completedDate,false)}`);
+  if(x.submittedDate)proof.push(`Submitted ${dateLabel(x.submittedDate,false)}`);
+  const receiptUrl=safeLink(x.receiptUrl),receipt=receiptUrl?`<a href="${esc(receiptUrl)}" target="_blank" rel="noopener noreferrer">Open receipt ↗</a>`:'';
+  return `<article class="task ${x.done?'done':''}" data-task-id="${esc(x.id)}"><label class="completion"><input type="checkbox" ${x.done?'checked':''} ${disabled?'disabled':''} onchange="toggleTask(${id},this.checked,this)" aria-label="${x.done?'Reopen':'Complete'} ${esc(x.title)}"></label><div class="task-content"><span class="task-name">${esc(x.title)}</span><div class="task-meta">${dueChip(x)}${x.needsHelp&&!x.done?'<span class="status-chip help">Needs help</span>':''}</div>${proof.length||receipt||x.receiptNote?`<div class="completion-record">${proof.length?`<span>${proof.map(esc).join(' · ')}</span>`:''}${receipt}${x.receiptNote?`<span>${esc(x.receiptNote)}</span>`:''}</div>`:''}<div class="task-actions">${url?`<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">Open assignment ↗</a>`:''}${receiptUrl?'':receipt}${x.done&&!x.submittedDate&&!disabled?`<button class="text-button" onclick="markSubmitted(${id})">Mark submitted today</button>`:''}${!disabled&&!x.done?`<button class="text-button" aria-pressed="${!!x.needsHelp}" onclick="toggleHelp(${id})">${x.needsHelp?'Clear help request':'I need help'}</button>`:''}</div></div></article>`;
 }
 function taskGroups(subjects,filter,student=state.view,readonly=false){
   const groups=Object.entries(subjects).map(([subject,rows])=>[subject,rows.filter(filter).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999'))]).filter(([,rows])=>rows.length);
@@ -547,7 +552,7 @@ function retryWrites(){state.syncPhase='saved';return pumpWrites();}
 window.addEventListener('online',()=>{if(state.pending.length)retryWrites();});
 window.addEventListener('beforeunload',event=>{if(state.pending.length){event.preventDefault();event.returnValue='';}});
 function saveAssignmentChange(type,found){
-  const x=found.x,change={type,student:found.student,subject:found.subject,id:x.id,title:x.title,due:x.due,done:x.done,url:x.url||'',needsHelp:!!x.needsHelp};
+  const x=found.x,change={type,student:found.student,subject:found.subject,id:x.id,title:x.title,due:x.due,done:x.done,url:x.url||'',needsHelp:!!x.needsHelp,completedDate:x.completedDate||'',submittedDate:x.submittedDate||'',receiptUrl:x.receiptUrl||'',receiptNote:x.receiptNote||''};
   if(type==='status'){delete change.title;delete change.due;delete change.subject;delete change.url;}
   return queuedWrite({change},'Assignment');
 }
@@ -565,10 +570,11 @@ function toggleTask(id,done,checkbox){
 function confirmCompleteTask(id){const found=findTask(id);closeDialog();if(found)saveTaskStatus(found,true);}
 async function saveTaskStatus(found,done){
   const id=found.x.id;
-  const previous={done:found.x.done,needsHelp:found.x.needsHelp};found.x.done=done;if(done)found.x.needsHelp=false;
+  const previous={done:found.x.done,needsHelp:found.x.needsHelp,completedDate:found.x.completedDate||'',submittedDate:found.x.submittedDate||''};found.x.done=done;if(done){found.x.completedDate=scheduleDay();found.x.needsHelp=false;}
   const saved=saveAssignmentChange('status',found);render();
   if(await saved)showToast(done?'Assignment completed and saved':'Assignment reopened and saved',()=>{const current=findTask(id);if(!current)return;Object.assign(current.x,previous);saveAssignmentChange('status',current);render();});
 }
+async function markSubmitted(id){const found=findTask(id);if(!found||!found.x.done||found.x.submittedDate)return;found.x.submittedDate=scheduleDay();const saved=saveAssignmentChange('status',found);render();if(await saved)showToast('Submission date saved');}
 function toggleHelp(id){const found=findTask(id);if(!found||found.x.done)return;found.x.needsHelp=!found.x.needsHelp;saveAssignmentChange('status',found);render();showToast(found.x.needsHelp?'Help request added for your parent':'Help request cleared');}
 function showToast(message,undo=null){const node=document.getElementById('toast');undoAction=undo;node.hidden=false;node.innerHTML=`<span>${esc(message)}</span>${undo?'<button class="text-button" onclick="undoToast()">Undo</button>':''}<button class="text-button" aria-label="Dismiss message" onclick="document.getElementById('toast').hidden=true">×</button>`;clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>{node.hidden=true;undoAction=null;},10000);}
 function undoToast(){const action=undoAction;undoAction=null;document.getElementById('toast').hidden=true;if(action)action();}
@@ -674,7 +680,7 @@ function saveSubjectCatalog(student){const catalog=subjectCatalog(student);state
 function openSubjectManager(){
   const student=state.editorStudent||'leon',subjects=Object.keys(state.assignments[student]||{}).sort((a,b)=>subjectLabel(a,student).localeCompare(subjectLabel(b,student)));
   const list=subjects.length?subjects.map(subject=>{const count=(state.assignments[student][subject]||[]).length;return `<div class="editor-assignment"><div><strong>${esc(subjectLabel(subject,student))}</strong><span class="small">${count?`${count} assignment${count===1?'':'s'}`:'No assignments'}</span></div><button class="button light" onclick="removeAssignmentSubject('${student}',${jsArg(subject)})" ${count?'disabled title="Remove assignments before removing this subject"':''}>Remove</button></div>`;}).join(''):'<p class="empty">No subjects yet. Add one below to create an assignment slot.</p>';
-  openDialog('subject-manager',`<h2>Manage ${nameOf(student)}’s subjects</h2><p class="small">Scheduled core classes are added automatically. One-off custom schedule events are skipped. You can add other subjects here.</p><div class="editor-assignments">${list}</div><form onsubmit="addAssignmentSubject(event,'${student}')"><label>New subject<input name="subject" maxlength="60" placeholder="For example, Music" required></label><p class="form-error" id="subject-error" role="alert"></p><button class="button" type="submit">Add subject</button></form>`);
+  openDialog('subject-manager',`<h2>Manage ${nameOf(student)}’s subjects</h2><p class="small">Standard classes and classes in ${nameOf(student)}’s schedule are available automatically. You can also add other subjects here.</p><div class="editor-assignments">${list}</div><form onsubmit="addAssignmentSubject(event,'${student}')"><label>New subject<input name="subject" maxlength="60" placeholder="For example, Music" required></label><p class="form-error" id="subject-error" role="alert"></p><button class="button" type="submit">Add subject</button></form>`);
 }
 function addAssignmentSubject(event,student){
   event.preventDefault();const label=String(new FormData(event.target).get('subject')||'').trim(),subject=scheduleAssignmentSubject({subject:'custom',label});
@@ -688,7 +694,7 @@ function addAssignmentSubject(event,student){
 }
 function removeAssignmentSubject(student,subject){
   if((state.assignments[student]?.[subject]||[]).length){showToast('Remove the subject’s assignments first.');return;}
-  const catalog=subjectCatalog(student),scheduled=scheduledItems(student).some(item=>scheduleAssignmentSubject(item)===subject&&!subject.startsWith('custom-'));
+  const catalog=subjectCatalog(student),scheduled=SCHEDULE_SUBJECTS.includes(subject)||scheduledItems(student).some(item=>scheduleAssignmentSubject(item)===subject);
   catalog.added=catalog.added.filter(item=>item.id!==subject);
   if(scheduled&&!catalog.hidden.includes(subject))catalog.hidden.push(subject);
   state.assignmentSubjectCatalogs[student]=catalog;delete state.assignments[student][subject];
@@ -702,13 +708,13 @@ function assignmentEditor(){
 }
 function openAssignmentForm(id=''){
   const found=id?findTask(id):null,student=found?.student||state.editorStudent||'leon',subject=found?.subject||state.editorSubject,x=found?.x||{};
-  openDialog('assignment-form',`<h2>${id?'Edit':'Add'} assignment</h2><form onsubmit="submitAssignment(event,${jsArg(id)})"><label>Title<input name="title" value="${esc(x.title||'')}" required maxlength="2000" autofocus></label><div class="settings-grid"><label>Due date<input type="date" name="due" value="${esc(x.due||'')}"></label><label>Subject<select name="subject">${Object.keys(state.assignments[student]).map(s=>`<option value="${s}" ${s===subject?'selected':''}>${esc(subjectLabel(s,student))}</option>`).join('')}</select></label></div><label>Assignment link <span class="small">Optional</span><input type="url" name="url" value="${esc(x.url||'')}" placeholder="https://…"><small>Paste the direct link from the school site.</small></label><p class="form-error" id="assignment-error" role="alert"></p><button class="button" type="submit">${id?'Save changes':'Add assignment'}</button></form>`);
+  openDialog('assignment-form',`<h2>${id?'Edit':'Add'} assignment</h2><form onsubmit="submitAssignment(event,${jsArg(id)})"><label>Title<input name="title" value="${esc(x.title||'')}" required maxlength="2000" autofocus></label><div class="settings-grid"><label>Due date<input type="date" name="due" value="${esc(x.due||'')}"></label><label>Subject<select name="subject">${Object.keys(state.assignments[student]).map(s=>`<option value="${s}" ${s===subject?'selected':''}>${esc(subjectLabel(s,student))}</option>`).join('')}</select></label><label>Completed date<input type="date" name="completedDate" value="${esc(x.completedDate||'')}"></label><label>Submitted date<input type="date" name="submittedDate" value="${esc(x.submittedDate||'')}"></label></div><label>Assignment link <span class="small">Optional</span><input type="url" name="url" value="${esc(x.url||'')}" placeholder="https://…"><small>Paste the direct link from the school site.</small></label><label>Receipt or proof link <span class="small">Optional</span><input type="url" name="receiptUrl" value="${esc(x.receiptUrl||'')}" placeholder="https://…"><small>Link to a submission confirmation, screenshot, or other receipt.</small></label><label>Receipt note <span class="small">Optional</span><textarea name="receiptNote" maxlength="2000" placeholder="Confirmation number or other details">${esc(x.receiptNote||'')}</textarea></label><p class="form-error" id="assignment-error" role="alert"></p><button class="button" type="submit">${id?'Save changes':'Add assignment'}</button></form>`);
 }
 function submitAssignment(event,id){
-  event.preventDefault();const data=new FormData(event.target),url=String(data.get('url')||'').trim(),title=String(data.get('title')).trim();
-  if(!title||url&&!safeLink(url)){document.getElementById('assignment-error').textContent='Enter a title and a complete http or https link.';return;}
+  event.preventDefault();const data=new FormData(event.target),url=String(data.get('url')||'').trim(),receiptUrl=String(data.get('receiptUrl')||'').trim(),title=String(data.get('title')).trim();
+  if(!title||url&&!safeLink(url)||receiptUrl&&!safeLink(receiptUrl)){document.getElementById('assignment-error').textContent='Enter a title and complete http or https links.';return;}
   const found=id?findTask(id):null,student=found?.student||state.editorStudent||'leon',subject=data.get('subject');
-  const x={...(found?.x||{id:crypto.randomUUID(),done:false,needsHelp:false}),title,due:data.get('due')||'',url:safeLink(url)};
+  const x={...(found?.x||{id:crypto.randomUUID(),done:false,needsHelp:false}),title,due:data.get('due')||'',url:safeLink(url),completedDate:data.get('completedDate')||'',submittedDate:data.get('submittedDate')||'',receiptUrl:safeLink(receiptUrl),receiptNote:String(data.get('receiptNote')||'').trim()};
   if(found)state.assignments[student][found.subject].splice(found.index,1);
   (state.assignments[student][subject]??=[]).push(x);state.editorSubject=subject;
   saveAssignmentChange(id?'update':'add',{student,subject,x});closeDialog();render();
@@ -739,8 +745,8 @@ function openFamilyEditorChooser(editor){
 function openFamilyEditor(editor,student){if(editor==='schedule')openScheduleFor(student);else openCardEditor(student);}
 function openScheduleFor(student){state.editorStudent=student;state.scheduleDates[student]=scheduleDay();state.schedules[student]=scheduleFor(student);openScheduleEditor();}
 function openScheduleEditor(){
-  const student=state.editorStudent||'leon',items=state.schedules[student]||[],subjects=[...new Set([...Object.keys(state.assignments[student]).filter(subject=>!subject.startsWith('custom-')),...SCHEDULE_SUBJECTS])],date=state.scheduleDates[student]||scheduleDay();
-  openDialog('schedule',`<h2>${nameOf(student)}’s schedule</h2><p class="small">All times use Eastern Time. Changes stay here until you select “Save this day” or import a schedule.</p><label>Schedule date<input type="date" value="${date}" min="${scheduleDay()}" onchange="selectScheduleDate(this.value)"></label><p class="small">${esc(state.scheduleMessage||'')}</p><div class="schedule-editor">${items.map((x,i)=>`<div class="schedule-row"><label>Class<select onchange="setScheduleSubject(${i},this.value)">${[...subjects,'custom','break'].map(s=>`<option value="${s}" ${x.subject===s?'selected':''}>${esc(LABELS[s]||s)}</option>`).join('')}</select></label><label>Label<input value="${esc(x.label||'')}" onchange="editScheduleEntry(${i},'label',this.value)" ${!['custom','break'].includes(x.subject)?'disabled':''}></label><label>Start<input type="time" value="${esc(x.time||'')}" onchange="editScheduleEntry(${i},'time',this.value)"></label><label>End <span class="small">Optional</span><input type="time" value="${esc(x.endTime||'')}" onchange="editScheduleEntry(${i},'endTime',this.value)"></label><button class="text-button danger" onclick="removeScheduleEntry(${i})">Remove</button></div>`).join('')}</div><div class="toolbar"><button class="button" onclick="addScheduleEntry()">Add class or break</button><button class="button light" onclick="openScheduleImport()">Import schedule</button><button class="button light" onclick="clearOpenSchedule()">Clear this day</button><button class="button" onclick="saveOpenSchedule()">Save this day</button></div>`);
+  const student=state.editorStudent||'leon',items=state.schedules[student]||[],subjects=[...new Set([...Object.keys(state.assignments[student]),...SCHEDULE_SUBJECTS])],date=state.scheduleDates[student]||scheduleDay();
+  openDialog('schedule',`<h2>${nameOf(student)}’s schedule</h2><p class="small">All times use Eastern Time. Changes stay here until you select “Save this day” or import a schedule.</p><label>Schedule date<input type="date" value="${date}" min="${scheduleDay()}" onchange="selectScheduleDate(this.value)"></label><p class="small">${esc(state.scheduleMessage||'')}</p><div class="schedule-editor">${items.map((x,i)=>`<div class="schedule-row"><label>Class<select onchange="setScheduleSubject(${i},this.value)">${[...subjects,'custom','break'].map(s=>`<option value="${s}" ${x.subject===s?'selected':''}>${esc(subjectLabel(s,student))}</option>`).join('')}</select></label><label>Label<input value="${esc(x.label||'')}" onchange="editScheduleEntry(${i},'label',this.value)" ${!['custom','break'].includes(x.subject)?'disabled':''}></label><label>Start<input type="time" value="${esc(x.time||'')}" onchange="editScheduleEntry(${i},'time',this.value)"></label><label>End <span class="small">Optional</span><input type="time" value="${esc(x.endTime||'')}" onchange="editScheduleEntry(${i},'endTime',this.value)"></label><button class="text-button danger" onclick="removeScheduleEntry(${i})">Remove</button></div>`).join('')}</div><div class="toolbar"><button class="button" onclick="addScheduleEntry()">Add class or break</button><button class="button light" onclick="openScheduleImport()">Import schedule</button><button class="button light" onclick="clearOpenSchedule()">Clear this day</button><button class="button" onclick="saveOpenSchedule()">Save this day</button></div>`);
 }
 function closeScheduleEditor(){closeDialog();}
 function refreshScheduleEditor(){render();openScheduleEditor();}
@@ -752,7 +758,7 @@ function addScheduleEntry(){
 function setScheduleSubject(index,subject){
   const student=state.editorStudent||'leon',item=state.schedules[student][index];
   item.subject=subject;item.type=subject==='break'?'break':'class';
-  if(subject!=='custom')item.label=subject==='break'?'Break':LABELS[subject]||subject;
+  if(subject!=='custom')item.label=subject==='break'?'Break':subjectLabel(subject,student);
   state.scheduleMessage='Unsaved changes';refreshScheduleEditor();
 }
 function editScheduleEntry(index,field,value){

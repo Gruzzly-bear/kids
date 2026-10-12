@@ -57,6 +57,22 @@ export async function onRequestPost({ request, env }) {
         if (url === null) return json({ error: 'Use a complete http or https assignment link.' }, 400);
         meta.url = url;
       }
+      const validDate = value => typeof value === 'string' && (!value || /^\d{4}-\d{2}-\d{2}$/.test(value) && !isNaN(Date.parse(`${value}T12:00:00Z`)) && new Date(`${value}T12:00:00Z`).toISOString().slice(0, 10) === value);
+      for (const key of ['completedDate', 'submittedDate']) {
+        if ((role === 'parent' || type === 'status') && Object.hasOwn(change, key)) {
+          if (!validDate(change[key])) return json({ error: 'Use a valid completion and submission date.' }, 400);
+          meta[key] = change[key];
+        }
+      }
+      if (role === 'parent' && Object.hasOwn(change, 'receiptUrl')) {
+        const receiptUrl = safeURL(change.receiptUrl);
+        if (receiptUrl === null) return json({ error: 'Use a complete http or https receipt link.' }, 400);
+        meta.receiptUrl = receiptUrl;
+      }
+      if (role === 'parent' && Object.hasOwn(change, 'receiptNote')) {
+        if (typeof change.receiptNote !== 'string' || change.receiptNote.length > 2000) return json({ error: 'Keep receipt notes under 2,000 characters.' }, 400);
+        meta.receiptNote = change.receiptNote.trim();
+      }
       if (Object.hasOwn(change, 'needsHelp')) meta.needsHelp = !!change.needsHelp;
       const done = Object.hasOwn(change, 'done') ? !!change.done : !!existing?.done;
       if (done) meta.needsHelp = false;
