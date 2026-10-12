@@ -97,6 +97,24 @@ export async function onRequestPost({ request, env }) {
       await setting(env, 'dashboard_cards', body.cards || {}).run();
       return json({ ok: true });
     }
+    if (body.calendarOnly) {
+      if (role !== 'parent') return json({ error: 'Only parents can edit the family calendar.' }, 403);
+      if (!Array.isArray(body.events) || body.events.length > 500) return json({ error: 'The calendar can hold up to 500 events.' }, 400);
+      const validDate = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && !isNaN(Date.parse(`${value}T12:00:00Z`)) && new Date(`${value}T12:00:00Z`).toISOString().slice(0, 10) === value;
+      const validTime = value => typeof value === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
+      const events = body.events.map(item => ({
+        id: typeof item?.id === 'string' ? item.id : '',
+        title: typeof item?.title === 'string' ? item.title.trim() : '',
+        date: item?.date,
+        start: item?.start || '',
+        end: item?.end || '',
+        location: typeof item?.location === 'string' ? item.location.trim() : '',
+        notes: typeof item?.notes === 'string' ? item.notes.trim() : ''
+      }));
+      if (events.some(item => !item.id || item.id.length > 120 || !item.title || item.title.length > 160 || !validDate(item.date) || (item.start && !validTime(item.start)) || (item.end && !validTime(item.end)) || (item.start && item.end && item.end <= item.start) || item.location.length > 160 || item.notes.length > 2000) || new Set(events.map(item => item.id)).size !== events.length) return json({ error: 'Check the event title, date, times, and details.' }, 400);
+      await setting(env, 'family_calendar', events).run();
+      return json({ ok: true });
+    }
     return json({ error: 'Unsupported save request.' }, 400);
   } catch {
     return json({ error: 'Your update could not be saved. Please retry.' }, 500);

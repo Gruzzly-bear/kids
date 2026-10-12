@@ -8,6 +8,8 @@ The first successful sign-in imports the assignment lists into D1.
 
 The kids’ dashboard shows Now / Next, Due Today, the next unfinished due date in Working Ahead, and Past Due. Completed work can be reopened. Completing an assignment records its completion date, and the child can record a separate submission date. Parents can add or correct both dates and keep a receipt link and note with each assignment. Parents can also attach a direct assignment link, manage help requests, import assignments and schedules, and review the next seven days for both children. The shared dashboard remains read-only.
 
+The Family Calendar link is available from the sign-in page, parent workspace, shared dashboard, and both kids’ dashboards. Everyone can view the shared month calendar and daily agenda. Parents can add, edit, and remove all-day or timed events, with an optional location and notes. Calendar events sync through the existing `settings` table and need no database migration.
+
 Settings include light/dark/device appearance, theme previews and high-contrast themes, text size, spacing, and an optional class browser. Signed-in profiles sync settings through D1; shared-dashboard and signed-out settings are saved on the current device. Existing theme choices carry over.
 
 Assignment links, completion and submission dates, receipt links and notes, help flags, and preferences use the existing `settings` table. Existing databases need no migration. Keep the current Cloudflare Pages `DB` binding and password secrets. Upload the HTML, CSS, JavaScript, and `functions` files together when deploying.

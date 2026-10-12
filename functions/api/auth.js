@@ -23,6 +23,8 @@ export async function onRequestPost({request,env}){
     if(cleanup.length)await env.DB.batch(cleanup);
     const cardsRow=await env.DB.prepare("SELECT value FROM settings WHERE key='dashboard_cards'").first();let cards=null;
     try{cards=cardsRow?JSON.parse(cardsRow.value):null}catch{}
+    const calendarRow=await env.DB.prepare("SELECT value FROM settings WHERE key='family_calendar'").first();let calendar=[];
+    try{calendar=JSON.parse(calendarRow?.value||'[]');if(!Array.isArray(calendar))calendar=[];}catch{}
     const extraRows=await env.DB.prepare("SELECT key,value FROM settings WHERE key LIKE 'assignment_meta_%' OR key LIKE 'preferences_%' OR key LIKE 'assignment_subjects_%'").all(),extras=new Map(extraRows.results.map(row=>[row.key,row.value]));
     const assignments=result.results.map(row=>({...row,...metadata(readJSON(extras.get('assignment_meta_'+row.id)))})),scopes=all?['leon','logan','parent','monitor']:[role];
     const prefs=Object.fromEntries(scopes.filter(scope=>extras.has('preferences_'+scope)).map(scope=>[scope,preferences(readJSON(extras.get('preferences_'+scope)))]));
@@ -31,6 +33,6 @@ export async function onRequestPost({request,env}){
       const raw=readJSON(extras.get(`assignment_subjects_${student}`),{}),added=Array.isArray(raw.added)?raw.added.filter(item=>item&&typeof item.id==='string'&&typeof item.label==='string').map(item=>({id:item.id,label:item.label})):[],hidden=Array.isArray(raw.hidden)?raw.hidden.filter(id=>typeof id==='string'):[];
       assignmentSubjectCatalogs[student]={added,hidden};
     }
-    return json({role,assignments,schedules,cards,preferences:prefs,assignmentSubjectCatalogs});
+    return json({role,assignments,schedules,cards,calendar,preferences:prefs,assignmentSubjectCatalogs});
   }catch(e){return json({error:"Setup is incomplete. Run schema.sql in D1, then confirm the three secrets are saved."},500)}
 }

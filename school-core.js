@@ -1,7 +1,7 @@
 // Schedule storage and school-site import helpers.
 const LABELS={ela:'Language Arts',math:'Math',science:'Science',social:'Social Studies',stem:'STEM',tech:'Technology',pe:'Physical Education',art:'Art',spanish:'Spanish',edtech:'Ed Tech'};
 const SCHEDULE_SUBJECTS=['ela','math','science','social','stem','tech','pe','art','spanish','edtech'];
-const state={view:null,assignments:null,schedules:{leon:[],logan:[]},scheduledDays:{leon:{},logan:{}},scheduleDates:{leon:'',logan:''},displayCards:{leon:[],logan:[],monitor:[]},announcements:{leon:[],logan:[]},scheduleMessage:'',showEditor:false,auth:null,parentReturnSession:null,assignmentSubjectCatalogs:{leon:{added:[],hidden:[]},logan:{added:[],hidden:[]}}};
+const state={view:null,assignments:null,schedules:{leon:[],logan:[]},scheduledDays:{leon:{},logan:{}},scheduleDates:{leon:'',logan:''},displayCards:{leon:[],logan:[],monitor:[]},announcements:{leon:[],logan:[]},familyCalendar:[],calendarMonth:'',calendarDate:'',calendarReturnView:null,scheduleMessage:'',showEditor:false,auth:null,parentReturnSession:null,assignmentSubjectCatalogs:{leon:{added:[],hidden:[]},logan:{added:[],hidden:[]}}};
 const esc=s=>String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 
 const SCHOOL_LINKS={
