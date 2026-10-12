@@ -320,7 +320,6 @@ function ensureAssignmentSlots(){
   for(const student of ['leon','logan']){
     state.assignments[student]??={};
     const catalog=state.assignmentSubjectCatalogs?.[student]||{added:[],hidden:[]},hidden=new Set(catalog.hidden||[]);
-    for(const subject of SCHEDULE_SUBJECTS)if(!hidden.has(subject))(state.assignments[student][subject]??=[]);
     for(const item of scheduledItems(student)){
       const subject=scheduleAssignmentSubject(item);
       if(subject&&!hidden.has(subject))(state.assignments[student][subject]??=[]);
@@ -680,7 +679,7 @@ function saveSubjectCatalog(student){const catalog=subjectCatalog(student);state
 function openSubjectManager(){
   const student=state.editorStudent||'leon',subjects=Object.keys(state.assignments[student]||{}).sort((a,b)=>subjectLabel(a,student).localeCompare(subjectLabel(b,student)));
   const list=subjects.length?subjects.map(subject=>{const count=(state.assignments[student][subject]||[]).length;return `<div class="editor-assignment"><div><strong>${esc(subjectLabel(subject,student))}</strong><span class="small">${count?`${count} assignment${count===1?'':'s'}`:'No assignments'}</span></div><button class="button light" onclick="removeAssignmentSubject('${student}',${jsArg(subject)})" ${count?'disabled title="Remove assignments before removing this subject"':''}>Remove</button></div>`;}).join(''):'<p class="empty">No subjects yet. Add one below to create an assignment slot.</p>';
-  openDialog('subject-manager',`<h2>Manage ${nameOf(student)}’s subjects</h2><p class="small">Standard classes and classes in ${nameOf(student)}’s schedule are available automatically. You can also add other subjects here.</p><div class="editor-assignments">${list}</div><form onsubmit="addAssignmentSubject(event,'${student}')"><label>New subject<input name="subject" maxlength="60" placeholder="For example, Music" required></label><p class="form-error" id="subject-error" role="alert"></p><button class="button" type="submit">Add subject</button></form>`);
+  openDialog('subject-manager',`<h2>Manage ${nameOf(student)}’s subjects</h2><p class="small">Classes in ${nameOf(student)}’s saved schedule are available automatically. You can also add other subjects here.</p><div class="editor-assignments">${list}</div><form onsubmit="addAssignmentSubject(event,'${student}')"><label>New subject<input name="subject" maxlength="60" placeholder="For example, Music" required></label><p class="form-error" id="subject-error" role="alert"></p><button class="button" type="submit">Add subject</button></form>`);
 }
 function addAssignmentSubject(event,student){
   event.preventDefault();const label=String(new FormData(event.target).get('subject')||'').trim(),subject=scheduleAssignmentSubject({subject:'custom',label});
@@ -694,7 +693,7 @@ function addAssignmentSubject(event,student){
 }
 function removeAssignmentSubject(student,subject){
   if((state.assignments[student]?.[subject]||[]).length){showToast('Remove the subject’s assignments first.');return;}
-  const catalog=subjectCatalog(student),scheduled=SCHEDULE_SUBJECTS.includes(subject)||scheduledItems(student).some(item=>scheduleAssignmentSubject(item)===subject);
+  const catalog=subjectCatalog(student),scheduled=scheduledItems(student).some(item=>scheduleAssignmentSubject(item)===subject);
   catalog.added=catalog.added.filter(item=>item.id!==subject);
   if(scheduled&&!catalog.hidden.includes(subject))catalog.hidden.push(subject);
   state.assignmentSubjectCatalogs[student]=catalog;delete state.assignments[student][subject];
