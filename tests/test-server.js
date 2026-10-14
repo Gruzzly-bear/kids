@@ -34,7 +34,7 @@ export async function fixture() {
   const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});
   const shift=n=>{const d=new Date(today+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);};
   for(const student of ['leon','logan'])for(const [i,title,due,done] of [[0,'Today’s math assignment',today,0],[1,'A long assignment title that should wrap naturally on a phone without being clipped or overlapping the controls',shift(3),0],[2,'Later assignment',shift(4),0],[3,'Past-due assignment',shift(-2),0],[4,'Completed practice',today,1],[5,'No date yet','',0]])await DB.prepare('INSERT INTO assignments (id,student,subject,title,due,done) VALUES (?,?,?,?,?,?)').bind(student+'-'+i,student,i===1?'ela':'math',title,due,done).run();
-  for(const student of ['leon','logan'])await DB.prepare('INSERT INTO settings (key,value) VALUES (?,?)').bind(student+'_schedule',JSON.stringify({template:[{subject:'math',time:'09:00',label:'Math'},{subject:'ela',time:'10:00',label:'Language Arts'},{subject:'break',time:'12:00',label:'Lunch'}],days:{}})).run();
+  for(const student of ['leon','logan'])await DB.prepare('INSERT INTO settings (key,value) VALUES (?,?)').bind(student+'_schedule',JSON.stringify({days:{}})).run();
   return { DB, sqlite };
 }
 export async function startServer(port=4173) {

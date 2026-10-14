@@ -134,7 +134,7 @@ const fs = require('node:fs');
   const denseRows=Object.entries(seedAssignments.logan).flatMap(([subject,items])=>items.map((x,i)=>({id:'density-'+subject+'-'+i,student:'logan',subject,title:x[0],due:x[1]==='N/A'?'':new Date(x[1]).toISOString().slice(0,10),done:x[2]})));
   await page.clock.install({time:new Date('2026-10-02T14:00:00-04:00')});
   await page.setViewportSize({width:1440,height:900});
-  await page.evaluate(rows=>{state.assignments=dbData(rows);state.auth={role:'logan',password:'test-password'};state.view='logan';state.subjectView=null;state.preferences.logan={...DEFAULT_PREFS,appearance:'dark',darkTheme:'dracula'};state.scheduleTemplates.logan=[{subject:'math',time:'09:00'},{subject:'ela',time:'10:00'},{subject:'custom',time:'13:10',label:'Spanish'}];render();},denseRows);
+  await page.evaluate(rows=>{state.assignments=dbData(rows);state.auth={role:'logan',password:'test-password'};state.view='logan';state.subjectView=null;state.preferences.logan={...DEFAULT_PREFS,appearance:'dark',darkTheme:'dracula'};render();},denseRows);
   await page.evaluate(()=>document.querySelectorAll('.work-section').forEach(node=>node.open=true));
   const density=await page.evaluate(()=>({height:document.documentElement.scrollHeight,sectionTops:[...document.querySelectorAll('.work-board>.work-section')].map(el=>Math.round(el.getBoundingClientRect().top)),first:document.querySelector('.work-board>.work-section').className,scheduleHeight:document.querySelector('.schedule').offsetHeight,resourcesBottom:document.querySelector('.resources').getBoundingClientRect().bottom}));
   assert(density.first.includes('late'),'Past Due comes first');

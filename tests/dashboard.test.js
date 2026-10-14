@@ -29,7 +29,7 @@ test('preferences sync per profile and retain existing schedules and cards',asyn
   const env=await fixture(),preferences={appearance:'dark',lightTheme:'forest',darkTheme:'midnight',textSize:'large',density:'compact',classBrowser:true};
   assert.equal((await post(save,env,{...leon,preferencesOnly:true,scope:'leon',preferences})).status,200);
   assert.equal((await post(save,env,{...leon,preferencesOnly:true,scope:'logan',preferences})).status,403);
-  const data=await (await post(auth,env,leon)).json();assert.equal(data.preferences.leon.textSize,'large');assert.equal(data.preferences.leon.classBrowser,true);assert(data.schedules.leon.template.length);
+  const data=await (await post(auth,env,leon)).json();assert.equal(data.preferences.leon.textSize,'large');assert.equal(data.preferences.leon.classBrowser,true);assert.deepEqual(data.schedules.leon.days,{});
   assert.equal((await post(save,env,{...parent,cardsOnly:true,cards:{leon:['Hello']}})).status,200);
   assert.equal((await (await post(auth,env,parent)).json()).cards.leon[0],'Hello');
   assert.equal((await post(save,env,{role:'monitor',change:{type:'status',id:'leon-0',student:'leon',done:true}})).status,401);
@@ -42,6 +42,30 @@ test('add, edit, remove, and undo retain metadata without a schema migration',as
   assert.equal((await post(save,env,{...parent,change:{...change,type:'remove'}})).status,200,'Retrying removal is idempotent');
   assert.equal(await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind('assignment_meta_new-task').first(),null);
   assert.equal((await post(save,env,{...parent,change})).status,200);
+});
+test('saving separate schedule days concurrently preserves every day and adding assignments preserves existing data',async()=>{
+  const env=await fixture();
+  const original=JSON.parse((await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind('leon_schedule').first()).value);
+  original.days['2026-10-20']=[{subject:'math',time:'09:00'}];
+  await env.DB.prepare('UPDATE settings SET value=? WHERE key=?').bind(JSON.stringify(original),'leon_schedule').run();
+
+  const saveDay=(date,subject)=>post(save,env,{...parent,scheduleOnly:true,student:'leon',date,items:[{subject,time:'10:00'}]});
+  const responses=await Promise.all([saveDay('2026-10-21','ela'),saveDay('2026-10-22','science')]);
+  assert(responses.every(response=>response.status===200));
+
+  const add=(id,title)=>post(save,env,{...parent,change:{type:'add',id,student:'leon',subject:'math',title,due:'2026-10-21'}});
+  const added=await Promise.all([add('extra-math-1','Extra math 1'),add('extra-math-2','Extra math 2')]);
+  assert(added.every(response=>response.status===200));
+
+  const savedSchedule=JSON.parse((await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind('leon_schedule').first()).value);
+  assert.deepEqual(savedSchedule.days['2026-10-20'],[{subject:'math',time:'09:00'}]);
+  assert.deepEqual(savedSchedule.days['2026-10-21'],[{subject:'ela',time:'10:00'}]);
+  assert.deepEqual(savedSchedule.days['2026-10-22'],[{subject:'science',time:'10:00'}]);
+
+  const assignments=await env.DB.prepare('SELECT id,title FROM assignments WHERE student=?').bind('leon').all();
+  assert(assignments.results.some(row=>row.id==='leon-0'));
+  assert(assignments.results.some(row=>row.id==='extra-math-1'&&row.title==='Extra math 1'));
+  assert(assignments.results.some(row=>row.id==='extra-math-2'&&row.title==='Extra math 2'));
 });
 test('parent password changes require current credentials and preserve access',async()=>{
   const env=await fixture();
@@ -65,11 +89,11 @@ test('Working Ahead chooses only the next unfinished due date across weekends',(
   assert.equal(context.nextDueDate({math:[{due:'2026-10-12'}]}),'2026-10-12');
   assert.equal(context.nextDueDate({math:[{due:'2026-10-01'},{due:'',done:false}]}),'');
 });
-test('weekday defaults, explicit weekend days, and class end times determine Now / Next',()=>{
+test('saved dates, explicit weekend days, and class end times determine Now / Next',()=>{
   const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
   const forFunction=source.slice(source.indexOf('function scheduleFor('),source.indexOf('function schoolMinutes('));
   const snapshotFunction=source.slice(source.indexOf('function scheduleSnapshot('),source.indexOf('function schedulePanel('));
-  const context=vm.createContext({state:{scheduleTemplates:{leon:[{time:'09:00',endTime:'09:45',subject:'math'},{time:'10:00',endTime:'10:45',subject:'ela'}]},scheduledDays:{leon:{'2026-10-03':[{time:'09:00',subject:'math'}]}}},copySchedule:x=>JSON.parse(JSON.stringify(x)),scheduleDay:()=> '2026-10-05',schoolMinutes:()=> 570,scheduleMinutes:x=>x?Number(x.slice(0,2))*60+Number(x.slice(3)):-1});
+  const context=vm.createContext({state:{scheduledDays:{leon:{'2026-10-03':[{time:'09:00',subject:'math'}],'2026-10-05':[{time:'09:00',endTime:'09:45',subject:'math'},{time:'10:00',endTime:'10:45',subject:'ela'}]}}},copySchedule:x=>JSON.parse(JSON.stringify(x)),scheduleDay:()=> '2026-10-05',schoolMinutes:()=> 570,scheduleMinutes:x=>x?Number(x.slice(0,2))*60+Number(x.slice(3)):-1});
   vm.runInContext(forFunction+snapshotFunction,context);
   assert.equal(context.scheduleFor('leon','2026-10-04').length,0);
   assert.equal(context.scheduleFor('leon','2026-10-03').length,1);
@@ -78,13 +102,12 @@ test('weekday defaults, explicit weekend days, and class end times determine Now
   context.schoolMinutes=()=> 590;result=context.scheduleSnapshot('leon');assert.equal(result.current,-1);assert.equal(result.next,1);
   context.schoolMinutes=()=> 700;result=context.scheduleSnapshot('leon');assert.equal(result.current,-1);assert.equal(result.next,-1);
   context.schoolMinutes=()=> 710;result=context.scheduleSnapshot('leon');
-  assert.equal(result.visibleItems.length,1,'Classes ended over two hours ago are hidden');
-  assert.equal(result.visibleItems[0].status,'elapsed');
-  context.schoolMinutes=()=> 705;result=context.scheduleSnapshot('leon');assert.equal(result.visibleItems.length,2,'Exactly two hours remains visible');
-  context.schoolMinutes=()=> 630;result=context.scheduleSnapshot('leon');assert.equal(result.visibleItems[1].status,'current');
-  context.state.scheduleTemplates.leon[0].endTime='';
-  context.state.scheduleTemplates.leon[1].endTime='';
-  context.schoolMinutes=()=> 720;result=context.scheduleSnapshot('leon');assert.equal(result.visibleItems.length,2,'Missing end uses next start, retaining unknown final end');
+  assert.equal(result.visibleItems.length,0,'Ended classes are hidden');
+  context.schoolMinutes=()=> 705;result=context.scheduleSnapshot('leon');assert.equal(result.visibleItems.length,0);
+  context.schoolMinutes=()=> 630;result=context.scheduleSnapshot('leon');assert.equal(result.visibleItems.length,1);assert.equal(result.visibleItems[0].status,'current');
+  context.state.scheduledDays.leon['2026-10-05'][0].endTime='';
+  context.state.scheduledDays.leon['2026-10-05'][1].endTime='';
+  context.schoolMinutes=()=> 720;result=context.scheduleSnapshot('leon');assert.equal(result.visibleItems.length,1,'Missing end uses next start, retaining unknown final end');
   context.schoolMinutes=()=> 721;result=context.scheduleSnapshot('leon');assert.equal(result.visibleItems.length,1);
   assert.equal(result.currentLabel,'Latest start');
 });

@@ -85,12 +85,15 @@ export async function onRequestPost({ request, env }) {
     if (body.scheduleOnly && role === 'parent') {
       const { student, date, items } = body;
       if (!['leon', 'logan'].includes(student) || typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date) || isNaN(Date.parse(`${date}T12:00:00Z`)) || !Array.isArray(items)) return json({ error: 'Choose a valid student, date, and schedule.' }, 400);
-      const currentRow = await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind(`${student}_schedule`).first();
-      let current = {};
-      try { current = JSON.parse(currentRow?.value || '{}') || {}; } catch {}
-      const days = { ...(Array.isArray(current) ? {} : current.days || {}) };
-      days[date] = items;
-      await setting(env, `${student}_schedule`, { days }).run();
+      // Merge the single day inside SQLite so concurrent saves for different
+      // dates cannot overwrite each other. Keep other schedule properties too.
+      await env.DB.prepare(`
+        INSERT INTO settings (key,value) VALUES (?, json_object('days', json_object(?, json(?))))
+        ON CONFLICT(key) DO UPDATE SET value=json_patch(
+          CASE WHEN json_valid(settings.value) THEN settings.value ELSE '{}' END,
+          json_object('days', json_object(?, json(?)))
+        )
+      `).bind(`${student}_schedule`, date, JSON.stringify(items), date, JSON.stringify(items)).run();
       return json({ ok: true });
     }
     if (body.cardsOnly && role === 'parent') {
