@@ -6,7 +6,7 @@
 
 The first successful sign-in imports the assignment lists into D1.
 
-The kids’ dashboard shows Now / Next, Due Today, the next unfinished due date in Working Ahead, and Past Due. Completed work can be reopened. Completing an assignment records its completion date, and the child can record a separate submission date. Parents can add or correct both dates and keep a receipt link and note with each assignment. Parents can also attach a direct assignment link, manage help requests, import assignments and schedules, and review the next seven days for both children. The shared dashboard remains read-only.
+The kids’ dashboard shows Now / Next, Due Today, the next unfinished due date in Working Ahead, and Past Due. Completed work can be reopened. Completing an assignment records its completion date, and the child can record a separate submission date. Parents can also mark assignments complete or reopen them from the shared dashboard. Parents can add or correct both dates and keep a receipt link and note with each assignment. Parents can also attach a direct assignment link, manage help requests, import assignments and schedules, and review the next seven days for both children. The shared dashboard stays read-only for monitor access.
 
 The Family Calendar link is available from the sign-in page, parent workspace, shared dashboard, and both kids’ dashboards. Everyone can view the shared month calendar and daily agenda. Parents can add, edit, and remove all-day or timed events, with an optional location and notes. Calendar events sync through the existing `settings` table and need no database migration.
 
