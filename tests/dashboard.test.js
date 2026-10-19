@@ -42,6 +42,19 @@ test('only parents can enable decorative fonts and student saves preserve that c
   await write(parent,true);assert.equal(await enabled(),true);
   await write(leon,false);assert.equal(await enabled(),true);
   await write(parent,false);assert.equal(await enabled(),false);
+  await post(save,env,{...parent,preferencesOnly:true,scope:'leon',preferences:{allowedFonts:['montserrat','pokemon-gb']}});
+  await post(save,env,{...leon,preferencesOnly:true,scope:'leon',preferences:{allowedFonts:['soffie']}});
+  const data=await (await post(auth,env,leon)).json();
+  assert.deepEqual(data.preferences.leon.allowedFonts,['montserrat','pokemon-gb'],'Students cannot change the parent font list');
+});
+test('parents control dashboard expansion and student settings preserve it',async()=>{
+  const env=await fixture();
+  const write=(credentials,dashboardExpanded)=>post(save,env,{...credentials,preferencesOnly:true,scope:'leon',preferences:{dashboardExpanded}});
+  const expanded=async()=> (await (await post(auth,env,leon)).json()).preferences.leon.dashboardExpanded;
+  await write(leon,true);assert.equal(await expanded(),false);
+  await write(parent,true);assert.equal(await expanded(),true);
+  await write(leon,false);assert.equal(await expanded(),true);
+  await write(parent,false);assert.equal(await expanded(),false);
 });
 test('add, edit, remove, and undo retain metadata without a schema migration',async()=>{
   const env=await fixture(),change={type:'add',id:'new-task',student:'leon',subject:'math',title:'New task',due:'',url:'https://example.com',done:false};
@@ -161,4 +174,30 @@ test('parent dashboard shows expanded schedules for both children and optional l
   assert.equal((html.match(/<details open>/g)||[]).length,2);
   assert(html.includes('leon')&&html.includes('logan')&&html.includes('Optional · Math · Help session'));
   assert(source.includes('</nav>'+String.fromCharCode(96)+'+parentSchedules()'));
+});
+test('schedule summaries hide routine clutter and preserve special sessions',()=>{
+  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
+  const context=vm.createContext({subjectLabel:subject=>({ela:'Language Arts',math:'Math',stem:'STEM'})[subject],esc:x=>x});
+  vm.runInContext(source.slice(source.indexOf('function scheduleLabel('),source.indexOf('function scheduleItemStyle(')),context);
+  for(const [subject,label,expected] of [
+    ['ela','ELA Live Lesson with Mrs. Brady','Language Arts'],
+    ['ela','English Language Arts 4 A-Kochkodin','Language Arts'],
+    ['stem','STEM 5-Morgan Drake','STEM'],
+    ['math','Math Mania with Mrs. Trimble','Math'],
+    ['math','Math Small Group Pod B','Math · Small Group Pod B'],
+    ['math',"OPTIONAL - Mrs. Trimble's Help Session",'Math · Help Session']
+  ]){
+    const item={subject,label};
+    assert.equal(context.scheduleLabel(item),expected);
+    assert.equal(item.label,label,'Saved information is unchanged');
+  }
+});
+test('help inbox uses an accessible icon and highlights only waiting requests',()=>{
+  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
+  const context=vm.createContext({});
+  vm.runInContext(source.slice(source.indexOf('function helpInboxButton('),source.indexOf('function openPasswordSettings(')),context);
+  const empty=context.helpInboxButton(0,false),waiting=context.helpInboxButton(3,true);
+  assert(empty.includes('<svg')&&empty.includes('0 pending requests'));
+  assert(!empty.includes('inbox-count has-requests'));
+  assert(waiting.includes('inbox-count has-requests')&&waiting.includes('aria-current="page"'));
 });

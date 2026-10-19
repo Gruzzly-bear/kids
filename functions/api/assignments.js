@@ -12,7 +12,10 @@ export async function onRequestPost({ request, env }) {
       if(role!=='parent'){
         const stored=await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind(`preferences_${scope}`).first();
         const existing=readJSON(stored?.value, {});
+        nextPreferences.dashboardExpanded=existing.dashboardExpanded===true;
         nextPreferences.decorativeFonts=existing.decorativeFonts===true;
+        if(Array.isArray(existing.allowedFonts))nextPreferences.allowedFonts=existing.allowedFonts;
+        else delete nextPreferences.allowedFonts;
       }
       await setting(env, `preferences_${scope}`, nextPreferences).run();
       return json({ ok: true });
