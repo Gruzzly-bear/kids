@@ -251,7 +251,7 @@ function setPreference(field, value, forScope=scope()) {
   if(state.auth&&state.auth.role!=='monitor')queuedWrite({preferencesOnly:true,scope:forScope,preferences:p},'Preferences');
   if(field==='classBrowser'||field==='hideCompleted'||field==='clockFormat')render();
   updateAppearanceControls(p);
-  if(field==='decorativeFonts')drawSettings();
+  if(field==='decorativeFonts'){drawSettings();openFontPreview(forScope);}
   if(['leon','logan'].includes(forScope)&&['avatar','avatarImage','avatarFrame'].includes(field))refreshProfileAvatarViews(forScope,p);
 }
 function selectTheme(theme,forScope=scope()){
@@ -641,7 +641,21 @@ function openDialog(id,content){
   dialog.innerHTML=`<div class="dialog-top"><button class="button light" onclick="closeDialog()" aria-label="Close dialog">Close</button></div>${content}`;
   dialog.addEventListener('close',()=>{dialog.remove();if(!document.getElementById('app-dialog')){if(returnFocus?.isConnected&&!returnFocus.closest('dialog'))returnFocus.focus({preventScroll:true});else app.focus({preventScroll:true});}});document.body.append(dialog);dialog.showModal();dialog.querySelector('[autofocus],input,select')?.focus();
 }
-function closeDialog(){const dialog=document.getElementById('app-dialog'),refreshSlots=dialog?.dataset.dialog==='schedule';dialog?.close();if(refreshSlots){ensureAssignmentSlots();render();}}
+function closeDialog(){document.getElementById('font-preview-dialog')?.close();const dialog=document.getElementById('app-dialog'),refreshSlots=dialog?.dataset.dialog==='schedule';dialog?.close();if(refreshSlots){ensureAssignmentSlots();render();}}
+function openFontPreview(forScope=scope()){
+  document.getElementById('font-preview-dialog')?.close();
+  const p=prefs(forScope),select=document.createElement('select');
+  select.innerHTML=clockFontOptions(p);
+  const families={'emotion-engine':'Emotion Engine','isaacsans':'IsaacSans','modern-fantasy':'Modern Fantasy','gbboot':'GB Boot','warioland4':'Wario Land 4','ci-gamedev':'CI Gamedev','tbj-margin':'TBJ Margin','system':'Consolas'};
+  const samples=[...select.options].filter(option=>option.value!=='theme').map(option=>{
+    const family=families[option.value]||option.textContent;
+    return `<article class="font-preview-card"><h3>${esc(option.textContent)}</h3><p style="font-family:'${esc(family)}',sans-serif!important">Working Ahead · Read a chapter today.</p><p style="font-family:'${esc(family)}',sans-serif!important">Math at 9:30 AM · 0123456789</p></article>`;
+  }).join('');
+  const dialog=document.createElement('dialog');dialog.id='font-preview-dialog';dialog.setAttribute('aria-labelledby','font-preview-title');
+  dialog.innerHTML=`${p.decorativeFonts?'<link rel="stylesheet" href="assets/optional-fonts/fonts.css">':''}<div class="dialog-top"><button autofocus class="button light" onclick="document.getElementById('font-preview-dialog').close()">Back to settings</button></div><h2 id="font-preview-title">${p.decorativeFonts?'Decorative fonts enabled':'Decorative fonts disabled'}</h2><p>These fonts are now available for ${esc(forScope==='parent'?'Parent':forScope==='monitor'?'Shared dashboard':nameOf(forScope))}. Choose a text or clock font in Settings.</p><div class="font-preview-grid">${samples}</div>`;
+  dialog.addEventListener('close',()=>{dialog.remove();const customizer=document.querySelector('#app-dialog .appearance-customizer');if(customizer)customizer.open=true;document.querySelector('#app-dialog .appearance-customizer input')?.focus();});
+  document.body.append(dialog);dialog.showModal();
+}
 function openSettings(){
   state.settingsScope=scope();drawSettings();
 }
