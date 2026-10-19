@@ -34,6 +34,15 @@ test('preferences sync per profile and retain existing schedules and cards',asyn
   assert.equal((await (await post(auth,env,parent)).json()).cards.leon[0],'Hello');
   assert.equal((await post(save,env,{role:'monitor',change:{type:'status',id:'leon-0',student:'leon',done:true}})).status,401);
 });
+test('only parents can enable decorative fonts and student saves preserve that choice',async()=>{
+  const env=await fixture();
+  const write=(credentials,decorativeFonts)=>post(save,env,{...credentials,preferencesOnly:true,scope:'leon',preferences:{decorativeFonts}});
+  const enabled=async()=> (await (await post(auth,env,leon)).json()).preferences.leon.decorativeFonts;
+  await write(leon,true);assert.equal(await enabled(),false);
+  await write(parent,true);assert.equal(await enabled(),true);
+  await write(leon,false);assert.equal(await enabled(),true);
+  await write(parent,false);assert.equal(await enabled(),false);
+});
 test('add, edit, remove, and undo retain metadata without a schema migration',async()=>{
   const env=await fixture(),change={type:'add',id:'new-task',student:'leon',subject:'math',title:'New task',due:'',url:'https://example.com',done:false};
   assert.equal((await post(save,env,{...parent,change})).status,200);

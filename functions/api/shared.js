@@ -32,6 +32,7 @@ export function preferences(value = {}) {
     lightTheme: typeof value.lightTheme === 'string' ? value.lightTheme.slice(0, 40) : 'coastal',
     darkTheme: typeof value.darkTheme === 'string' ? value.darkTheme.slice(0, 40) : 'midnight',
     visualStyle: ['classic', 'boxy', 'studio', 'playful', 'glass', 'minimal', 'comic', 'retro', 'pixel', 'book', 'stardew', 'dragoon', 'wow-ui', 'isaac', 'swtor', 'ps2-ui', 'ps4-ui', 'pipboy'].includes(value.visualStyle) ? value.visualStyle : 'classic',
+    decorativeFonts: value.decorativeFonts === true,
     fontStyle: fontStyles.includes(value.fontStyle) ? value.fontStyle : 'theme',
     clockFont: ['system', ...fontStyles].includes(value.clockFont) ? value.clockFont : 'theme',
     cornerStyle: ['theme', 'soft', 'square', 'pill'].includes(value.cornerStyle) ? value.cornerStyle : 'theme',

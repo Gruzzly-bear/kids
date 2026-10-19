@@ -8,7 +8,13 @@ export async function onRequestPost({ request, env }) {
     if (body.preferencesOnly) {
       const scope = body.scope || role;
       if (!['parent', 'leon', 'logan', 'monitor'].includes(scope) || (role !== 'parent' && scope !== role)) return json({ error: 'Not allowed.' }, 403);
-      await setting(env, `preferences_${scope}`, preferences(body.preferences)).run();
+      const nextPreferences=preferences(body.preferences);
+      if(role!=='parent'){
+        const stored=await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind(`preferences_${scope}`).first();
+        const existing=readJSON(stored?.value, {});
+        nextPreferences.decorativeFonts=existing.decorativeFonts===true;
+      }
+      await setting(env, `preferences_${scope}`, nextPreferences).run();
       return json({ ok: true });
     }
     if (body.passwordOnly && role === 'parent') {

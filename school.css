@@ -188,41 +188,41 @@ dialog::backdrop{background:#0d1b2d99;backdrop-filter:blur(4px);}.dialog-top{dis
 .class-timeline-card{gap:5px;padding:10px 12px;line-height:1.35;}.class-timeline-card>span.small{line-height:1.25;}.class-timeline-card>time{white-space:normal;overflow-wrap:normal;word-break:keep-all;line-height:1.3;}
 @font-face{font-family:Charger;src:url("assets/charger-22559/Charger-XRDo.otf") format("opentype");font-weight:400;font-display:swap}
 @font-face{font-family:Charger;src:url("assets/charger-22559/ChargerBold-gXaY.otf") format("opentype");font-weight:700;font-display:swap}
-@font-face{font-family:"Cosmic Fantasy";src:url("assets/cosmic-fantasy-170325/CosmicFantasy-vnwo4.otf") format("opentype");font-weight:400;font-display:swap}
-@font-face{font-family:"Dalelands Uncial";src:url("assets/dalelands-17993/DalelandsUncial-BOpn.ttf") format("truetype");font-weight:400;font-display:swap}
-@font-face{font-family:"Dalelands Uncial";src:url("assets/dalelands-17993/DalelandsUncialBold-82zA.ttf") format("truetype");font-weight:700;font-display:swap}
-@font-face{font-family:"Dragoon Bold";src:url("assets/dragoon-bold-43019/DragoonBold-Ea4Mj.otf") format("opentype");font-weight:700;font-display:swap}
+
+
+
+
 @font-face{font-family:"Emotion Engine";src:url("assets/emotion-engine-18002/EmotionEngine-8ynA.ttf") format("truetype");font-weight:400;font-display:swap}
 @font-face{font-family:"Emotion Engine";src:url("assets/emotion-engine-18002/EmotionEngineBold-YGnL.ttf") format("truetype");font-weight:700;font-display:swap}
-@font-face{font-family:Gamecuben;src:url("assets/gamecuben-4517/GamecubenDualset-L85D.ttf") format("truetype");font-weight:400;font-display:swap;size-adjust:105%}
-@font-face{font-family:"GB Boot";src:url("assets/gbboot-2385/Gbboot-ALpM.ttf") format("truetype");font-weight:400;font-display:swap;size-adjust:112%}
+
+
 @font-face{font-family:IsaacSans;src:url("assets/isaacsans-18283/Isaacsans-lEpZ.ttf") format("truetype");font-weight:400;font-display:swap}
-@font-face{font-family:Kroegbainder;src:url("assets/kroegbainder-98598/Kroegbainder-gw07p.ttf") format("truetype");font-weight:400;font-display:swap}
-@font-face{font-family:"Modern Fantasy";src:url("assets/modern-fantasy-43456/ModernFantasyDemoRegular-4B74W.otf") format("opentype");font-weight:400;font-display:swap}
-@font-face{font-family:"Pokemon GB";src:url("assets/pokemon-gb-9621/PokemonGb-RAeo.ttf") format("truetype");font-weight:400;font-display:swap;size-adjust:128%}
-@font-face{font-family:"Wario Land 4";src:url("assets/warioland4tt-30199/Warioland4chmc-VApe.ttf") format("truetype");font-weight:400;font-display:swap}
-@font-face{font-family:"Baby Angel";src:url("assets/baby-angel-170725/BabyAngel-Yq4mO.otf") format("opentype");font-weight:400;font-display:swap}
-@font-face{font-family:"Ballkids Game";src:url("assets/ballkids-game-105594/BallkidsGame-JR5w7.otf") format("opentype");font-weight:400;font-display:swap}
-@font-face{font-family:Bravyka;src:url("assets/bravyka-170739/BravykaRegular-gwVZ4.ttf") format("truetype");font-weight:400;font-display:swap}
-@font-face{font-family:"CI Gamedev";src:url("assets/ci-gamedev-16px-130458/CiGamedevRegular-ovq3z.ttf") format("truetype");font-weight:400;font-display:swap}
-@font-face{font-family:Fokuz;src:url("assets/fokuz-170716/Fokuz-5yeg8.ttf") format("truetype");font-weight:400;font-display:swap}
-@font-face{font-family:Gamepixies;src:url("assets/gamepixies-42493/Gamepixies-XGDzg.ttf") format("truetype");font-weight:400;font-display:swap}
-@font-face{font-family:Midnight;src:url("assets/midnight-7-170778/Midnight-gwV96.otf") format("opentype");font-weight:400;font-display:swap}
-@font-face{font-family:"Money Game";src:url("assets/money-game-68524/MoneyGameRegular-Yza9o.ttf") format("truetype");font-weight:400;font-display:swap}
+
+
+
+
+
+
+
+
+
+
+
+
 @font-face{font-family:Montserrat;src:url("assets/montserrat-16544/MontserratRegular-RpK6l.otf") format("opentype");font-weight:400;font-display:swap}
 @font-face{font-family:Montserrat;src:url("assets/montserrat-16544/MontserratSemibold-8M8PB.otf") format("opentype");font-weight:600;font-display:swap}
 @font-face{font-family:Montserrat;src:url("assets/montserrat-16544/MontserratBold-p781R.otf") format("opentype");font-weight:700;font-display:swap}
 @font-face{font-family:Queensides;src:url("assets/queensides-90306/Queensides-3z7Ey.ttf") format("truetype");font-weight:400;font-display:swap}
 @font-face{font-family:Queensides;src:url("assets/queensides-90306/QueensidesMedium-x30zV.ttf") format("truetype");font-weight:500;font-display:swap}
-@font-face{font-family:"Retro Viber";src:url("assets/retro-viber-156707/RetroViberRegular-6RPaM.otf") format("opentype");font-weight:400;font-display:swap}
+
 @font-face{font-family:"Rushford Clean";src:url("assets/rushford-clean-105444/Rushfordclean-rgz89.otf") format("opentype");font-weight:400;font-display:swap}
-@font-face{font-family:"Simple People";src:url("assets/simple-people-170773/SimplePeople-m295v.otf") format("opentype");font-weight:400;font-display:swap}
-@font-face{font-family:Soffie;src:url("assets/soffie-140110/SoffieRegular-ovOLV.otf") format("opentype");font-weight:400;font-display:swap}
-@font-face{font-family:"Spenbeb Game";src:url("assets/spenbeb-game-119715/SpenbebGame-R9q46.otf") format("opentype");font-weight:400;font-display:swap}
-@font-face{font-family:"Super Joyful";src:url("assets/super-joyful-153768/SuperJoyful-lxwPq.ttf") format("truetype");font-weight:400;font-display:swap}
+
+
+
+
 @font-face{font-family:"TBJ Margin";src:url("assets/tbj-margin-condensed-165753/TbjMarginCondensedDemoReg-ARaXg.ttf") format("truetype");font-weight:400;font-display:swap}
 @font-face{font-family:"TBJ Margin";src:url("assets/tbj-margin-condensed-165753/TbjMarginCondensedDemoBold-V46we.ttf") format("truetype");font-weight:700;font-display:swap}
-@font-face{font-family:"Wah Iki";src:url("assets/wah-iki-147402/WahIki-R9l7v.otf") format("opentype");font-weight:400;font-display:swap}
+
 :root[data-font="charger"] body,:root[data-font="charger"] body *{font-family:Charger,"Segoe UI",sans-serif}
 :root[data-font="emotion-engine"] body,:root[data-font="emotion-engine"] body *{font-family:"Emotion Engine",system-ui,sans-serif}
 :root[data-font="isaacsans"] body,:root[data-font="isaacsans"] body *{font-family:IsaacSans,"Trebuchet MS",sans-serif}
