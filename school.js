@@ -420,7 +420,7 @@ function scheduleLabel(item,student='leon'){
 }
 function scheduleItemStyle(item){return `--item-color:var(--subject-${item.subject},var(--accent))`;}
 function scheduleSnapshot(student){
-  const items=scheduleFor(student).filter(x=>scheduleMinutes(x.time)>=0).sort((a,b)=>scheduleMinutes(a.time)-scheduleMinutes(b.time)),minutes=schoolMinutes();
+  const items=scheduleFor(student).filter(x=>!x.optional&&scheduleMinutes(x.time)>=0).sort((a,b)=>scheduleMinutes(a.time)-scheduleMinutes(b.time)),minutes=schoolMinutes();
   const active=items.findIndex((x,i)=>!x.optional&&scheduleMinutes(x.time)<=minutes&&(x.endTime?minutes<scheduleMinutes(x.endTime):items[i+1]?minutes<scheduleMinutes(items[i+1].time):true));
   const started=active>=0?active:items.findLastIndex(x=>scheduleMinutes(x.time)<=minutes),next=items.findIndex(x=>scheduleMinutes(x.time)>minutes);
   const end=started<0?-1:items[started].endTime?scheduleMinutes(items[started].endTime):items[started+1]?scheduleMinutes(items[started+1].time):-1;
@@ -455,6 +455,10 @@ function previewTomorrowSchedule(student=state.view){
   openDialog('tomorrow-schedule',`<h2>${nameOf(student)}’s schedule for tomorrow</h2><p class="small">${dateLabel(date)} · Preview only</p>${content}`);
 }
 function showHub(){state.subjectView=null;render();}
+function optionalSessions(student=state.view){
+  const items=scheduleFor(student).filter(x=>x.optional&&scheduleMinutes(x.time)>=0).sort((a,b)=>scheduleMinutes(a.time)-scheduleMinutes(b.time));
+  return `<section class="panel optional-sessions" aria-label="Optional sessions"><div class="section-heading"><h2>Optional sessions <span class="count">${items.length}</span></h2></div><p class="small">Join if you’d like extra help. These are your choice and aren’t part of your class rotation.</p>${items.length?`<div class="schedule-list">${items.map(item=>`<div class="schedule-item" style="${scheduleItemStyle(item)}"><span>${esc(scheduleLabel(item,student))}</span><time>${formatScheduleTime(item.time)}${item.endTime?' – '+formatScheduleTime(item.endTime):''}</time></div>`).join('')}</div>`:'<p class="empty">No optional sessions today.</p>'}</section>`;
+}
 function openSubject(subject){state.subjectView=subject;state.subjectTaskView='all';render();}
 function classBrowser(){const subjects=state.assignments[state.view];return `<section class="panel"><h2>Classes</h2><div class="class-picker">${Object.entries(subjects).map(([subject,rows])=>`<button class="button light" onclick="openSubject(${jsArg(subject)})"><span class="subject-dot" style="--subject-color:var(--subject-${subject},var(--accent))"></span><span>${esc(subjectLabel(subject,state.view))}<small>${rows.filter(x=>!x.done).length} to do</small></span></button>`).join('')}</div></section>`;}
 function studentPage(){
@@ -465,7 +469,7 @@ function studentPage(){
     const subject=state.subjectView,items=subjects[subject]||[],filter=x=>(!prefs().hideCompleted||!x.done)&&(state.subjectTaskView!=='soon'||x.due&&x.due<=addDays(today,7));
     return mast()+studentAnnouncementStack(state.view)+`<section class="page-heading"><div><button class="text-button" onclick="showHub()">← Back to dashboard</button><h1>${esc(subjectLabel(subject,state.view))}</h1></div></section><div class="toolbar"><label class="switch"><input type="checkbox" ${prefs().hideCompleted?'checked':''} onchange="setPreference('hideCompleted',this.checked)">Hide completed</label><div class="segmented"><button aria-pressed="${state.subjectTaskView!=='soon'}" onclick="state.subjectTaskView='all';render()">All work</button><button aria-pressed="${state.subjectTaskView==='soon'}" onclick="state.subjectTaskView='soon';render()">Due within a week</button></div></div><section class="panel assignment-list">${items.filter(filter).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999')).map(x=>task(x)).join('')||'<p class="empty">No assignments in this view.</p>'}</section>`;
   }
-  return mast()+studentAnnouncementStack(state.view)+hero+`<div class="student-dashboard-grid"><div class="work-board">${workSection(subjects,'late')}${workSection(subjects,'today')}${workingAhead(subjects)}</div>${schedulePanel(state.view,false)}</div>`/* Focus timer parked for later: +focusTimerPanel() */+(prefs().classBrowser?classBrowser():'');
+  return mast()+studentAnnouncementStack(state.view)+hero+`<div class="student-dashboard-grid"><div class="work-board">${workSection(subjects,'late')}${workSection(subjects,'today')}<div class="student-ahead-stack">${workingAhead(subjects)}${optionalSessions(state.view)}</div></div>${schedulePanel(state.view,false)}</div>`/* Focus timer parked for later: +focusTimerPanel() */+(prefs().classBrowser?classBrowser():'');
 }
 function loginPage(){return mast()+`<section class="login"><p class="eyebrow">Your day, organized</p><h1>Ready for your school day?</h1><p class="small">Choose your profile to see classes and assignments.</p><div class="people">${['leon','logan'].map(student=>`<button class="person" onclick="signIn('${student}')">${profileAvatarMark(student)}<b>${nameOf(student)}</b><span class="small">Open my dashboard</span></button>`).join('')}</div><div class="home-actions"><button class="button light" onclick="signIn('parent')">Parent sign in</button></div>${state.loadError?`<p class="form-error" role="alert">${esc(state.loadError)}</p><button class="button light" onclick="restoreSession()">Retry connection</button>`:''}</section>`;}
 function render(){
