@@ -111,3 +111,22 @@ test('saved dates, explicit weekend days, and class end times determine Now / Ne
   context.schoolMinutes=()=> 721;result=context.scheduleSnapshot('leon');assert.equal(result.visibleItems.length,1);
   assert.equal(result.currentLabel,'Latest start');
 });
+
+test('schedule imports retain overlapping optional support sessions and their titles',()=>{
+  const context=vm.createContext({Date,Intl,crypto});vm.runInContext(readFileSync(new URL('../school-core.js',import.meta.url),'utf8'),context);
+  const text=['Monday, October 5, 2026','Trimble Math','Math lesson','9:00 AM to 9:45 AM','Math help session','9:15 AM to 9:30 AM','Open Office','10:00 AM to 10:30 AM','Small-Group practice','10:00 AM to 10:30 AM'].join('\n');
+  const items=context.parseSchedulePaste(text,'leon').days['2026-10-05'];
+  assert.equal(items.filter(x=>x.optional).length,3);
+  assert(items.some(x=>!x.optional&&x.time==='09:00'&&x.subject==='math'));
+  assert(items.some(x=>x.optional&&x.label==='Open Office'));
+  assert.equal(context.parseSchedulePaste(text,'leon').skipped.length,0);
+});
+test('parent dashboard shows expanded schedules for both children and optional labels',()=>{
+  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
+  const context=vm.createContext({scheduleFor:()=>[{subject:'math',label:'Help session',optional:true,time:'09:00',endTime:'09:30'}],scheduleMinutes:()=>540,scheduleDay:()=> '2026-10-19',dateLabel:x=>x,profileAvatarMark:()=>'',nameOf:x=>x,esc:x=>x,subjectLabel:()=> 'Math',formatScheduleTime:x=>x,scheduleItemStyle:()=>''});
+  vm.runInContext(source.slice(source.indexOf('function scheduleLabel('),source.indexOf('function scheduleSnapshot('))+source.slice(source.indexOf('function parentSchedules('),source.indexOf('function weeklyOverview(')),context);
+  const html=context.parentSchedules();
+  assert.equal((html.match(/<details open>/g)||[]).length,2);
+  assert(html.includes('leon')&&html.includes('logan')&&html.includes('Optional · Math · Help session'));
+  assert(source.includes('</nav>'+String.fromCharCode(96)+'+parentSchedules()'));
+});
