@@ -179,7 +179,8 @@ test('parent dashboard separates regular schedules from collapsed optional sessi
   const regular=[...html.matchAll(/<details open>([\s\S]*?)<\/details>/g)];for(const section of regular)assert(!section[1].includes('Help session'));
   assert(!/<details[^>]*class="panel optional-sessions[^>]*\bopen\b/.test(html));
   assert(html.includes('leon')&&html.includes('logan')&&html.includes('Optional · Math · Help session'));
-  assert(source.includes('</nav>'+String.fromCharCode(96)+'+parentSchedules()'));
+  assert(source.includes('parent-dashboard-layout'));
+  assert(html.includes('parent-side-schedule leon'));assert(html.includes('parent-side-schedule logan'));
 });
 test('schedule summaries hide routine clutter and preserve special sessions',()=>{
   const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
