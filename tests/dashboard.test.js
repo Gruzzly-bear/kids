@@ -320,16 +320,17 @@ test('assignment pop-out returns from child dialogs and closes cleanly',()=>{
 
 test('kids see per-assignment point previews and totals for the exact work shown',()=>{
   const source=readFileSync(new URL('../school.js',import.meta.url),'utf8'),today='2026-10-19';
-  const context=vm.createContext({state:{view:'leon',auth:{role:'leon'}},scheduleDay:()=>today,jsArg:JSON.stringify,safeLink:()=>'',esc:x=>x,dueChip:()=>'',dateLabel:x=>x,nameOf:x=>x,subjectLabel:x=>x,nextDueDate:subjects=>Object.values(subjects).flat().filter(x=>!x.done&&x.due>today).map(x=>x.due).sort()[0]||''});
+  const context=vm.createContext({state:{view:'leon',auth:{role:'leon'}},scheduleDay:()=>today,addDays:()=> '2026-10-20',jsArg:JSON.stringify,safeLink:()=>'',esc:x=>x,dueChip:()=>'',dateLabel:x=>x,nameOf:x=>x,subjectLabel:x=>x,nextDueDate:subjects=>Object.values(subjects).flat().filter(x=>!x.done&&x.due>today).map(x=>x.due).sort()[0]||''});
   vm.runInContext(source.slice(source.indexOf('function potentialTaskPoints('),source.indexOf('function scheduleMinutes(')),context);
   const task=(id,due,extra={})=>({id,title:id,due,done:false,...extra});
   const subjects={math:[task('due-one',today),task('tomorrow-one','2026-10-20'),task('later','2026-10-22')],ela:[task('due-two',today),task('tomorrow-two','2026-10-20'),task('complete',today,{done:true,submittedDate:today}),task('late','2026-10-18')]};
   let html=context.workSection(subjects,'today');
   assert(!html.includes('points available'));assert(context.potentialPointsTotal(subjects.math.concat(subjects.ela).filter(x=>x.due===today),'leon').includes('⭐ 2 points available'));assert.equal((html.match(/1 point if submitted today/g)||[]).length,2);
-  html=context.workingAhead(subjects);assert(html.includes('⭐ 4 points available'));assert.equal((html.match(/2 points if submitted today/g)||[]).length,2);assert(!html.includes('data-task-id="later"'));
+  assert(context.potentialPointsTotal(context.todayAndTomorrowWork(subjects),'leon').includes('⭐ 6 points available'));
+  html=context.workingAhead(subjects);assert(!html.includes('points available'));assert.equal((html.match(/2 points if submitted today/g)||[]).length,2);assert(!html.includes('data-task-id="later"'));
   assert.equal(context.potentialTaskPoints(task('no-date','')),0);assert.equal(context.potentialTaskPoints(task('late','2026-10-18')),0);assert.equal(context.potentialTaskPoints(task('done',today,{done:true})),0);
   subjects.math[0].done=true;assert(context.potentialPointsTotal(subjects.math.concat(subjects.ela).filter(x=>x.due===today),'leon').includes('⭐ 1 point available'));
-  assert(context.workingAhead({}).includes('⭐ 0 points available'));
+  assert(!context.workingAhead({}).includes('points available'));
   context.state.view='monitor';context.state.auth.role='monitor';assert(!context.workingAhead(subjects,'leon',true).includes('points available'));
   context.state.view='parent';context.state.auth.role='parent';assert(!context.workSection(subjects,'today','leon').includes('potential-points'));
 });
