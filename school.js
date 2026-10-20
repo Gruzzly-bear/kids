@@ -154,6 +154,8 @@ function prefs(forScope = scope()) {
   const p = forScope==='monitor'||forScope==='home'?{...DEFAULT_PREFS,...legacy,...state.preferences[forScope],...local}:{...DEFAULT_PREFS,...legacy,...local,...state.preferences[forScope]};
   if (!THEME_PALETTES[p.lightTheme] || DARK_THEME_KEYS.includes(p.lightTheme)) p.lightTheme='coastal';
   if (!DARK_THEME_KEYS.includes(p.darkTheme)) p.darkTheme='midnight';
+  if(!themeOwned(p.lightTheme,forScope))p.lightTheme='coastal';
+  if(!themeOwned(p.darkTheme,forScope))p.darkTheme='midnight';
   if (!['classic','boxy','studio','playful','glass','minimal','comic','retro','pixel','book','stardew','dragoon','wow-ui','isaac','swtor','ps2-ui','ps4-ui','pipboy'].includes(p.visualStyle)) p.visualStyle='classic';
   if (!FONT_STYLE_IDS.includes(p.fontStyle)) p.fontStyle='theme';
   if (!['theme','soft','square','pill'].includes(p.cornerStyle)) p.cornerStyle='theme';
@@ -175,8 +177,40 @@ function prefs(forScope = scope()) {
   p.decorativeFonts=p.allowedFonts.some(id=>!READABLE_FONT_IDS.includes(id));
   if(p.fontStyle!=='theme'&&!p.allowedFonts.includes(p.fontStyle))p.fontStyle='theme';
   if(!['theme','system'].includes(p.clockFont)&&!p.allowedFonts.includes(p.clockFont))p.clockFont='theme';
+  for(const [field,rule] of Object.entries(state.rewards?.cosmeticRules||{}))if(!cosmeticOwned(field,p[field],forScope))p[field]=rule.default;
   return p;
 }
+function cosmeticItem(field,value){const rule=state.rewards?.cosmeticRules?.[field];if(!rule)return null;const normalized=['avatarImage','backgroundImage'].includes(field)?(value?'custom':''):value;return Object.values(state.rewards?.cosmetics||{}).find(item=>item.group===rule.group&&item.value===normalized)||null;}
+function cosmeticOwned(field,value,student=state.settingsScope||scope()){
+  if(!['leon','logan'].includes(student))return true;
+  const rule=state.rewards?.cosmeticRules?.[field];if(!rule)return true;
+  if(value===rule.default)return true;
+  const item=cosmeticItem(field,value);return !!item&&!!state.rewards?.cosmeticUnlocks?.[student]?.includes(item.id);
+}
+async function openCosmeticUnlock(field,value,student){
+  const item=cosmeticItem(field,value);if(!item)return;
+  if(state.auth?.role!==student){showToast('Sign in as '+nameOf(student)+' to buy this unlock.');return;}
+  if(!await pumpWrites()){showToast('Save your pending changes first.');return;}
+  try{state.rewards=(await fetchAuth(state.auth)).rewards;}catch{showToast('Connect to load your point balance.');return;}
+  if(cosmeticOwned(field,value,student)){drawSettings();return;}
+  const balance=state.rewards.balances[student]||0;
+  openDialog('unlock-cosmetic',`<h2>Unlock ${esc(item.title)}</h2><p>${item.cost} points · A permanent unlock for ${nameOf(student)}.</p><p>You have ${balance} points.</p><div class="actions"><button class="button" ${balance<item.cost?'disabled':''} onclick="storeAction({rewardAction:'unlockCosmetic',id:${jsArg(item.id)}})">Unlock for ${item.cost} points</button><button class="button light" onclick="drawSettings()">Back to settings</button></div><p id="store-error" class="form-error" role="alert"></p>`);
+}
+function labelCosmeticPrices(){
+  const student=state.settingsScope;if(!['leon','logan'].includes(student))return;
+  document.querySelectorAll('#app-dialog select[data-pref]').forEach(select=>{
+    const field=select.dataset.pref;if(!state.rewards?.cosmeticRules?.[field])return;
+    for(const option of select.options){const item=cosmeticItem(field,option.value);if(item)option.textContent+=cosmeticOwned(field,option.value,student)?' · Unlocked':` · 🔒 ${item.cost} points`;}
+  });
+  document.querySelectorAll('[data-avatar-choice]').forEach(button=>{const value=button.dataset.avatarChoice,item=cosmeticItem('avatar',value);if(item&&!cosmeticOwned('avatar',value,student))button.insertAdjacentHTML('beforeend',`<small>🔒 ${item.cost} pts</small>`);});
+  document.querySelectorAll('[data-avatar-frame-choice]').forEach(button=>{const value=button.dataset.avatarFrameChoice,item=cosmeticItem('avatarFrame',value);if(item&&!cosmeticOwned('avatarFrame',value,student))button.insertAdjacentHTML('beforeend',`<small>🔒 ${item.cost} pts</small>`);});
+  for(const [field,handler] of [['avatarImage','setProfileAvatarImage'],['backgroundImage','setCustomBackground']]){
+    const input=document.querySelector(`#app-dialog input[type="file"][onchange*="${handler}"]`),item=cosmeticItem(field,'custom');
+    if(input&&item&&!cosmeticOwned(field,'custom',student)){input.hidden=true;input.insertAdjacentHTML('afterend',`<button type="button" class="button light" onclick="event.preventDefault();openCosmeticUnlock('${field}','custom',state.settingsScope)">🔒 Unlock uploads · ${item.cost} points</button>`);}
+  }
+}
+function themeOwned(theme,student=state.settingsScope||scope()){return !['leon','logan'].includes(student)||['coastal','midnight',...(state.rewards?.unlocked?.[student]||[])].includes(theme);}
+function themeLockLabel(theme){return themeOwned(theme)?(['coastal','midnight'].includes(theme)?'Free':'Unlocked'):'🔒 5 points';}
 function activeTheme(p){const dark=p.appearance==='dark'||p.appearance==='system'&&matchMedia('(prefers-color-scheme: dark)').matches;return dark?p.darkTheme:p.lightTheme;}
 function applyPreferences() {
   const p=prefs(), dark=p.appearance==='dark'||p.appearance==='system'&&matchMedia('(prefers-color-scheme: dark)').matches;
@@ -206,6 +240,7 @@ function previewCustomBackgroundOpacity(value,forScope=scope()){
   const output=document.querySelector('[data-background-opacity-value]');if(output)output.textContent=`${opacity}%`;
 }
 async function setProfileAvatarImage(input,forScope=state.settingsScope||scope()){
+  if(!cosmeticOwned('avatarImage','custom',forScope)){input.value='';openCosmeticUnlock('avatarImage','custom',forScope);return;}
   const file=input.files?.[0];if(!file)return;
   if(!file.type.startsWith('image/')){showToast('Choose an image file.');input.value='';return;}
   try{
@@ -224,6 +259,7 @@ async function setProfileAvatarImage(input,forScope=state.settingsScope||scope()
 }
 function clearProfileAvatarImage(forScope=state.settingsScope||scope()){setPreference('avatarImage','',forScope);showToast('Profile picture removed.');}
 async function setCustomBackground(input){
+  if(!cosmeticOwned('backgroundImage','custom',state.settingsScope)){input.value='';openCosmeticUnlock('backgroundImage','custom',state.settingsScope);return;}
   const file=input.files?.[0];if(!file)return;
   if(!file.type.startsWith('image/')){showToast('Choose an image file.');input.value='';return;}
   try{
@@ -242,7 +278,9 @@ async function setCustomBackground(input){
 }
 function clearCustomBackground(forScope=scope()){setPreference('backgroundImage','',forScope);}
 function setPreference(field, value, forScope=scope()) {
+  if(!cosmeticOwned(field,value,forScope)){openCosmeticUnlock(field,value,forScope);return;}
   if(['decorativeFonts','allowedFonts','dashboardExpanded'].includes(field)&&state.auth?.role!=='parent')return;
+  if(['lightTheme','darkTheme'].includes(field)&&!themeOwned(value,forScope)){openThemeUnlock(value,forScope);return;}
   const p={...prefs(forScope),[field]:value};
   if(field==='avatar')p.avatarImage='';
   state.preferences[forScope]=p; localWrite('school-preferences-'+forScope,p);
@@ -254,6 +292,7 @@ function setPreference(field, value, forScope=scope()) {
 }
 function selectTheme(theme,forScope=scope()){
   if(!THEME_PALETTES[theme])return;
+  if(!themeOwned(theme,forScope)){openThemeUnlock(theme,forScope);return;}
   const dark=DARK_THEME_KEYS.includes(theme),p={...prefs(forScope),appearance:dark?'dark':'light',[dark?'darkTheme':'lightTheme']:theme};
   state.preferences[forScope]=p;localWrite('school-preferences-'+forScope,p);
   if(forScope===scope())applyPreferences();
@@ -342,7 +381,44 @@ function nextDueDate(subjects,today=scheduleDay()){return Object.values(subjects
 function mast(){
   const student=['leon','logan'].includes(state.view);
   const calendarView=state.view==='calendar';
-  return `<header class="mast"><a href="#" class="brand" onclick="event.preventDefault();${calendarView?'closeCalendar()':student?'showHub()':state.view==='parent'?"setParentTab('overview')":'render()'}"><span class="brand-mark">${student?profileAvatarMark(state.view):'S'}</span><span><b>School Dashboard</b><small>${calendarView?'Family calendar':student?nameOf(state.view)+'’s school day':state.view==='parent'?'Parent workspace':'Your family’s school day'}</small></span></a><div class="header-actions"><button class="button light" onclick="${calendarView?'closeCalendar()':'openCalendar()'}">${calendarView?'Back':'📅 Family Calendar'}</button>${student||state.view==='monitor'||state.view==='parent'?'<button class="button light" onclick="openResources()">School Resources</button>':''}<button class="button light" onclick="openSettings()">Settings</button>${state.view?'<button class="button light" onclick="'+(state.view==='monitor'?'closeMonitor()':'goHome()')+'">'+(state.view==='monitor'?(state.parentReturnSession?'Back to parent':'Close dashboard'):'Sign out')+'</button>':''}</div></header>`;
+  return `<header class="mast"><a href="#" class="brand" onclick="event.preventDefault();${calendarView?'closeCalendar()':student?'showHub()':state.view==='parent'?"setParentTab('overview')":'render()'}"><span class="brand-mark">${student?profileAvatarMark(state.view):'S'}</span><span><b>School Dashboard</b><small>${calendarView?'Family calendar':student?nameOf(state.view)+'’s school day':state.view==='parent'?'Parent workspace':'Your family’s school day'}</small></span></a><div class="header-actions">${state.auth&&state.auth.role!=='monitor'?'<button class="button light" onclick="openRewards()">⭐ Rewards Store</button>':''}<button class="button light" onclick="${calendarView?'closeCalendar()':'openCalendar()'}">${calendarView?'Back':'📅 Family Calendar'}</button>${student||state.view==='monitor'||state.view==='parent'?'<button class="button light" onclick="openResources()">School Resources</button>':''}<button class="button light" onclick="openSettings()">Settings</button>${state.view?'<button class="button light" onclick="'+(state.view==='monitor'?'closeMonitor()':'goHome()')+'">'+(state.view==='monitor'?(state.parentReturnSession?'Back to parent':'Close dashboard'):'Sign out')+'</button>':''}</div></header>`;
+}
+async function openRewards(){
+  if(!state.auth||state.auth.role==='monitor')return;
+  if(!await pumpWrites()){showToast('Save your pending changes before opening the store.');return;}
+  try{const data=await fetchAuth(state.auth);state.rewards=data.rewards;drawRewards();}catch{showToast('Couldn’t load the store. Please try again when connected.');}
+}
+function drawRewards(){
+  const r=state.rewards,parent=state.auth.role==='parent',students=parent?['leon','logan']:[state.auth.role];
+  openDialog('rewards',`<h2>⭐ Rewards Store</h2><p>Earn 1 point for submitting on the due date, or 2 points for submitting at least a day early. Late work and work without a due date earn no points. Mark completed work submitted to earn points.</p><div class="reward-balances">${students.map(student=>`<strong>${nameOf(student)}: ${r.balances[student]||0} points</strong>`).join('')}</div><p class="small">Corrected dates, reopened work, and removed assignments update earnings. Past purchases stay recorded.</p>${parent?'<button class="button" onclick="editReward()">＋ Add reward</button>':''}<div class="reward-list">${r.items.map(item=>`<article class="panel reward-card"><div><h3>${esc(item.title)}</h3><p>${item.cost} points</p></div><div class="actions">${parent?`<button class="button light" onclick="editReward(${jsArg(item.id)})">Edit</button><button class="text-button danger" onclick="storeAction({rewardAction:'remove',id:${jsArg(item.id)}})">Remove</button>`:`<button class="button" ${(r.balances[state.auth.role]||0)<item.cost?'disabled':''} onclick="confirmReward(${jsArg(item.id)})">Redeem</button>`}</div></article>`).join('')||'<p class="empty">No rewards yet. Parents can add something to work toward.</p>'}</div><h3>Theme unlocks</h3><p class="small">Coastal and Midnight are free. Every other theme costs 5 points once, per child. Browse and unlock themes in Settings. Fonts cost 3 points, UI styles 5, details and avatars 2, and custom-image uploads 4. Every purchase is permanent.</p><button class="button light" onclick="openSettings()">Browse themes</button><h3>Redemption history</h3>${r.history.map(item=>`<p><strong>${esc(nameOf(item.student))}</strong> · ${esc(item.title)} · ${item.cost} points <span class="small">${esc(new Date(item.date).toLocaleString())}</span></p>`).join('')||'<p class="small">No rewards redeemed yet.</p>'}<p id="store-error" role="alert" class="form-error"></p>`);
+}
+function editReward(id){
+  if(state.auth?.role!=='parent')return;
+  const item=state.rewards.items.find(x=>x.id===id)||{id:crypto.randomUUID(),title:'',cost:1};
+  openDialog('edit-reward',`<h2>${id?'Edit':'Add'} reward</h2><form onsubmit="event.preventDefault();storeAction({rewardAction:'save',id:${jsArg(item.id)},title:this.elements.title.value,cost:Number(this.elements.cost.value)})"><label>Reward name<input name="title" maxlength="160" required value="${esc(item.title)}"></label><label>Point price<input name="cost" type="number" min="1" max="100000" step="1" required value="${item.cost}"></label><div class="actions"><button class="button" type="submit">Save reward</button><button class="button light" type="button" onclick="drawRewards()">Cancel</button></div><p id="store-error" class="form-error" role="alert"></p></form>`);
+}
+function confirmReward(id){
+  const item=state.rewards.items.find(x=>x.id===id);if(!item)return;
+  const requestId=crypto.randomUUID();
+  openDialog('redeem-reward',`<h2>Redeem ${esc(item.title)}?</h2><p>Spend ${item.cost} points on this reward. Your parent can see this purchase in the redemption history.</p><div class="actions"><button class="button" onclick="storeAction({rewardAction:'redeem',id:${jsArg(id)},requestId:${jsArg(requestId)}})">Spend ${item.cost} points</button><button class="button light" onclick="drawRewards()">Cancel</button></div><p id="store-error" class="form-error" role="alert"></p>`);
+}
+let storeBusy=false;
+async function openThemeUnlock(theme,student){
+  if(state.auth?.role!==student){showToast('Sign in as '+nameOf(student)+' to buy this theme for 5 points.');return;}
+  if(!await pumpWrites()){showToast('Save your pending changes first.');return;}
+  try{state.rewards=(await fetchAuth(state.auth)).rewards;}catch{showToast('Connect to load your point balance.');return;}
+  if(themeOwned(theme,student)){drawSettings();return;}
+  const balance=state.rewards.balances[student]||0;
+  openDialog('unlock-theme',`<h2>Unlock ${esc(THEME_PALETTES[theme][0])}</h2><p>5 points · Yours permanently, including presets that use this palette.</p><p>You have ${balance} points.</p><div class="actions"><button class="button" ${balance<5?'disabled':''} onclick="storeAction({rewardAction:'unlockTheme',id:${jsArg(theme)}})">Unlock for 5 points</button><button class="button light" onclick="drawSettings()">Back to themes</button></div><p id="store-error" class="form-error" role="alert"></p>`);
+}
+async function storeAction(body){
+  if(storeBusy)return;storeBusy=true;
+  try{
+    const response=await fetch('/api/assignments',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...body,role:state.auth.role,password:state.auth.password})}),data=await response.json();
+    if(!response.ok)throw Error(data.error||'Couldn’t save. Please retry.');
+    state.rewards=data.rewards;drawRewards();showToast(['unlockTheme','unlockCosmetic'].includes(body.rewardAction)?'Unlocked! Choose it in Settings.':body.rewardAction==='redeem'?'Reward redeemed!':'Rewards updated');
+  }catch(error){const node=document.getElementById('store-error');if(node)node.textContent=error.message;}
+  finally{storeBusy=false;}
 }
 function dashboardClock(){return '<time class="dashboard-clock" id="dashboard-clock" aria-label="Current time"></time>';}
 function updateDashboardClock(){
@@ -547,7 +623,7 @@ function monitorPage(){state.view='monitor';render();}
 function acceptAuth(data,session){
   const nextView=session.role==='monitor'?'monitor':session.role==='parent'?'parent':session.role,subjectView=state.view===nextView?state.subjectView:null;
   state.assignments=dbData(data.assignments);loadSchedules(data.schedules);loadCards(data.cards);state.familyCalendar=Array.isArray(data.calendar)?data.calendar:[];
-  state.preferences=data.preferences||{};state.assignmentSubjectCatalogs={leon:{added:[],hidden:[]},logan:{added:[],hidden:[]},...(data.assignmentSubjectCatalogs||{})};state.auth=session;state.syncPhase='saved';state.syncError='';state.liveSyncError='';state.view=nextView;
+  state.rewards=data.rewards||{items:[],history:[],balances:{}};state.preferences=data.preferences||{};state.assignmentSubjectCatalogs={leon:{added:[],hidden:[]},logan:{added:[],hidden:[]},...(data.assignmentSubjectCatalogs||{})};state.auth=session;state.syncPhase='saved';state.syncError='';state.liveSyncError='';state.view=nextView;
   state.subjectView=subjectView;state.sharedSnapshot=JSON.stringify(data);state.loadError='';state.pending=localRead('school-pending-'+session.role,[]).filter(item=>item&&item.body&&typeof item.label==='string');
   // Replay unsaved edits into the fetched snapshot so a reload does not hide them.
   for(const item of state.pending){const c=item.body.change;if(c){const found=findTask(c.id);if(c.type==='add'&&!found)(state.assignments[c.student][c.subject]??=[]).push({...c});else if(c.type==='remove'&&found)state.assignments[found.student][found.subject].splice(found.index,1);else if(found){const previous=found.subject;Object.assign(found.x,c);if(c.subject&&c.subject!==previous){state.assignments[found.student][previous].splice(found.index,1);(state.assignments[found.student][c.subject]??=[]).push(found.x);}}}if(item.body.preferencesOnly)state.preferences[item.body.scope]=item.body.preferences;if(item.body.subjectsOnly)state.assignmentSubjectCatalogs[item.body.student]=item.body.catalog;if(item.body.scheduleOnly){const {student,date,items}=item.body;(state.scheduledDays[student]??={})[date]=copySchedule(items);if(state.scheduleDates[student]===date)state.schedules[student]=copySchedule(items)}if(item.body.cardsOnly)loadCards(item.body.cards);if(item.body.calendarOnly)state.familyCalendar=item.body.events;}
@@ -712,13 +788,13 @@ const LOOK_PRESETS=[
   {id:'binding-of-isaac',label:'The Binding of Isaac',note:'Scrap paper · inked cards',theme:'binding-of-isaac',style:'isaac',group:'game'},
   {id:'pipboy',label:'Fallout Pip-Boy',note:'Green CRT · terminal UI',theme:'pipboy',style:'pipboy',group:'game'}
 ];
-function lookChoices(p,group='featured'){return LOOK_PRESETS.filter(look=>(look.group||'featured')===group).map(look=>{const palette=THEME_PALETTES[look.theme],selected=activeTheme(p)===look.theme&&p.visualStyle===look.style;return `<button type="button" class="look-choice" data-look-choice="${look.id}" aria-pressed="${selected}" onclick="applyLookPreset('${look.id}',state.settingsScope)"><span class="look-swatch" style="--look-page:${palette[2]};--look-accent:${palette[1]}"><i></i><b></b><em></em></span><span><strong>${look.label}</strong><small>${look.note}</small></span></button>`;}).join('');}
-function themeChoices(p,keys){const active=activeTheme(p);return keys.map(key=>{const palette=THEME_PALETTES[key],[label,accent,bg,,,line]=palette,isDark=DARK_THEME_KEYS.includes(key);return `<button type="button" class="theme-swatch" data-theme-choice="${key}" data-theme-label="${esc(label.toLowerCase())}" aria-label="Use ${esc(label)} ${isDark?'dark':'light'} palette" aria-pressed="${active===key}" onclick="selectTheme('${key}',state.settingsScope)"><span class="swatch" style="--swatch-page:${bg};--swatch-accent:${accent};--swatch-mid:${palette[4]||bg};--swatch-line:${line||accent}"><i></i><i></i><i></i></span><span>${label}<small>${isDark?'Dark':'Light'}</small></span></button>`;}).join('');}
+function lookChoices(p,group='featured'){return LOOK_PRESETS.filter(look=>(look.group||'featured')===group).map(look=>{const palette=THEME_PALETTES[look.theme],selected=activeTheme(p)===look.theme&&p.visualStyle===look.style;return `<button type="button" class="look-choice" data-look-choice="${look.id}" aria-pressed="${selected}" onclick="applyLookPreset('${look.id}',state.settingsScope)"><span class="look-swatch" style="--look-page:${palette[2]};--look-accent:${palette[1]}"><i></i><b></b><em></em></span><span><strong>${look.label}</strong><small>${look.note} · ${themeLockLabel(look.theme)}${cosmeticOwned('visualStyle',look.style)?'':' · 🔒 UI 5 points'}</small></span></button>`;}).join('');}
+function themeChoices(p,keys){const active=activeTheme(p);return keys.map(key=>{const palette=THEME_PALETTES[key],[label,accent,bg,,,line]=palette,isDark=DARK_THEME_KEYS.includes(key);return `<button type="button" class="theme-swatch" data-theme-choice="${key}" data-theme-label="${esc(label.toLowerCase())}" aria-label="Use ${esc(label)} ${isDark?'dark':'light'} palette" aria-pressed="${active===key}" onclick="selectTheme('${key}',state.settingsScope)"><span class="swatch" style="--swatch-page:${bg};--swatch-accent:${accent};--swatch-mid:${palette[4]||bg};--swatch-line:${line||accent}"><i></i><i></i><i></i></span><span>${label}<small>${isDark?'Dark':'Light'} · ${themeLockLabel(key)}</small></span></button>`;}).join('');}
 function themeLibrary(p){const consoles=['nes','gameboy','snes','genesis','atari','arcade','arcade-cyan','playstation','ps2','ps4','psp','gba','gbc','n64','wii','gamecube','dreamcast','xbox','saturn','ds'],gameWorlds=['wow-alliance','wow-horde','cuphead','star-wars-sith','star-wars-jedi','star-wars','swtor','legend-of-dragoon','sims','stardew-valley','binding-of-isaac','pipboy'],groups=[['Paper & calm',['coastal','material','facebook','paper','sand','book','sepia-story','sakura-paper','arctic']],['Nature',['forest','meadow','mint','ocean-night','emerald-night','chalkboard']],['Bright & playful',['sunset','peach','berry','rose','citrus','coral','pastel-pop','comic-book']],['Retro consoles',consoles],['Game worlds',gameWorlds],['Night palettes',DARK_THEME_KEYS.filter(key=>!['genesis','atari','arcade','arcade-cyan','chalkboard','contrast-dark','ps2','ps4','psp','xbox','wow-alliance','wow-horde','star-wars-sith','star-wars','swtor','pipboy'].includes(key))],['High contrast',['contrast','contrast-dark']]],used=new Set(groups.flatMap(([,keys])=>keys)),other=Object.keys(THEME_PALETTES).filter(key=>!used.has(key));if(other.length)groups.push(['More palettes',other]);return groups.map(([label,keys],index)=>`<details class="theme-group" data-theme-group="${index}"><summary>${label}<span class="count">${keys.length}</span></summary><div class="theme-grid">${themeChoices(p,keys)}</div></details>`).join('');}
 function interfaceStyleOptions(p){return[['classic','Classic'],['boxy','Boxy'],['studio','Studio'],['playful','Playful'],['glass','Glass'],['minimal','Minimal'],['comic','Comic'],['retro','Retro'],['pixel','8-bit Console'],['book','Book · serif'],['stardew','Stardew Valley · pixel farm'],['dragoon','Legend of Dragoon · RPG'],['wow-ui','World of Warcraft · fantasy'],['isaac','Binding of Isaac · paper'],['swtor','Star Wars · sci-fi'],['ps2-ui','PlayStation 2 · glossy'],['ps4-ui','PlayStation 4 · tiles'],['pipboy','Fallout · Pip-Boy']].map(([key,label])=>`<option value="${key}" ${p.visualStyle===key?'selected':''}>${label}</option>`).join('');}
 function fontStyleOptions(p){const groups=[['Theme matched',[['theme','Match current theme']]],['Readable fonts',[['charger','Charger'],['emotion-engine','Emotion Engine'],['isaacsans','IsaacSans'],['montserrat','Montserrat'],['queensides','Queensides'],['rushford-clean','Rushford Clean'],['tbj-margin','TBJ Margin Condensed']]],['Decorative fonts',[['cosmic-fantasy','Cosmic Fantasy'],['dalelands','Dalelands Uncial'],['dragoon-bold','Dragoon Bold'],['gamecuben','Gamecuben'],['gbboot','GB Boot'],['kroegbainder','Kroegbainder'],['modern-fantasy','Modern Fantasy Demo'],['pokemon-gb','Pokemon GB'],['warioland4','Wario Land 4'],...EXTRA_FONT_OPTIONS.filter(([id])=>!['montserrat','queensides','rushford-clean','tbj-margin'].includes(id))]]];return groups.map(([label,items])=>[label,items.filter(([id])=>id==='theme'||p.allowedFonts.includes(id))]).filter(([,items])=>items.length).map(([label,items])=>`<optgroup label="${label}">${items.map(([key,name])=>`<option value="${key}" ${p.fontStyle===key?'selected':''}>${name}</option>`).join('')}</optgroup>`).join('');}
 function clockFontOptions(p){const options=[['theme','Match theme font'],['system','Digital monospace'],['charger','Charger'],['emotion-engine','Emotion Engine'],['isaacsans','IsaacSans'],['cosmic-fantasy','Cosmic Fantasy'],['dalelands','Dalelands Uncial'],['dragoon-bold','Dragoon Bold'],['gamecuben','Gamecuben'],['gbboot','GB Boot'],['kroegbainder','Kroegbainder'],['modern-fantasy','Modern Fantasy Demo'],['pokemon-gb','Pokemon GB'],['warioland4','Wario Land 4'],...EXTRA_FONT_OPTIONS];return options.filter(([key])=>['theme','system'].includes(key)||p.allowedFonts.includes(key)).map(([key,label])=>`<option value="${key}" ${p.clockFont===key?'selected':''}>${label}</option>`).join('');}
-function applyLookPreset(id,forScope=scope()){const look=LOOK_PRESETS.find(item=>item.id===id);if(!look)return;const dark=DARK_THEME_KEYS.includes(look.theme),p={...prefs(forScope),appearance:dark?'dark':'light',visualStyle:look.style,[dark?'darkTheme':'lightTheme']:look.theme};state.preferences[forScope]=p;localWrite('school-preferences-'+forScope,p);if(forScope===scope())applyPreferences();if(state.auth&&state.auth.role!=='monitor')queuedWrite({preferencesOnly:true,scope:forScope,preferences:p},'Appearance');updateAppearanceControls(p);}
+function applyLookPreset(id,forScope=scope()){const look=LOOK_PRESETS.find(item=>item.id===id);if(!look)return;if(!cosmeticOwned('visualStyle',look.style,forScope)){openCosmeticUnlock('visualStyle',look.style,forScope);return;}if(!themeOwned(look.theme,forScope)){openThemeUnlock(look.theme,forScope);return;}const dark=DARK_THEME_KEYS.includes(look.theme),p={...prefs(forScope),appearance:dark?'dark':'light',visualStyle:look.style,[dark?'darkTheme':'lightTheme']:look.theme};state.preferences[forScope]=p;localWrite('school-preferences-'+forScope,p);if(forScope===scope())applyPreferences();if(state.auth&&state.auth.role!=='monitor')queuedWrite({preferencesOnly:true,scope:forScope,preferences:p},'Appearance');updateAppearanceControls(p);}
 function interfaceStyleLabel(value){return({classic:'Classic',boxy:'Boxy',studio:'Studio',playful:'Playful',glass:'Glass',minimal:'Minimal',comic:'Comic',retro:'Retro',pixel:'8-bit Console',book:'Book',stardew:'Stardew Valley',dragoon:'Legend of Dragoon','wow-ui':'World of Warcraft',isaac:'Binding of Isaac',swtor:'Star Wars','ps2-ui':'PlayStation 2','ps4-ui':'PlayStation 4',pipboy:'Fallout Pip-Boy'})[value]||value;}
 function updateAppearanceControls(p){const active=activeTheme(p),current=`${THEME_PALETTES[active][0]} · ${interfaceStyleLabel(p.visualStyle)}`;document.querySelectorAll('[data-theme-choice]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.themeChoice===active)));document.querySelectorAll('[data-style-choice]').forEach(button=>button.setAttribute('aria-pressed',String(p.visualStyle===button.dataset.styleChoice)));document.querySelectorAll('[data-look-choice]').forEach(button=>{const look=LOOK_PRESETS.find(item=>item.id===button.dataset.lookChoice);button.setAttribute('aria-pressed',String(!!look&&look.theme===active&&look.style===p.visualStyle));});document.querySelectorAll('[data-pref]').forEach(input=>{if(Object.hasOwn(p,input.dataset.pref))input.value=p[input.dataset.pref];});document.querySelectorAll('[data-appearance-current]').forEach(label=>label.textContent=current);document.querySelectorAll('[data-avatar-choice]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.avatarChoice===p.avatar)));document.querySelectorAll('[data-avatar-frame-choice]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.avatarFrameChoice===p.avatarFrame)));document.querySelectorAll('[data-profile-avatar]').forEach(avatar=>{const student=avatar.dataset.profileAvatar,profile=prefs(student),frame=avatar.dataset.profileAvatarFrame||profile.avatarFrame;avatar.textContent=profileAvatarFor(student,profile);avatar.className=`profile-avatar avatar-frame-${frame}`;});document.querySelectorAll('.avatar-summary').forEach(summary=>{const student=document.querySelector('[data-avatar-choice]')?.closest('.avatar-customizer')?.dataset.student;if(student){const profile=prefs(student);summary.textContent=`${profileAvatarFor(student,profile)} · ${AVATAR_FRAMES.find(([frame])=>frame===profile.avatarFrame)?.[1]||'Circle'}`;}});const opacity=document.querySelector('[data-background-opacity]'),output=document.querySelector('[data-background-opacity-value]'),remove=document.querySelector('[data-background-remove]'),effect=document.querySelector('[data-background-effect]');if(opacity){opacity.value=p.backgroundOpacity;opacity.disabled=!p.backgroundImage;}if(output)output.textContent=`${p.backgroundOpacity}%`;if(remove)remove.disabled=!p.backgroundImage;if(effect)effect.disabled=!p.backgroundImage;}
 function filterThemeLibrary(query){const term=String(query||'').trim().toLowerCase();let matches=0;document.querySelectorAll('.theme-group').forEach(group=>{const buttons=[...group.querySelectorAll('[data-theme-choice]')],shown=buttons.filter(button=>!term||button.dataset.themeLabel.includes(term));buttons.forEach(button=>button.hidden=!!term&&!shown.includes(button));group.hidden=!!term&&!shown.length;if(term&&shown.length)group.open=true;if(!term)group.open=false;matches+=shown.length;});const empty=document.getElementById('theme-search-empty');if(empty)empty.hidden=matches>0;}
@@ -732,6 +808,7 @@ function drawSettings(){
   document.querySelector('#app-dialog .custom-background-controls')?.insertAdjacentHTML('afterbegin',`<label class="background-effect-control">Background effect<select data-pref="backgroundEffect" data-background-effect ${p.backgroundImage?'':'disabled'} onchange="setPreference('backgroundEffect',this.value,state.settingsScope)">${opt('none','None',p.backgroundEffect)+opt('scanlines','CRT scanlines',p.backgroundEffect)+opt('grid','Pixel grid',p.backgroundEffect)+opt('paper','Paper grain',p.backgroundEffect)+opt('halftone','Halftone dots',p.backgroundEffect)}</select><small>Apply a texture directly to the background image.</small></label>`);
   if(parent&&forScope==='parent')document.getElementById('app-dialog').insertAdjacentHTML('beforeend','<button class="button light" onclick="openPasswordSettings()">Change parent password</button>');
   if(parent&&['leon','logan','monitor'].includes(forScope))document.getElementById('app-dialog').insertAdjacentHTML('beforeend',`<label class="switch dashboard-detail-setting"><input type="checkbox" ${p.dashboardExpanded?'checked':''} onchange="setPreference('dashboardExpanded',this.checked,state.settingsScope)">Start dashboard with all details expanded</label>`);
+  labelCosmeticPrices();
   organizeSettings();
 }
 function showSettingsSection(section){
@@ -841,7 +918,7 @@ function removeTask(id){
   openDialog('remove-assignment',`<h2>Remove assignment?</h2><p>${esc(found.x.title)}</p><p class="small">You can undo the removal immediately afterward.</p><button class="button danger" onclick="confirmRemove(${jsArg(id)})">Remove assignment</button>`);
 }
 function confirmRemove(id){const found=findTask(id);if(!found)return;state.assignments[found.student][found.subject].splice(found.index,1);saveAssignmentChange('remove',found);closeDialog();render();showToast('Assignment removed',()=>{state.assignments[found.student][found.subject].push(found.x);saveAssignmentChange('add',found);render();});}
-function downloadBackup(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({assignments:state.assignments,schedules:schedulePayload(),cards:dashboardCardsPayload(),calendar:state.familyCalendar,preferences:state.preferences},null,2)],{type:'application/json'}));a.download='school-dashboard-backup-'+scheduleDay()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
+function downloadBackup(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({assignments:state.assignments,schedules:schedulePayload(),cards:dashboardCardsPayload(),calendar:state.familyCalendar,preferences:state.preferences,rewards:state.rewards},null,2)],{type:'application/json'}));a.download='school-dashboard-backup-'+scheduleDay()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
 function sharedPage(){const readonly=state.auth?.role!=='parent';return mast()+`<section class="page-heading"><div><p class="small">${dateLabel(scheduleDay())}</p><h1>Our school day</h1></div>${dashboardClock()}<button class="button light" onclick="refreshDashboard()">Refresh</button></section><p id="shared-refresh-status" class="small" role="status">${esc(state.refreshError||'')}</p><div class="shared-grid">${['leon','logan'].map(student=>`<article class="shared-child"><h2 class="profile-heading">${profileAvatarMark(student)}<span>${nameOf(student)}</span></h2><div class="work-board">${workSection(state.assignments[student],'late',student,readonly)}${workSection(state.assignments[student],'today',student,readonly)}${workingAhead(state.assignments[student],student,readonly)}${optionalSessions(student)}</div>${schedulePanel(student)}</article>`).join('')}</div>`;}
 async function refreshDashboard(silent=false){
   if(!state.auth||state.pending.length||pumping){if(!silent)showToast('Save your pending changes before refreshing.');return;}

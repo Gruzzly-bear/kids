@@ -1,14 +1,55 @@
 import { authorized, hash, json, metadata, preferences, readJSON, safeURL, setting } from './shared.js';
+import { earnedSQL, spentSQL, rewardsData, restrictThemes } from './rewards.js';
+import { FREE_THEMES, THEME_CATALOG, THEME_PRICE } from './theme-catalog.js';
+import { COSMETICS } from './cosmetics.js';
 
 export async function onRequestPost({ request, env }) {
   try {
     const body = await request.json();
     const { role, password, change } = body;
     if (!await authorized(env, role, password)) return json({ error: 'Please sign in again.' }, 401);
+    if (body.rewardAction) {
+      const { rewardAction: action, id }=body;
+      if(typeof id!=='string'||! /^[a-zA-Z0-9-]{1,120}$/.test(id))return json({error:'Invalid reward.'},400);
+      if(action==='unlockCosmetic'){
+        if(!['leon','logan'].includes(role))return json({error:'Sign in as a child to unlock appearance options.'},403);
+        const item=Object.hasOwn(COSMETICS,id)?COSMETICS[id]:null;if(!item)return json({error:'Choose a valid appearance option.'},400);
+        const key='redemption_cosmetic_'+role+'_'+id;
+        await env.DB.prepare(`INSERT INTO settings(key,value) SELECT ?,? WHERE ?<=(${earnedSQL})-(${spentSQL}) ON CONFLICT(key) DO NOTHING`)
+          .bind(key,JSON.stringify({id,student:role,cosmetic:id,title:item.title,cost:item.cost,date:new Date().toISOString()}),item.cost,role,role).run();
+        if(!await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind(key).first())return json({error:`You need ${item.cost} points for this unlock.`},409);
+      } else if(action==='unlockTheme'){
+        if(!['leon','logan'].includes(role))return json({error:'Sign in as a child to unlock a theme.'},403);
+        if(!Object.hasOwn(THEME_CATALOG,id)||FREE_THEMES.includes(id))return json({error:'Choose a locked theme.'},400);
+        const key='redemption_theme_'+role+'_'+id;
+        await env.DB.prepare(`INSERT INTO settings(key,value) SELECT ?,? WHERE ?<=(${earnedSQL})-(${spentSQL}) ON CONFLICT(key) DO NOTHING`)
+          .bind(key,JSON.stringify({id:'theme-'+id,student:role,theme:id,title:THEME_CATALOG[id]+' theme',cost:THEME_PRICE,date:new Date().toISOString()}),THEME_PRICE,role,role).run();
+        if(!await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind(key).first())return json({error:'You need 5 points to unlock this theme.'},409);
+      } else if(action==='save'||action==='remove'){
+        if(role!=='parent')return json({error:'Only parents can edit rewards.'},403);
+        if(action==='remove')await env.DB.prepare('DELETE FROM settings WHERE key=?').bind('reward_'+id).run();
+        else {
+          const title=typeof body.title==='string'?body.title.trim():'';
+          if(!title||title.length>160||!Number.isSafeInteger(body.cost)||body.cost<1||body.cost>100000)return json({error:'Enter a reward name and a whole point price from 1 to 100,000.'},400);
+          await setting(env,'reward_'+id,{id,title,cost:body.cost}).run();
+        }
+      } else if(action==='redeem'){
+        if(!['leon','logan'].includes(role))return json({error:'Sign in as a child to redeem a reward.'},403);
+        if(typeof body.requestId!=='string'||! /^[a-zA-Z0-9-]{1,120}$/.test(body.requestId))return json({error:'Invalid purchase.'},400);
+        const key='redemption_'+role+'_'+body.requestId;
+        // Price lookup, balance check, and debit happen in one atomic statement.
+        await env.DB.prepare(`INSERT INTO settings(key,value)
+          SELECT ?,json_object('id',?,'student',?,'title',json_extract(value,'$.title'),'cost',json_extract(value,'$.cost'),'date',?)
+          FROM settings WHERE key=? AND json_extract(value,'$.cost')<=(${earnedSQL})-(${spentSQL})
+          ON CONFLICT(key) DO NOTHING`).bind(key,body.requestId,role,new Date().toISOString(),'reward_'+id,role,role).run();
+        if(!await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind(key).first())return json({error:'This reward is unavailable or you need more points. Refresh and try again.'},409);
+      } else return json({error:'Invalid store action.'},400);
+      return json({ok:true,rewards:await rewardsData(env,role)});
+    }
     if (body.preferencesOnly) {
       const scope = body.scope || role;
       if (!['parent', 'leon', 'logan', 'monitor'].includes(scope) || (role !== 'parent' && scope !== role)) return json({ error: 'Not allowed.' }, 403);
-      const nextPreferences=preferences(body.preferences);
+      const nextPreferences=await restrictThemes(env,scope,preferences(body.preferences));
       if(role!=='parent'){
         const stored=await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind(`preferences_${scope}`).first();
         const existing=readJSON(stored?.value, {});
@@ -70,6 +111,7 @@ export async function onRequestPost({ request, env }) {
       for (const key of ['completedDate', 'submittedDate']) {
         if ((role === 'parent' || type === 'status') && Object.hasOwn(change, key)) {
           if (!validDate(change[key])) return json({ error: 'Use a valid completion and submission date.' }, 400);
+          if(role!=='parent'&&change[key]&&change[key]!==meta[key]&&change[key]!==new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'}))return json({error:'Students can record today’s date. Ask a parent to correct an earlier date.'},400);
           meta[key] = change[key];
         }
       }

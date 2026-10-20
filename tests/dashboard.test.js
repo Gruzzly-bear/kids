@@ -201,3 +201,97 @@ test('help inbox uses an accessible icon and highlights only waiting requests',(
   assert(!empty.includes('inbox-count has-requests'));
   assert(waiting.includes('inbox-count has-requests')&&waiting.includes('aria-current="page"'));
 });
+
+test('points use submission dates and rewards enforce prices, ownership and retry safety',async()=>{
+  const env=await fixture();
+  const update=async(id,due,submittedDate,done=true)=>post(save,env,{...parent,change:{id,student:'leon',subject:'math',type:'update',title:id,due,submittedDate,done}});
+  await update('leon-0','2026-10-20','2026-10-20');
+  await update('leon-1','2026-10-21','2026-10-20');
+  await update('leon-2','2026-10-19','2026-10-20');
+  await update('leon-3','','2026-10-20');
+  await update('leon-4','2026-10-21','');
+  const data=async(credentials=leon)=>(await (await post(auth,env,credentials)).json()).rewards;
+  assert.equal((await data()).balances.leon,3);
+  const reward={rewardAction:'save',id:'screen-time',title:'Extra screen time',cost:3};
+  assert.equal((await post(save,env,{...leon,...reward})).status,403);
+  assert.equal((await post(save,env,{...parent,...reward,cost:-1})).status,400);
+  assert.equal((await post(save,env,{...parent,...reward})).status,200);
+  const purchase={...leon,rewardAction:'redeem',id:reward.id,requestId:'purchase-1',cost:0,student:'logan'};
+  assert.equal((await post(save,env,purchase)).status,200);
+  assert.equal((await post(save,env,purchase)).status,200);
+  assert.equal((await data()).balances.leon,0);
+  assert.equal((await data()).history.length,1);
+  assert.equal((await post(save,env,{...purchase,requestId:'purchase-2'})).status,409);
+  assert.equal((await data({role:'logan',password:'test-password'})).history.length,0);
+  await update('leon-1','2026-10-21','2026-10-20',false);
+  assert.equal((await data()).balances.leon,-2,'Reopening cannot earn points twice');
+  await update('leon-1','2026-10-21','2026-10-20');
+  assert.equal((await data()).balances.leon,0);
+  assert.equal((await post(save,env,{...leon,change:{type:'status',id:'leon-0',student:'leon',submittedDate:'2020-01-01'}})).status,400);
+  await post(save,env,{...parent,rewardAction:'remove',id:reward.id});
+  assert.equal((await data()).items.length,0);
+  assert.equal((await data(parent)).history[0].title,reward.title);
+});
+
+test('theme unlocks cost five points once per child and locked palettes cannot be saved',async()=>{
+  const env=await fixture();
+  const {THEME_CATALOG,FREE_THEMES}=await import('../functions/api/theme-catalog.js');
+  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
+  const palettes=vm.runInNewContext('('+source.match(/const THEME_PALETTES = (\{[\s\S]*?\n\});/)[1]+')');
+  assert.deepEqual(Object.keys(THEME_CATALOG).sort(),Object.keys(palettes).sort());
+  assert.deepEqual(FREE_THEMES,['coastal','midnight']);
+  const data=async(credentials=leon)=>(await (await post(auth,env,credentials)).json());
+  await post(save,env,{...leon,preferencesOnly:true,preferences:{lightTheme:'forest',darkTheme:'dracula'}});
+  assert.equal((await data()).preferences.leon.lightTheme,'coastal');
+  assert.equal((await data()).preferences.leon.darkTheme,'midnight');
+  const buy={...leon,rewardAction:'unlockTheme',id:'forest',cost:0};
+  assert.equal((await post(save,env,buy)).status,409);
+  for(let i=0;i<3;i++)await post(save,env,{...parent,change:{type:'update',id:'leon-'+i,student:'leon',subject:'math',title:'Early work',due:'2026-10-21',submittedDate:'2026-10-20',done:true}});
+  assert.equal((await post(save,env,buy)).status,200);
+  assert.equal((await post(save,env,buy)).status,200);
+  let result=await data();assert.equal(result.rewards.balances.leon,1);assert(result.rewards.unlocked.leon.includes('forest'));
+  await post(save,env,{...leon,preferencesOnly:true,preferences:{lightTheme:'forest'}});
+  assert.equal((await data()).preferences.leon.lightTheme,'forest');
+  assert.equal((await post(save,env,{...buy,id:'dracula'})).status,409);
+  assert.equal((await post(save,env,{...buy,id:'nonexistent'})).status,400);
+  assert.equal((await post(save,env,{...buy,id:'coastal'})).status,400);
+  assert.equal((await post(save,env,{...buy,role:'parent'})).status,403);
+  assert(!(await data({role:'logan',password:'test-password'})).rewards.unlocked.logan.includes('forest'));
+  await post(save,env,{...parent,change:{type:'status',id:'leon-0',student:'leon',done:false}});
+  result=await data();assert(result.rewards.unlocked.leon.includes('forest'),'Unlock stays owned even if earnings change');
+  assert.equal(result.preferences.leon.lightTheme,'forest');
+});
+
+test('cosmetic purchases gate all appearance fields and share permanent font ownership',async()=>{
+  const env=await fixture();
+  const {COSMETICS,COSMETIC_RULES}=await import('../functions/api/cosmetics.js');
+  const image='data:image/webp;base64,AAAA';
+  const premium={fontStyle:'montserrat',clockFont:'montserrat',visualStyle:'glass',cornerStyle:'pill',edgeStyle:'glow',surfaceTexture:'paper',backgroundEffect:'scanlines',avatar:'🐱',avatarFrame:'glow',avatarImage:image,backgroundImage:image,textSize:'large',motion:'reduced'};
+  const data=async(credentials=leon)=>(await (await post(auth,env,credentials)).json());
+  await post(save,env,{...parent,preferencesOnly:true,scope:'leon',preferences:premium});
+  let prefs=(await data()).preferences.leon;
+  for(const [field,rule] of Object.entries(COSMETIC_RULES))assert.equal(prefs[field],rule.default,field+' is locked');
+  assert.equal(prefs.textSize,'large');assert.equal(prefs.motion,'reduced');
+  await post(save,env,{...parent,preferencesOnly:true,scope:'parent',preferences:premium});
+  assert.equal((await data(parent)).preferences.parent.visualStyle,'glass');
+  const buy=id=>post(save,env,{...leon,rewardAction:'unlockCosmetic',id,cost:0,student:'logan'});
+  assert.equal((await buy('font-montserrat')).status,409);
+  assert.equal((await buy('constructor')).status,400);
+  assert.equal((await post(save,env,{...parent,rewardAction:'unlockCosmetic',id:'style-glass'})).status,403);
+  // Enough real assignment earnings to exercise every cosmetic category.
+  for(let i=0;i<30;i++)await post(save,env,{...parent,change:{type:'add',id:'cosmetic-work-'+i,student:'leon',subject:'math',title:'Early work',due:'2026-10-21',submittedDate:'2026-10-20',done:true}});
+  const ids=new Set(Object.entries(premium).map(([field,value])=>{
+    const rule=COSMETIC_RULES[field];if(!rule)return null;
+    return Object.values(COSMETICS).find(item=>item.group===rule.group&&item.value===(field.endsWith('Image')?'custom':value))?.id;
+  }).filter(Boolean));
+  for(const id of ids){assert.equal((await buy(id)).status,200,id);assert.equal((await buy(id)).status,200,'Retry '+id);}
+  const spent=[...ids].reduce((sum,id)=>sum+COSMETICS[id].cost,0);
+  let result=await data();assert.equal(result.rewards.balances.leon,60-spent);
+  assert.equal(result.rewards.history.length,ids.size);
+  await post(save,env,{...leon,preferencesOnly:true,preferences:premium});
+  result=await data();for(const field of Object.keys(COSMETIC_RULES))assert.equal(result.preferences.leon[field],premium[field],field+' unlocked');
+  assert.equal(result.rewards.cosmeticUnlocks.leon.filter(id=>id==='font-montserrat').length,1,'One purchase covers text and clock');
+  const logan=await data({role:'logan',password:'test-password'});assert.deepEqual(logan.rewards.cosmeticUnlocks.logan,[]);
+  await post(save,env,{...parent,change:{type:'status',id:'cosmetic-work-0',student:'leon',done:false}});
+  assert((await data()).rewards.cosmeticUnlocks.leon.includes('style-glass'),'Purchases survive earnings corrections');
+});

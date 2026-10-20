@@ -1,4 +1,5 @@
 import { metadata, preferences, readJSON } from './shared.js';
+import { restrictThemes } from './rewards.js';
 import { seedAssignments } from "../seed.js";
 
 const json=(body,status=200)=>Response.json(body,{status});
@@ -28,11 +29,13 @@ export async function onRequestPost({request,env}){
     const extraRows=await env.DB.prepare("SELECT key,value FROM settings WHERE key LIKE 'assignment_meta_%' OR key LIKE 'preferences_%' OR key LIKE 'assignment_subjects_%'").all(),extras=new Map(extraRows.results.map(row=>[row.key,row.value]));
     const assignments=result.results.map(row=>({...row,...metadata(readJSON(extras.get('assignment_meta_'+row.id)))})),scopes=all?['leon','logan','parent','monitor']:[role];
     const prefs=Object.fromEntries(scopes.filter(scope=>extras.has('preferences_'+scope)).map(scope=>[scope,preferences(readJSON(extras.get('preferences_'+scope)))]));
+    for(const scope of Object.keys(prefs))await restrictThemes(env,scope,prefs[scope]);
     const students=all?['leon','logan']:[role],assignmentSubjectCatalogs={};
     for(const student of students){
       const raw=readJSON(extras.get(`assignment_subjects_${student}`),{}),added=Array.isArray(raw.added)?raw.added.filter(item=>item&&typeof item.id==='string'&&typeof item.label==='string').map(item=>({id:item.id,label:item.label})):[],hidden=Array.isArray(raw.hidden)?raw.hidden.filter(id=>typeof id==='string'):[];
       assignmentSubjectCatalogs[student]={added,hidden};
     }
-    return json({role,assignments,schedules,cards,calendar,preferences:prefs,assignmentSubjectCatalogs});
+    const { rewardsData }=await import('./rewards.js');
+    return json({role,assignments,schedules,cards,calendar,preferences:prefs,assignmentSubjectCatalogs,rewards:await rewardsData(env,role)});
   }catch(e){return json({error:"Setup is incomplete. Run schema.sql in D1, then confirm the three secrets are saved."},500)}
 }
