@@ -325,10 +325,10 @@ test('kids see per-assignment point previews and totals for the exact work shown
   const task=(id,due,extra={})=>({id,title:id,due,done:false,...extra});
   const subjects={math:[task('due-one',today),task('tomorrow-one','2026-10-20'),task('later','2026-10-22')],ela:[task('due-two',today),task('tomorrow-two','2026-10-20'),task('complete',today,{done:true,submittedDate:today}),task('late','2026-10-18')]};
   let html=context.workSection(subjects,'today');
-  assert(html.includes('⭐ 2 points available'));assert.equal((html.match(/1 point if submitted today/g)||[]).length,2);
+  assert(!html.includes('points available'));assert(context.potentialPointsTotal(subjects.math.concat(subjects.ela).filter(x=>x.due===today),'leon').includes('⭐ 2 points available'));assert.equal((html.match(/1 point if submitted today/g)||[]).length,2);
   html=context.workingAhead(subjects);assert(html.includes('⭐ 4 points available'));assert.equal((html.match(/2 points if submitted today/g)||[]).length,2);assert(!html.includes('data-task-id="later"'));
   assert.equal(context.potentialTaskPoints(task('no-date','')),0);assert.equal(context.potentialTaskPoints(task('late','2026-10-18')),0);assert.equal(context.potentialTaskPoints(task('done',today,{done:true})),0);
-  subjects.math[0].done=true;assert(context.workSection(subjects,'today').includes('⭐ 1 point available'));
+  subjects.math[0].done=true;assert(context.potentialPointsTotal(subjects.math.concat(subjects.ela).filter(x=>x.due===today),'leon').includes('⭐ 1 point available'));
   assert(context.workingAhead({}).includes('⭐ 0 points available'));
   context.state.view='monitor';context.state.auth.role='monitor';assert(!context.workingAhead(subjects,'leon',true).includes('points available'));
   context.state.view='parent';context.state.auth.role='parent';assert(!context.workSection(subjects,'today','leon').includes('potential-points'));
@@ -408,4 +408,30 @@ test('child schedule headers show individual counts and route actions to that ch
   for(const action of ['editStudent','openScheduleFor','openPointAward','openChildHelp'])assert(leon.includes(action+"('leon')"));
   assert(logan.includes('Due today <b>0</b>'));assert(logan.includes('logan help requests, 0 pending'));assert(!logan.includes('has-requests'));
   assert(!source.includes('function weeklyOverview('));
+});
+
+test('both children retain purchased profile icons after signing in and changing other settings',async()=>{
+  const env=await fixture();
+  for(const [student,avatar,id] of [['leon','🐱','avatar-1'],['logan','🐶','avatar-2']]){
+    const credentials={role:student,password:'test-password'};
+    await post(save,env,{...parent,rewardAction:'awardPoints',id:'icon-award-'+student,student,points:10});
+    assert.equal((await post(save,env,{...credentials,rewardAction:'unlockCosmetic',id})).status,200);
+    assert.equal((await post(save,env,{...credentials,preferencesOnly:true,preferences:{avatar}})).status,200);
+    let data=await (await post(auth,env,credentials)).json();assert.equal(data.preferences[student].avatar,avatar);
+    await post(save,env,{...credentials,preferencesOnly:true,preferences:{...data.preferences[student],textSize:'large'}});
+    data=await (await post(auth,env,credentials)).json();assert.equal(data.preferences[student].avatar,avatar);
+    assert.equal((await (await post(auth,env,parent)).json()).preferences[student].avatar,avatar);
+    await post(save,env,{...credentials,rewardAction:'unlockCosmetic',id:'upload-custom'});
+    await post(save,env,{...credentials,preferencesOnly:true,preferences:{...data.preferences[student],avatarImage:'data:image/webp;base64,AAAA'}});
+    data=await (await post(auth,env,credentials)).json();assert.equal(data.preferences[student].avatarImage,'data:image/webp;base64,AAAA');
+  }
+});
+
+test('appearance refresh preserves profile images rather than replacing them with emoji',()=>{
+  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
+  const avatar={dataset:{profileAvatar:'logan',profileAvatarFrame:''},innerHTML:'',className:''};
+  const context=vm.createContext({document:{querySelectorAll:()=>[avatar]},prefs:()=>({avatarFrame:'glow',avatarImage:'saved-image'}),profileAvatarContents:()=>'<img src="saved-image">'});
+  const start=source.indexOf("document.querySelectorAll('[data-profile-avatar]').forEach",source.indexOf('function updateAppearanceControls('));
+  vm.runInContext(source.slice(start,source.indexOf("document.querySelectorAll('.avatar-summary')",start)),context);
+  assert.equal(avatar.innerHTML,'<img src="saved-image">');assert.equal(avatar.className,'profile-avatar avatar-frame-glow');
 });
