@@ -328,7 +328,7 @@ test('assignment pop-out returns from child dialogs and closes cleanly',()=>{
 test('kids see per-assignment point previews and totals for the exact work shown',()=>{
   const source=readFileSync(new URL('../school.js',import.meta.url),'utf8'),today='2026-10-19';
   const context=vm.createContext({state:{view:'leon',auth:{role:'leon'}},scheduleDay:()=>today,addDays:()=> '2026-10-20',jsArg:JSON.stringify,safeLink:()=>'',esc:x=>x,dueChip:()=>'',dateLabel:x=>x,nameOf:x=>x,subjectLabel:x=>x,nextDueDate:subjects=>Object.values(subjects).flat().filter(x=>!x.done&&x.due>today).map(x=>x.due).sort()[0]||''});
-  vm.runInContext(source.slice(source.indexOf('function potentialTaskPoints('),source.indexOf('function scheduleMinutes(')),context);
+  vm.runInContext(source.slice(source.indexOf('function workingAheadDate('),source.indexOf('function scheduleMinutes(')),context);
   const task=(id,due,extra={})=>({id,title:id,due,done:false,...extra});
   const subjects={math:[task('due-one',today),task('tomorrow-one','2026-10-20'),task('later','2026-10-22')],ela:[task('due-two',today),task('tomorrow-two','2026-10-20'),task('complete',today,{done:true,submittedDate:today}),task('late','2026-10-18')]};
   let html=context.workSection(subjects,'today');
@@ -473,7 +473,7 @@ test('goals, reward delivery, breakdowns and parent activity persist with owners
 test('next action ignores historical completions and done-and-submitted saves both dates together',async()=>{
   const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
   const task={id:'next-task',title:'Read today',subject:'ela',student:'leon',due:'2026-10-20',done:false},found={student:'leon',subject:'ela',x:task};let saved=0;
-  const context=vm.createContext({state:{auth:{role:'leon'}},allTasks:()=>[{id:'old',title:'Old complete',done:true,due:'2020-01-01'},task],scheduleDay:()=> '2026-10-20',safeLink:()=>'',esc:x=>x,subjectLabel:()=> 'Language Arts',dateLabel:x=>x,potentialTaskPoints:()=>1,jsArg:JSON.stringify,findTask:()=>found,closeDialog:()=>{},render:()=>{},saveAssignmentChange:async()=>{saved++;assert.equal(task.done,true);assert.equal(task.completedDate,'2026-10-20');assert.equal(task.submittedDate,'2026-10-20');return true;},showToast:()=>{}});
+  const context=vm.createContext({state:{auth:{role:'leon'}},allTasks:()=>[{id:'old',title:'Old complete',done:true,due:'2020-01-01'},task],scheduleDay:()=> '2026-10-20',addDays:()=> '2026-10-21',safeLink:()=>'',esc:x=>x,subjectLabel:()=> 'Language Arts',dateLabel:x=>x,potentialTaskPoints:()=>1,jsArg:JSON.stringify,findTask:()=>found,closeDialog:()=>{},render:()=>{},saveAssignmentChange:async()=>{saved++;assert.equal(task.done,true);assert.equal(task.completedDate,'2026-10-20');assert.equal(task.submittedDate,'2026-10-20');return true;},showToast:()=>{}});
   vm.runInContext(source.slice(source.indexOf('function nextAssignmentCard('),source.indexOf('function savingsGoal(')),context);
   const html=context.nextAssignmentCard('leon');assert(html.includes('Read today'));assert(!html.includes('Old complete'));assert(html.includes('Done and submitted'));
   await context.completeAndSubmit(task.id);assert.equal(saved,1);assert.equal(task.needsHelp,false);
@@ -541,7 +541,8 @@ test('only next-day early submissions earn points and children cannot rewrite a 
   for(const days of [0,1,2,3,7]){
     const id='window-'+days;
     await post(save,env,{...parent,change:{type:'add',id,student:'leon',subject:'math',title:'Due in '+days,due:shift(days),done:false}});
-    assert.equal((await post(save,env,{...leon,change:{type:'status',id,student:'leon',done:true,submittedDate:today,completedDate:today}})).status,200);
+    assert.equal((await post(save,env,{...leon,change:{type:'status',id,student:'leon',done:true,submittedDate:today,completedDate:today}})).status,days<=1?200:403);
+    if(days>1)await post(save,env,{...parent,change:{type:'status',id,student:'leon',done:true,submittedDate:today,completedDate:today}});
   }
   let data=(await (await post(auth,env,leon)).json()).rewards;
   assert.equal(data.breakdown.leon.earned,3,'1 today plus 2 tomorrow, zero for every later day');assert.equal(data.balances.leon,3);
@@ -569,4 +570,33 @@ test('parent-only behavior rules enforce fixed costs, both-child fighting deduct
   assert.equal((await deduct('other','custom-deduction',{points:20,notes:'Parent explanation'})).status,200);
   data=(await (await post(auth,env,leon)).json()).rewards;assert.equal(data.balances.leon,0);assert.equal(data.history.find(x=>x.id==='custom-deduction').cost,4,'Only available points are deducted');
   assert.equal(data.pointRules.quizAttempts.points,2);assert.equal(data.pointRules.fighting.both,true);
+});
+
+test('Working Ahead displays tomorrow only and does not skip to later work',()=>{
+  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
+  const context=vm.createContext({state:{view:'leon',auth:{role:'leon'}},scheduleDay:()=> '2026-10-20',addDays:()=> '2026-10-21',dateLabel:x=>x,nameOf:x=>x,taskGroups:(subjects,filter)=>Object.values(subjects).flat().filter(filter).map(x=>x.title).join('|')});
+  vm.runInContext(source.slice(source.indexOf('function workingAheadDate('),source.indexOf('function task('))+source.slice(source.indexOf('function workingAhead('),source.indexOf('function scheduleMinutes(')),context);
+  const work={math:[{title:'Tomorrow work',due:'2026-10-21',done:false},{title:'Too far work',due:'2026-10-22',done:false}]};
+  let html=context.workingAhead(work);assert(html.includes('Tomorrow work'));assert(!html.includes('Too far work'));
+  work.math[0].done=true;html=context.workingAhead(work);assert(!html.includes('Too far work'));assert(html.includes('No assignments due tomorrow'));
+});
+
+test('recent submission undo resolves stable assignment IDs and reopens the correct child assignment',async()=>{
+  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
+  const x={id:'leon-task',student:'leon',title:'Same title',done:true,completedDate:'2026-10-20',submittedDate:'2026-10-20'},found={student:'leon',subject:'math',x};let saves=0;
+  const context=vm.createContext({state:{auth:{role:'parent'}},allTasks:()=>[x,{...x,id:'another-task'}],jsArg:JSON.stringify,findTask:()=>found,render:()=>{},showToast:()=>{},saveAssignmentChange:async()=>{saves++;return true;}});
+  vm.runInContext(source.slice(source.indexOf('function activityAssignment('),source.indexOf('function parentActivityFeed(')),context);
+  assert(context.submissionUndoAction({kind:'submission',assignmentId:x.id,student:'leon'}).includes('Undo submission'));
+  assert(context.submissionUndoAction({kind:'submission',title:x.title,student:'leon'}).includes('unavailable'),'Ambiguous older entries never target the wrong task');
+  await context.undoSubmittedAssignment(x.id,'logan');assert.equal(saves,0);
+  await context.undoSubmittedAssignment(x.id,'leon');assert.equal(saves,1);assert.equal(x.done,false);assert.equal(x.submittedDate,'');assert.equal(x.completedDate,'');
+  assert(context.submissionUndoAction({kind:'submission',assignmentId:x.id,student:'leon'}).includes('Submission undone'));
+});
+
+test('parent submission undo persists, recalculates points, and logs a reopened event',async()=>{
+  const env=await fixture(),today=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});
+  await post(save,env,{...leon,change:{type:'status',id:'leon-0',student:'leon',done:true,completedDate:today,submittedDate:today}});
+  let data=await (await post(auth,env,parent)).json();assert(data.rewards.activity.some(x=>x.kind==='submission'&&x.assignmentId==='leon-0'));
+  assert.equal((await post(save,env,{...parent,change:{type:'status',id:'leon-0',student:'leon',done:false,submittedDate:'',completedDate:''}})).status,200);
+  data=await (await post(auth,env,parent)).json();const x=data.assignments.find(x=>x.id==='leon-0');assert.equal(x.done,0);assert.equal(x.submittedDate,'');assert(data.rewards.activity.some(x=>x.kind==='reopened'&&x.assignmentId==='leon-0'));assert(data.rewards.balances.leon>=0);
 });

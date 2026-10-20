@@ -406,13 +406,14 @@ async function awardPoints(event,student,id){
   finally{storeBusy=false;}
 }
 function nextAssignmentCard(student){
-  const rows=allTasks(student).filter(x=>!x.done||!x.submittedDate&&x.completedDate===scheduleDay()).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999')||a.title.localeCompare(b.title)),x=rows[0];
-  if(!x)return '<section class="panel next-assignment"><strong>You’re all caught up!</strong></section>';
+  const rows=allTasks(student).filter(x=>(!x.due||x.due<=addDays(scheduleDay(),1))&&(!x.done||!x.submittedDate&&x.completedDate===scheduleDay())).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999')||a.title.localeCompare(b.title)),x=rows[0];
+  if(!x)return '<section class="panel next-assignment"><strong>You’re caught up for today!</strong></section>';
   const url=safeLink(x.url);
   return `<section class="panel next-assignment"><div><p class="small">${x.done?'Finish submitting':'Do this next'}</p><h2>${esc(x.title)}</h2><p class="small">${esc(subjectLabel(x.subject,student))} · ${x.due?dateLabel(x.due):'No due date'} · ${potentialTaskPoints({...x,done:false})} points if submitted today</p></div><div class="actions">${url?`<a class="button light" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Open assignment ↗</a>`:''}<button class="button" onclick="completeAndSubmit(${jsArg(x.id)})">Done and submitted</button></div></section>`;
 }
 async function completeAndSubmit(id){
   const found=findTask(id);if(!found||state.auth?.role!==found.student)return;
+  if(found.x.due>addDays(scheduleDay(),1)){showToast('You can only work ahead on assignments due tomorrow.');return;}
   const previous={...found.x};Object.assign(found.x,{done:true,completedDate:found.x.completedDate||scheduleDay(),submittedDate:found.x.submittedDate||scheduleDay(),needsHelp:false});
   closeDialog();const saved=saveAssignmentChange('status',found);render();
   if(await saved)showToast('Completed and submitted!',()=>{const current=findTask(id);if(current){Object.assign(current.x,previous);saveAssignmentChange('status',current);render();}});
@@ -434,9 +435,27 @@ async function deliverReward(id,student){
   if(storeBusy)return;storeBusy=true;
   try{const response=await fetch('/api/assignments',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...state.auth,rewardAction:'deliver',id,student})}),data=await response.json();if(!response.ok)throw Error(data.error);state.rewards=data.rewards;render();showToast('Reward marked delivered');}catch(error){showToast(error.message||'Couldn’t save delivery. Please retry.');}finally{storeBusy=false;}
 }
+function activityAssignment(entry){
+  const matches=allTasks(entry.student).filter(x=>entry.assignmentId?x.id===entry.assignmentId:x.title===entry.title);
+  return matches.length===1?matches[0]:null;
+}
+function submissionUndoAction(entry){
+  if(entry.kind!=='submission')return '';
+  const x=activityAssignment(entry);
+  if(!x)return '<span class="small">Assignment unavailable</span>';
+  return x.submittedDate?`<button class="button light" onclick="undoSubmittedAssignment(${jsArg(x.id)},'${entry.student}')">Undo submission</button>`:'<span class="small">Submission undone</span>';
+}
+async function undoSubmittedAssignment(id,student){
+  if(state.auth?.role!=='parent')return;
+  const found=findTask(id);if(!found||found.student!==student){showToast('Assignment no longer available. Refresh the dashboard.');return;}
+  if(!found.x.submittedDate)return;
+  const previous={...found.x};Object.assign(found.x,{done:false,submittedDate:'',completedDate:''});
+  const saved=saveAssignmentChange('status',found);render();
+  if(await saved)showToast('Submission undone. Assignment reopened.',()=>{const current=findTask(id);if(current){Object.assign(current.x,previous);saveAssignmentChange('status',current);render();}});
+}
 function parentActivityFeed(){
-  const filter=state.activityStudent||'all',labels={submission:'Submitted',completion:'Completed',help:'Help requested',bonus:'Bonus awarded',balanceAdjustment:'Balance corrected',penalty:'Past-due deduction',deduction:'Points deducted',purchase:'Purchased',delivery:'Delivered'},rows=(state.rewards?.activity||[]).filter(x=>filter==='all'||x.student===filter);
-  return `<section class="panel parent-activity"><div class="section-heading"><h2>Recent activity</h2><label>Child<select onchange="state.activityStudent=this.value;render()">${['all','leon','logan'].map(id=>`<option value="${id}" ${filter===id?'selected':''}>${id==='all'?'Both kids':nameOf(id)}</option>`).join('')}</select></label></div>${rows.slice(0,30).map(x=>`<div class="activity-row"><div><strong>${nameOf(x.student)} · ${labels[x.kind]||'Updated'}</strong><p>${esc(x.title)}</p></div><time class="small">${esc(new Date(x.date).toLocaleString())}</time></div>`).join('')||'<p class="small">No recent activity for this child.</p>'}</section>`;
+  const filter=state.activityStudent||'all',labels={submission:'Submitted',completion:'Completed',reopened:'Assignment reopened',help:'Help requested',bonus:'Bonus awarded',balanceAdjustment:'Balance corrected',penalty:'Past-due deduction',deduction:'Points deducted',purchase:'Purchased',delivery:'Delivered'},rows=(state.rewards?.activity||[]).filter(x=>filter==='all'||x.student===filter);
+  return `<section class="panel parent-activity"><div class="section-heading"><h2>Recent activity</h2><label>Child<select onchange="state.activityStudent=this.value;render()">${['all','leon','logan'].map(id=>`<option value="${id}" ${filter===id?'selected':''}>${id==='all'?'Both kids':nameOf(id)}</option>`).join('')}</select></label></div>${rows.slice(0,30).map(x=>`<div class="activity-row"><div><strong>${nameOf(x.student)} · ${labels[x.kind]||'Updated'}</strong><p>${esc(x.title)}</p></div><div class="activity-actions"><time class="small">${esc(new Date(x.date).toLocaleString())}</time>${submissionUndoAction(x)}</div></div>`).join('')||'<p class="small">No recent activity for this child.</p>'}</section>`;
 }
 function drawPointRules(){
   state.rewardCatalog=null;
@@ -573,11 +592,12 @@ function studentAnnouncementStack(student){const announcements=announcementBanne
 
 function refreshVisibleAnnouncements(){if(!['leon','logan'].includes(state.view))return;const target=document.getElementById('student-announcements');if(!target)return;const visible=visibleAnnouncements(state.view).map(item=>item.id).join('|'),shown=[...target.querySelectorAll('[data-announcement-id]')].map(node=>node.dataset.announcementId).join('|');if(visible!==shown)target.innerHTML=announcementBanner(state.view);}
 function dashboardCardsPayload(){return{leon:state.displayCards.leon,logan:state.displayCards.logan,announcements:state.announcements};}
+function workingAheadDate(subjects,today=scheduleDay()){const tomorrow=addDays(today,1);return Object.values(subjects).flat().some(x=>!x.done&&x.due===tomorrow)?tomorrow:'';}
 function potentialTaskPoints(x,today=scheduleDay()){
   if(x.done||x.submittedDate||!x.due||x.due<today)return 0;
   return x.due===today?1:Date.parse(x.due+'T12:00:00Z')-Date.parse(today+'T12:00:00Z')===86400000?2:0;
 }
-function availableTodayWork(subjects,today=scheduleDay()){const ahead=nextDueDate(subjects,today);return Object.values(subjects).flat().filter(x=>!x.done&&(x.due===today||ahead&&x.due===ahead));}
+function availableTodayWork(subjects,today=scheduleDay()){const ahead=workingAheadDate(subjects,today);return Object.values(subjects).flat().filter(x=>!x.done&&(x.due===today||ahead&&x.due===ahead));}
 function studentPointPreview(student,readonly=false){return !readonly&&state.view===student&&['leon','logan'].includes(student)&&state.auth?.role===student;}
 function potentialPointsTotal(rows,student,readonly=false){
   if(!studentPointPreview(student,readonly))return '';
@@ -586,6 +606,7 @@ function potentialPointsTotal(rows,student,readonly=false){
 }
 function task(x,student=state.view,readonly=false){
   const disabled=readonly||state.auth?.role==='monitor',studentSession=['leon','logan'].includes(state.auth?.role),id=jsArg(x.id),url=safeLink(x.url);
+  if(studentSession&&x.due>addDays(scheduleDay(),1))return '';
   const proof=[];
   if(x.completedDate)proof.push(`Completed ${dateLabel(x.completedDate,false)}`);
   if(x.submittedDate)proof.push(`Submitted ${dateLabel(x.submittedDate,false)}`);
@@ -601,8 +622,8 @@ function workSection(subjects,status,student=state.view,readonly=false){
   return `<details id="${student}-${status}-work" class="work-section ${status}"><summary class="section-heading"><h2>${status==='today'?'Due Today':'Past Due'} <span class="count">${count}</span></h2></summary>${count?`<div class="due-list" tabindex="0" role="region" aria-label="${nameOf(student)} ${status==='today'?'due today':'past due'} assignments">${taskGroups(subjects,filter,student,readonly)}</div>`:`<p class="empty">${status==='today'?'You’re caught up for today.':'No past-due assignments.'}</p>`}</details>`;
 }
 function workingAhead(subjects,student=state.view,readonly=false){
-  const date=nextDueDate(subjects),rows=Object.values(subjects).flat().filter(x=>!x.done&&date&&x.due===date),count=rows.length;
-  return `<details id="${student}-ahead-work" data-due-date="${date}" class="work-section ahead"><summary class="section-heading"><h2>Working Ahead <span class="count">${count}</span></h2><span class="small">${date?'Next due · '+dateLabel(date):'Next due date'}</span></summary>${date?`<div class="due-list" tabindex="0" role="region" aria-label="${nameOf(student)} working ahead assignments">${taskGroups(subjects,x=>!x.done&&x.due===date,student,readonly)}</div>`:'<p class="empty">No upcoming assignments.</p>'}</details>`;
+  const date=workingAheadDate(subjects),rows=Object.values(subjects).flat().filter(x=>!x.done&&date&&x.due===date),count=rows.length;
+  return `<details id="${student}-ahead-work" data-due-date="${date}" class="work-section ahead"><summary class="section-heading"><h2>Working Ahead <span class="count">${count}</span></h2><span class="small">${date?'Next due · '+dateLabel(date):'Tomorrow'}</span></summary>${date?`<div class="due-list" tabindex="0" role="region" aria-label="${nameOf(student)} working ahead assignments">${taskGroups(subjects,x=>!x.done&&x.due===date,student,readonly)}</div>`:'<p class="empty">No assignments due tomorrow. Check back tomorrow for more.</p>'}</details>`;
 }
 function scheduleMinutes(value){const [h,m]=String(value||'').split(':').map(Number);return Number.isInteger(h)&&Number.isInteger(m)?h*60+m:-1;}
 function formatScheduleTime(value){const minutes=scheduleMinutes(value);if(minutes<0)return'';const hour=Math.floor(minutes/60),minute=minutes%60;return prefs().clockFormat==='24h'?`${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}`:`${hour%12||12}:${String(minute).padStart(2,'0')}\u00a0${hour<12?'AM':'PM'}`;}
@@ -673,13 +694,13 @@ function optionalSessions(student=state.view){
   return `<${tag} id="${student}-optional-sessions" class="panel optional-sessions ${pinned?'fixed-schedule':'dashboard-disclosure'}" aria-label="Optional sessions"><${heading}>Optional sessions <span class="count">${items.length}</span></${heading}>${items.length?`<div class="schedule-list">${items.map(item=>`<div class="schedule-item" style="${scheduleItemStyle(item)}"><span>${esc(scheduleLabel(item,student))}</span><time>${formatScheduleTime(item.time)}${item.endTime?' – '+formatScheduleTime(item.endTime):''}</time></div>`).join('')}</div>`:'<p class="empty">No optional sessions today.</p>'}</${tag}>`;
 }
 function openSubject(subject){state.subjectView=subject;state.subjectTaskView='all';render();}
-function classBrowser(){const subjects=state.assignments[state.view];return `<section class="panel"><h2>Classes</h2><div class="class-picker">${Object.entries(subjects).map(([subject,rows])=>`<button class="button light" onclick="openSubject(${jsArg(subject)})"><span class="subject-dot" style="--subject-color:var(--subject-${subject},var(--accent))"></span><span>${esc(subjectLabel(subject,state.view))}<small>${rows.filter(x=>!x.done).length} to do</small></span></button>`).join('')}</div></section>`;}
+function classBrowser(){const subjects=state.assignments[state.view];return `<section class="panel"><h2>Classes</h2><div class="class-picker">${Object.entries(subjects).map(([subject,rows])=>`<button class="button light" onclick="openSubject(${jsArg(subject)})"><span class="subject-dot" style="--subject-color:var(--subject-${subject},var(--accent))"></span><span>${esc(subjectLabel(subject,state.view))}<small>${rows.filter(x=>!x.done&&(!x.due||x.due<=addDays(scheduleDay(),1))).length} to do</small></span></button>`).join('')}</div></section>`;}
 function studentPage(){
   const subjects=state.assignments[state.view],today=scheduleDay(),rows=Object.values(subjects).flat(),due=rows.filter(x=>x.due===today),complete=due.filter(x=>x.done).length;
-  const overdue=rows.filter(x=>!x.done&&x.due&&x.due<today).length,nextDate=nextDueDate(subjects),ahead=rows.filter(x=>!x.done&&nextDate&&x.due===nextDate).length;
+  const overdue=rows.filter(x=>!x.done&&x.due&&x.due<today).length,nextDate=workingAheadDate(subjects),ahead=rows.filter(x=>!x.done&&nextDate&&x.due===nextDate).length;
   const hero=`<section class="page-heading student-page-heading"><div class="student-date"><div class="student-identity">${profileAvatarMark(state.view)}<h1>${nameOf(state.view)}</h1></div><p class="small">${dateLabel(today)}</p>${potentialPointsTotal(availableTodayWork(subjects,today),state.view)}${savingsGoal(state.view)}</div>${classTimeline(state.view)}<div class="heading-summary"><nav class="work-shortcuts" aria-label="Jump to assignments"><a class="late" href="#${state.view}-late-work" onclick="document.getElementById('${state.view}-late-work').open=true">Past Due <b>${overdue}</b></a><a href="#${state.view}-today-work" onclick="document.getElementById('${state.view}-today-work').open=true">Today <b>${due.length-complete}</b></a><a href="#${state.view}-ahead-work" onclick="document.getElementById('${state.view}-ahead-work').open=true">Next <b>${ahead}</b></a></nav><span class="progress-caption">${due.length?complete+' of '+due.length+' due today completed':'A fresh day to learn'}</span></div></section>`;
   if(state.subjectView){
-    const subject=state.subjectView,items=subjects[subject]||[],filter=x=>(!prefs().hideCompleted||!x.done)&&(state.subjectTaskView!=='soon'||x.due&&x.due<=addDays(today,7));
+    const subject=state.subjectView,items=subjects[subject]||[],filter=x=>(!x.due||x.due<=addDays(today,1))&&(!prefs().hideCompleted||!x.done)&&(state.subjectTaskView!=='soon'||x.due&&x.due<=addDays(today,7));
     return mast()+studentAnnouncementStack(state.view)+`<section class="page-heading"><div><button class="text-button" onclick="showHub()">← Back to dashboard</button><h1>${esc(subjectLabel(subject,state.view))}</h1></div></section><div class="toolbar"><label class="switch"><input type="checkbox" ${prefs().hideCompleted?'checked':''} onchange="setPreference('hideCompleted',this.checked)">Hide completed</label><div class="segmented"><button aria-pressed="${state.subjectTaskView!=='soon'}" onclick="state.subjectTaskView='all';render()">All work</button><button aria-pressed="${state.subjectTaskView==='soon'}" onclick="state.subjectTaskView='soon';render()">Due within a week</button></div></div><section class="panel assignment-list">${items.filter(filter).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999')).map(x=>task(x)).join('')||'<p class="empty">No assignments in this view.</p>'}</section>`;
   }
   return mast()+studentAnnouncementStack(state.view)+hero+nextAssignmentCard(state.view)+`<div class="student-dashboard-grid"><div class="work-board">${workSection(subjects,'late')}${workSection(subjects,'today')}<div class="student-ahead-stack">${workingAhead(subjects)}${optionalSessions(state.view)}</div></div>${schedulePanel(state.view,false)}</div>`/* Focus timer parked for later: +focusTimerPanel() */+(prefs().classBrowser?classBrowser():'');
@@ -837,12 +858,13 @@ function toggleTask(id,done,checkbox){
 }
 function confirmCompleteTask(id){const found=findTask(id);closeDialog();if(found)saveTaskStatus(found,true);}
 async function saveTaskStatus(found,done){
+  if(done&&state.auth?.role!=='parent'&&found.x.due>addDays(scheduleDay(),1)){showToast('Only assignments due tomorrow are available for working ahead.');render();return;}
   const id=found.x.id;
   const previous={done:found.x.done,needsHelp:found.x.needsHelp,completedDate:found.x.completedDate||'',submittedDate:found.x.submittedDate||''};found.x.done=done;if(done){found.x.completedDate=scheduleDay();found.x.needsHelp=false;}
   const saved=saveAssignmentChange('status',found);render();
   if(await saved)showToast(done?'Assignment completed and saved':'Assignment reopened and saved',()=>{const current=findTask(id);if(!current)return;Object.assign(current.x,previous);saveAssignmentChange('status',current);render();});
 }
-async function markSubmitted(id){const found=findTask(id);if(!found||!found.x.done||found.x.submittedDate)return;found.x.submittedDate=scheduleDay();const saved=saveAssignmentChange('status',found);render();if(await saved)showToast('Submission date saved');}
+async function markSubmitted(id){const found=findTask(id);if(!found||!found.x.done||found.x.submittedDate)return;if(found.x.due>addDays(scheduleDay(),1)){showToast('Only assignments due tomorrow are available for working ahead.');return;}found.x.submittedDate=scheduleDay();const saved=saveAssignmentChange('status',found);render();if(await saved)showToast('Submission date saved');}
 function toggleHelp(id){const found=findTask(id);if(!found||found.x.done)return;found.x.needsHelp=!found.x.needsHelp;saveAssignmentChange('status',found);render();showToast(found.x.needsHelp?'Help request added for your parent':'Help request cleared');}
 function showToast(message,undo=null){const node=document.getElementById('toast');undoAction=undo;node.hidden=false;node.innerHTML=`<span>${esc(message)}</span>${undo?'<button class="text-button" onclick="undoToast()">Undo</button>':''}<button class="text-button" aria-label="Dismiss message" onclick="document.getElementById('toast').hidden=true">×</button>`;clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>{node.hidden=true;undoAction=null;},10000);}
 function undoToast(){const action=undoAction;undoAction=null;document.getElementById('toast').hidden=true;if(action)action();}

@@ -134,6 +134,10 @@ export async function onRequestPost({ request, env }) {
       }
       const metaRow = await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind(`assignment_meta_${id}`).first();
       const meta = metadata(readJSON(metaRow?.value));
+      if(role!=='parent'){
+        const day=new Date(new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'})+'T12:00:00Z');day.setUTCDate(day.getUTCDate()+1);
+        if(due>day.toISOString().slice(0,10)&&((change.done&&!existing?.done)||change.submittedDate&&change.submittedDate!==meta.submittedDate||change.completedDate&&change.completedDate!==meta.completedDate))return json({error:'You can only work ahead on assignments due tomorrow. Later assignments are not available yet.'},403);
+      }
       if (role === 'parent' && Object.hasOwn(change, 'url')) {
         const url = safeURL(change.url);
         if (url === null) return json({ error: 'Use a complete http or https assignment link.' }, 400);
@@ -165,8 +169,8 @@ export async function onRequestPost({ request, env }) {
         ? env.DB.prepare('INSERT INTO assignments (id,student,subject,title,due,done) VALUES (?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET subject=excluded.subject,title=excluded.title,due=excluded.due,done=excluded.done').bind(id, student, subject, title, due, done ? 1 : 0)
         : env.DB.prepare('UPDATE assignments SET title=?,due=?,subject=?,done=? WHERE id=? AND student=?').bind(title, due, subject, done ? 1 : 0, id, student);
       const events=[];
-      for(const [kind,changed] of [['submission',!!meta.submittedDate&&meta.submittedDate!==oldMeta.submittedDate],['completion',done&&!existing?.done],['help',meta.needsHelp&&!oldMeta.needsHelp]]){
-        if(changed)events.push(setting(env,'activity_'+crypto.randomUUID(),{id:crypto.randomUUID(),student,kind,title,date:new Date().toISOString()}));
+      for(const [kind,changed] of [['submission',!!meta.submittedDate&&meta.submittedDate!==oldMeta.submittedDate],['completion',done&&!existing?.done],['help',meta.needsHelp&&!oldMeta.needsHelp],['reopened',!!existing?.done&&!done||!!oldMeta.submittedDate&&!meta.submittedDate]]){
+        if(changed)events.push(setting(env,'activity_'+crypto.randomUUID(),{id:crypto.randomUUID(),assignmentId:id,student,kind,title,date:new Date().toISOString()}));
       }
       await env.DB.batch([statement, setting(env, `assignment_meta_${id}`, meta),...events]);
       return json({ ok: true, rewards:await rewardsData(env,role) });
