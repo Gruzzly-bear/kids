@@ -1,6 +1,7 @@
 import { readJSON } from './shared.js';
 import { FREE_THEMES, THEME_CATALOG, THEME_PRICE } from './theme-catalog.js';
 import { COSMETICS, COSMETIC_RULES } from './cosmetics.js';
+import { POINT_RULES } from './point-rules.js';
 
 export async function ownedCosmetics(env,student){
   const rows=await env.DB.prepare("SELECT value FROM settings WHERE key LIKE 'redemption_%' AND json_extract(value,'$.student')=?").bind(student).all();
@@ -31,6 +32,7 @@ export function earnedSQL(){
   return `SELECT COALESCE(SUM(CASE WHEN a.due<>''
   AND date(json_extract(m.value,'$.submittedDate'))=json_extract(m.value,'$.submittedDate')
   AND json_extract(m.value,'$.submittedDate')<=a.due
+  AND a.due<=date(json_extract(m.value,'$.submittedDate'),'+1 day')
   THEN CASE WHEN json_extract(m.value,'$.submittedDate')<a.due THEN 2 ELSE 1 END ELSE 0 END),0)
   FROM assignments a LEFT JOIN settings m ON m.key='assignment_meta_'||a.id WHERE a.student=?`;
 }
@@ -85,9 +87,9 @@ export async function rewardsData(env, role) {
   for(const student of Object.keys(balances)){
     const work=await env.DB.prepare("SELECT a.*,m.value AS metadata FROM assignments a LEFT JOIN settings m ON m.key='assignment_meta_'||a.id WHERE student=?").bind(student).all();
     let earned=0;
-    for(const assignment of work.results){const submitted=readJSON(assignment.metadata).submittedDate;if(submitted&&assignment.due&&submitted<=assignment.due)earned+=submitted<assignment.due?2:1;}
+    for(const assignment of work.results){const submitted=readJSON(assignment.metadata).submittedDate;if(submitted&&assignment.due&&submitted<=assignment.due&&Date.parse(assignment.due+'T12:00:00Z')-Date.parse(submitted+'T12:00:00Z')<=86400000)earned+=submitted<assignment.due?2:1;}
     const purchases=history.filter(item=>item.student===student);
-    breakdown[student]={earned,deductions:purchases.filter(item=>item.kind==='penalty').reduce((sum,item)=>sum+item.cost,0),bonuses:purchases.filter(item=>item.kind==='award').reduce((sum,item)=>sum+item.points,0),adjustments:purchases.filter(item=>item.kind==='balanceAdjustment').reduce((sum,item)=>sum+item.points,0),spent:purchases.filter(item=>!['award','penalty','balanceAdjustment'].includes(item.kind)).reduce((sum,item)=>sum+item.cost,0)};
+    breakdown[student]={earned,deductions:purchases.filter(item=>item.kind==='penalty').reduce((sum,item)=>sum+item.cost,0),behaviorDeductions:purchases.filter(item=>item.kind==='deduction').reduce((sum,item)=>sum+item.cost,0),bonuses:purchases.filter(item=>item.kind==='award').reduce((sum,item)=>sum+item.points,0),adjustments:purchases.filter(item=>item.kind==='balanceAdjustment').reduce((sum,item)=>sum+item.points,0),spent:purchases.filter(item=>!['award','penalty','deduction','balanceAdjustment'].includes(item.kind)).reduce((sum,item)=>sum+item.cost,0)};
     const row=await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind('reward_goal_'+student).first();
     goals[student]=items.find(item=>item.id===readJSON(row?.value).id)||null;
   }
@@ -95,8 +97,8 @@ export async function rewardsData(env, role) {
   if(role==='parent'){
     const events=await env.DB.prepare("SELECT value FROM settings WHERE key LIKE 'activity_%' ORDER BY json_extract(value,'$.date') DESC LIMIT 100").all();
     activity=events.results.map(row=>readJSON(row.value));
-    for(const item of history){activity.push({...item,kind:item.kind==='award'?'bonus':item.kind==='penalty'?'penalty':item.kind==='balanceAdjustment'?'balanceAdjustment':'purchase'});if(item.deliveredAt)activity.push({...item,kind:'delivery',date:item.deliveredAt});}
+    for(const item of history){activity.push({...item,kind:item.kind==='award'?'bonus':['penalty','deduction','balanceAdjustment'].includes(item.kind)?item.kind:'purchase'});if(item.deliveredAt)activity.push({...item,kind:'delivery',date:item.deliveredAt});}
     activity.sort((a,b)=>b.date.localeCompare(a.date));activity=activity.slice(0,100);
   }
-  return {items,history:history.sort((a,b)=>b.date.localeCompare(a.date)),balances,unlocked,themePrice:THEME_PRICE,cosmetics:COSMETICS,cosmeticRules:COSMETIC_RULES,cosmeticUnlocks,breakdown,goals,activity};
+  return {items,history:history.sort((a,b)=>b.date.localeCompare(a.date)),balances,unlocked,themePrice:THEME_PRICE,cosmetics:COSMETICS,cosmeticRules:COSMETIC_RULES,cosmeticUnlocks,breakdown,goals,activity,pointRules:POINT_RULES};
 }

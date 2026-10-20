@@ -234,7 +234,7 @@ test('points use submission dates and rewards enforce prices, ownership and retr
   assert.equal((await data()).balances.leon,0,'Reopening submitted work preserves its original earnings without debt');
   await update('leon-1','2026-10-21','2026-10-20');
   assert.equal((await data()).balances.leon,0);
-  assert.equal((await post(save,env,{...leon,change:{type:'status',id:'leon-0',student:'leon',submittedDate:'2020-01-01'}})).status,400);
+  assert.equal((await post(save,env,{...leon,change:{type:'status',id:'leon-0',student:'leon',submittedDate:'2020-01-01'}})).status,403);
   await post(save,env,{...parent,rewardAction:'remove',id:reward.id});
   assert.equal((await data()).items.length,0);
   assert.equal((await data(parent)).history[0].title,reward.title);
@@ -335,7 +335,7 @@ test('kids see per-assignment point previews and totals for the exact work shown
   assert(!html.includes('points available'));assert(context.potentialPointsTotal(subjects.math.concat(subjects.ela).filter(x=>x.due===today),'leon').includes('⭐ 2 points available'));assert.equal((html.match(/1 point if submitted today/g)||[]).length,2);
   assert(context.potentialPointsTotal(context.availableTodayWork(subjects),'leon').includes('⭐ 6 points available'));
   const laterAhead={math:[task('today',today),task('next','2026-10-22'),task('beyond','2026-10-25')]};
-  assert(context.potentialPointsTotal(context.availableTodayWork(laterAhead),'leon').includes('⭐ 3 points available'),'Next due date counts even beyond tomorrow');
+  assert(context.potentialPointsTotal(context.availableTodayWork(laterAhead),'leon').includes('⭐ 1 point available'),'Work beyond tomorrow earns no early points');
   html=context.workingAhead(subjects);assert(!html.includes('points available'));assert.equal((html.match(/2 points if submitted today/g)||[]).length,2);assert(!html.includes('data-task-id="later"'));
   assert.equal(context.potentialTaskPoints(task('no-date','')),0);assert.equal(context.potentialTaskPoints(task('late','2026-10-18')),0);assert.equal(context.potentialTaskPoints(task('done',today,{done:true})),0);
   subjects.math[0].done=true;assert(context.potentialPointsTotal(subjects.math.concat(subjects.ela).filter(x=>x.due===today),'leon').includes('⭐ 1 point available'));
@@ -533,4 +533,40 @@ test('Working Ahead advances across subjects and opens each newly populated date
   assert.equal(context.workSectionStartsOpen(node(date)),true,'Upcoming work opens on initial load');
   work.ela[1].done=true;assert.equal(context.nextDueDate(work),'2026-10-26','Skips weekends and empty dates');
   work.math[1].done=true;assert.equal(context.nextDueDate(work),'');
+});
+
+test('only next-day early submissions earn points and children cannot rewrite a submission',async()=>{
+  const env=await fixture(),today=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});
+  const shift=n=>{const date=new Date(today+'T12:00:00Z');date.setUTCDate(date.getUTCDate()+n);return date.toISOString().slice(0,10);};
+  for(const days of [0,1,2,3,7]){
+    const id='window-'+days;
+    await post(save,env,{...parent,change:{type:'add',id,student:'leon',subject:'math',title:'Due in '+days,due:shift(days),done:false}});
+    assert.equal((await post(save,env,{...leon,change:{type:'status',id,student:'leon',done:true,submittedDate:today,completedDate:today}})).status,200);
+  }
+  let data=(await (await post(auth,env,leon)).json()).rewards;
+  assert.equal(data.breakdown.leon.earned,3,'1 today plus 2 tomorrow, zero for every later day');assert.equal(data.balances.leon,3);
+  assert.equal((await post(save,env,{...leon,change:{type:'status',id:'window-2',student:'leon',submittedDate:''}})).status,403);
+  assert.equal((await post(save,env,{...leon,change:{type:'status',id:'window-2',student:'leon',submittedDate:shift(1)}})).status,403);
+  await post(save,env,{...parent,rewardAction:'save',id:'too-expensive',title:'Four point reward',cost:4});
+  assert.equal((await post(save,env,{...leon,rewardAction:'redeem',id:'too-expensive',requestId:'window-spend'})).status,409,'Client cannot spend imaginary early points');
+});
+
+test('parent-only behavior rules enforce fixed costs, both-child fighting deductions and zero floor',async()=>{
+  const env=await fixture();
+  for(const student of ['leon','logan'])await post(save,env,{...parent,rewardAction:'awardPoints',id:'behavior-budget-'+student,student,points:10});
+  const deduct=(rule,id,extra={})=>post(save,env,{...parent,rewardAction:'deductPoints',rule,id,student:'leon',points:999,...extra});
+  assert.equal((await post(save,env,{...leon,rewardAction:'deductPoints',rule:'refusal',id:'unauthorized',student:'logan'})).status,403);
+  assert.equal((await deduct('unknown','bad-rule')).status,400);
+  assert.equal((await deduct('other','missing-reason',{points:2})).status,400);
+  for(const rule of ['quizAttempts','refusal','listening','chores','fighting']){
+    assert.equal((await deduct(rule,'deduct-'+rule)).status,200);
+    assert.equal((await deduct(rule,'deduct-'+rule)).status,200,'Retries never deduct again');
+  }
+  let data=(await (await post(auth,env,parent)).json()).rewards;
+  assert.equal(data.balances.leon,4);assert.equal(data.balances.logan,9,'Fighting takes exactly one from both');
+  assert.equal(data.breakdown.leon.behaviorDeductions,6);assert.equal(data.breakdown.leon.spent,0,'Behavior is not store spending');
+  assert(data.activity.some(x=>x.kind==='deduction'));
+  assert.equal((await deduct('other','custom-deduction',{points:20,notes:'Parent explanation'})).status,200);
+  data=(await (await post(auth,env,leon)).json()).rewards;assert.equal(data.balances.leon,0);assert.equal(data.history.find(x=>x.id==='custom-deduction').cost,4,'Only available points are deducted');
+  assert.equal(data.pointRules.quizAttempts.points,2);assert.equal(data.pointRules.fighting.both,true);
 });

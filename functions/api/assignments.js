@@ -2,6 +2,7 @@ import { authorized, hash, json, metadata, preferences, readJSON, safeURL, setti
 import { earnedSQL, spentSQL, rewardsData, restrictThemes, recordOverduePenalties } from './rewards.js';
 import { FREE_THEMES, THEME_CATALOG, THEME_PRICE } from './theme-catalog.js';
 import { COSMETICS } from './cosmetics.js';
+import { POINT_RULES } from './point-rules.js';
 
 export async function onRequestPost({ request, env }) {
   try {
@@ -12,7 +13,20 @@ export async function onRequestPost({ request, env }) {
     if (body.rewardAction) {
       const { rewardAction: action, id }=body;
       if(typeof id!=='string'||! /^[a-zA-Z0-9-]{1,120}$/.test(id))return json({error:'Invalid reward.'},400);
-      if(action==='setGoal'){
+      if(action==='deductPoints'){
+        if(role!=='parent')return json({error:'Only parents can record deductions.'},403);
+        const rule=Object.hasOwn(POINT_RULES,body.rule)?POINT_RULES[body.rule]:null,notes=typeof body.notes==='string'?body.notes.trim():'';
+        if(!rule||!['leon','logan'].includes(body.student)||notes.length>240||body.rule==='other'&&!notes)return json({error:'Choose a child and a valid rule. Explain other deductions and keep notes under 240 characters.'},400);
+        const points=rule.points??body.points;
+        if(!Number.isSafeInteger(points)||points<1||points>100000)return json({error:'Use 1 to 100,000 whole points.'},400);
+        const students=rule.both?['leon','logan']:[body.student],writes=[];
+        for(const student of students){
+          const entry={id,student,kind:'deduction',rule:body.rule,title:rule.title,notes,requestedPoints:points,date:new Date().toISOString()};
+          writes.push(env.DB.prepare(`INSERT INTO settings(key,value) SELECT ?,json_set(?,'$.cost',MIN(?,MAX(0,(${earnedSQL()})-(${spentSQL})))) ON CONFLICT(key) DO NOTHING`)
+            .bind('redemption_behavior_'+id+'_'+student,JSON.stringify(entry),points,student,student));
+        }
+        await env.DB.batch(writes);
+      } else if(action==='setGoal'){
         if(!['leon','logan'].includes(role))return json({error:'Only children can choose a savings goal.'},403);
         if(id!=='clear'&&!await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind('reward_'+id).first())return json({error:'This reward is no longer available.'},404);
         await setting(env,'reward_goal_'+role,{id:id==='clear'?'':id}).run();
@@ -129,6 +143,7 @@ export async function onRequestPost({ request, env }) {
       for (const key of ['completedDate', 'submittedDate']) {
         if ((role === 'parent' || type === 'status') && Object.hasOwn(change, key)) {
           if (!validDate(change[key])) return json({ error: 'Use a valid completion and submission date.' }, 400);
+          if(role!=='parent'&&key==='submittedDate'&&meta.submittedDate&&change[key]!==meta.submittedDate)return json({error:'Ask a parent to correct a recorded submission date.'},403);
           if(role!=='parent'&&change[key]&&change[key]!==meta[key]&&change[key]!==new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'}))return json({error:'Students can record today’s date. Ask a parent to correct an earlier date.'},400);
           meta[key] = change[key];
         }
