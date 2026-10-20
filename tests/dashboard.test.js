@@ -169,12 +169,15 @@ test('optional sessions omit regular subjects and duplicates without entering th
   assert(html.includes('11:00')&&html.includes('11:30'));
   assert(source.includes('${workingAhead(subjects)}${optionalSessions(state.view)}'));
 });
-test('parent dashboard shows expanded schedules for both children and optional labels',()=>{
+test('parent dashboard separates regular schedules from collapsed optional sessions for both children',()=>{
   const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
-  const context=vm.createContext({childDashboardBar:student=>student,scheduleFor:()=>[{subject:'math',label:'Help session',optional:true,time:'09:00',endTime:'09:30'}],scheduleMinutes:()=>540,scheduleDay:()=> '2026-10-19',dateLabel:x=>x,profileAvatarMark:()=>'',nameOf:x=>x,esc:x=>x,subjectLabel:()=> 'Math',formatScheduleTime:x=>x,scheduleItemStyle:()=>''});
-  vm.runInContext(source.slice(source.indexOf('function scheduleLabel('),source.indexOf('function scheduleSnapshot('))+source.slice(source.indexOf('function parentSchedules('),source.indexOf('function openChildHelp(')),context);
+  const context=vm.createContext({state:{view:'parent'},scheduleAssignmentSubject:x=>x.subject,childDashboardBar:student=>student,scheduleFor:()=>[{subject:'ela',time:'08:00',endTime:'08:45'},{subject:'math',label:'Help session',optional:true,time:'09:00',endTime:'09:30'}],scheduleMinutes:()=>540,scheduleDay:()=> '2026-10-19',dateLabel:x=>x,profileAvatarMark:()=>'',nameOf:x=>x,esc:x=>x,subjectLabel:()=> 'Math',formatScheduleTime:x=>x,scheduleItemStyle:()=>''});
+  vm.runInContext(source.slice(source.indexOf('function scheduleLabel('),source.indexOf('function scheduleSnapshot('))+source.slice(source.indexOf('function optionalSessions('),source.indexOf('function openSubject('))+source.slice(source.indexOf('function parentSchedules('),source.indexOf('function openChildHelp(')),context);
   const html=context.parentSchedules();
   assert.equal((html.match(/<details open>/g)||[]).length,2);
+  assert.equal((html.match(/class="panel optional-sessions/g)||[]).length,2);
+  const regular=[...html.matchAll(/<details open>([\s\S]*?)<\/details>/g)];for(const section of regular)assert(!section[1].includes('Help session'));
+  assert(!/<details[^>]*class="panel optional-sessions[^>]*\bopen\b/.test(html));
   assert(html.includes('leon')&&html.includes('logan')&&html.includes('Optional · Math · Help session'));
   assert(source.includes('</nav>'+String.fromCharCode(96)+'+parentSchedules()'));
 });
@@ -514,4 +517,20 @@ test('simultaneous reward, theme and cosmetic purchases cannot overspend',async(
   assert(responses.some(response=>response.status===409));
   const result=(await (await post(auth,env,leon)).json()).rewards;
   assert(result.balances.leon>=0);assert(result.breakdown.leon.spent<=5);assert.equal(result.balances.leon,5-result.breakdown.leon.spent);
+});
+
+test('Working Ahead advances across subjects and opens each newly populated date for kids',()=>{
+  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
+  const context=vm.createContext({state:{view:'leon'},prefs:()=>({dashboardExpanded:false}),scheduleDay:()=> '2026-10-20'});
+  vm.runInContext(source.slice(source.indexOf('function nextDueDate('),source.indexOf('function mast('))+source.slice(source.indexOf('function workSectionStartsOpen('),source.indexOf('function render(')),context);
+  const work={math:[{due:'2026-10-22',done:false},{due:'2026-10-26',done:false}],ela:[{due:'2026-10-22',done:false},{due:'2026-10-23',done:false}]};
+  const node=date=>({dataset:{dueDate:date},classList:{contains:key=>['work-section','ahead'].includes(key)},querySelector:()=>({textContent:'1'})});
+  assert.equal(context.nextDueDate(work),'2026-10-22');
+  work.math[0].done=true;assert.equal(context.nextDueDate(work),'2026-10-22','Waits until every assignment on the date is complete');
+  work.ela[0].done=true;const date=context.nextDueDate(work);assert.equal(date,'2026-10-23');
+  assert.equal(context.workSectionStartsOpen(node(date),{open:false,dueDate:'2026-10-22'}),true,'Next date is visibly populated even if previous date was collapsed');
+  assert.equal(context.workSectionStartsOpen(node(date),{open:false,dueDate:date}),false,'Manual collapse persists for unchanged date');
+  assert.equal(context.workSectionStartsOpen(node(date)),true,'Upcoming work opens on initial load');
+  work.ela[1].done=true;assert.equal(context.nextDueDate(work),'2026-10-26','Skips weekends and empty dates');
+  work.math[1].done=true;assert.equal(context.nextDueDate(work),'');
 });
