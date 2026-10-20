@@ -601,3 +601,15 @@ test('parent submission undo persists, recalculates points, and logs a reopened 
   assert.equal((await post(save,env,{...parent,change:{type:'status',id:'leon-0',student:'leon',done:false,submittedDate:'',completedDate:''}})).status,200);
   data=await (await post(auth,env,parent)).json();const x=data.assignments.find(x=>x.id==='leon-0');assert.equal(x.done,0);assert.equal(x.submittedDate,'');assert(data.rewards.activity.some(x=>x.kind==='reopened'&&x.assignmentId==='leon-0'));assert(data.rewards.balances.leon>=0);
 });
+
+test('reminder visibility is saved separately per child and defaults off',async()=>{
+  const env=await fixture(),cards={leon:['Leon reminder','','',''],logan:['Logan reminder','','',''],announcements:{leon:[],logan:[]},reminderDisplay:{leon:true,logan:false}};
+  assert.equal((await post(save,env,{...parent,cardsOnly:true,cards})).status,200);
+  const saved=(await (await post(auth,env,leon)).json()).cards;
+  const core=vm.createContext({Date,Intl,crypto});vm.runInContext(readFileSync(new URL('../school-core.js',import.meta.url),'utf8'),core);core.loadCards(saved);
+  assert.equal(vm.runInContext('state.reminderDisplay.leon',core),true);assert.equal(vm.runInContext('state.reminderDisplay.logan',core),false);
+  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8'),context=vm.createContext({state:{reminderDisplay:saved.reminderDisplay},announcementBanner:()=>'<announcement/>',displayCards:student=>'<reminder>'+student+'</reminder>'});
+  vm.runInContext(source.slice(source.indexOf('function studentAnnouncementStack('),source.indexOf('function refreshVisibleAnnouncements(')),context);
+  assert(context.studentAnnouncementStack('leon').includes('<reminder>leon</reminder>'));assert(!context.studentAnnouncementStack('logan').includes('<reminder>'));assert(context.studentAnnouncementStack('logan').includes('<announcement/>'));
+  core.loadCards({});assert.equal(vm.runInContext('state.reminderDisplay.leon',core),false);
+});

@@ -448,3 +448,6 @@ dialog[data-dialog="assignments"] .editor-toolbar{margin-top:16px}
 .parent-child-controls .child-dashboard-controls .actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:auto;gap:7px}
 .parent-child-controls .child-dashboard-controls .button{width:100%;padding:8px 6px;font-size:.8rem;white-space:normal;min-height:38px}
 @media(max-width:700px){.parent-child-controls .week-students{grid-template-columns:minmax(0,1fr)}}
+.parent-dashboard-layout{grid-template-areas:"leon controls logan" "leon main logan" "activity activity activity"}.parent-dashboard-layout>.parent-activity{grid-area:activity;min-width:0;margin:0}
+@media(max-width:1150px){.parent-dashboard-layout{grid-template-areas:"controls controls" "leon logan" "main main" "activity activity"}}
+@media(max-width:700px){.parent-dashboard-layout{grid-template-areas:"controls" "leon" "logan" "main" "activity"}}
