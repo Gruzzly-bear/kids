@@ -436,3 +436,15 @@ dialog[data-dialog="assignments"] .editor-toolbar{margin-top:16px}
 .parent-side-schedule{margin:0;min-width:0}.parent-side-schedule.leon{grid-area:leon}.parent-side-schedule.logan{grid-area:logan}.parent-side-schedule>h2{display:flex;align-items:center;gap:8px;font-size:1.05rem;margin:0 0 12px}.parent-side-schedule>h2 .profile-avatar{width:32px;height:32px;font-size:1.4rem}.parent-side-schedule .schedule-list{grid-template-columns:minmax(0,1fr)}.parent-side-schedule .schedule-item{flex-wrap:wrap;gap:5px 10px;padding:10px 12px}.parent-side-schedule .schedule-item time{white-space:nowrap;font-size:.85rem}.parent-side-schedule .optional-sessions{padding:10px;margin:14px 0}.parent-side-schedule .optional-sessions summary{font-size:.9rem}.parent-main-content{grid-area:main;min-width:0}.parent-main-content>.panel{margin-bottom:18px}
 @media(max-width:1150px){.parent-dashboard-layout{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"controls controls" "leon logan" "main main"}.parent-child-controls .week-students{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){.parent-dashboard-layout{grid-template-columns:minmax(0,1fr);grid-template-areas:"controls" "leon" "logan" "main"}.parent-child-controls .week-students{grid-template-columns:minmax(0,1fr)}}
+/* Keep the two child control cards side by side within the overview. */
+.parent-child-controls .week-students{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}
+.parent-child-controls .week-student{min-width:0}
+.parent-child-controls .child-dashboard-bar{height:100%;flex-direction:column;align-items:stretch;gap:12px}
+.parent-child-controls .child-dashboard-bar .child-label{flex-direction:row;align-items:center;gap:8px;min-width:0}
+.parent-child-controls .child-dashboard-controls{display:flex;flex-direction:column;gap:12px}
+.parent-child-controls .child-work-counts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;font-size:.8rem}
+.parent-child-controls .child-work-counts>span{white-space:normal}
+.parent-child-controls .child-help-notification{justify-content:flex-start;padding-left:0}
+.parent-child-controls .child-dashboard-controls .actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:auto;gap:7px}
+.parent-child-controls .child-dashboard-controls .button{width:100%;padding:8px 6px;font-size:.8rem;white-space:normal;min-height:38px}
+@media(max-width:700px){.parent-child-controls .week-students{grid-template-columns:minmax(0,1fr)}}
