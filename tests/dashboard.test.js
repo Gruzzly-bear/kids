@@ -168,8 +168,8 @@ test('optional sessions stay available without entering the class rotation',()=>
 });
 test('parent dashboard shows expanded schedules for both children and optional labels',()=>{
   const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
-  const context=vm.createContext({scheduleFor:()=>[{subject:'math',label:'Help session',optional:true,time:'09:00',endTime:'09:30'}],scheduleMinutes:()=>540,scheduleDay:()=> '2026-10-19',dateLabel:x=>x,profileAvatarMark:()=>'',nameOf:x=>x,esc:x=>x,subjectLabel:()=> 'Math',formatScheduleTime:x=>x,scheduleItemStyle:()=>''});
-  vm.runInContext(source.slice(source.indexOf('function scheduleLabel('),source.indexOf('function scheduleSnapshot('))+source.slice(source.indexOf('function parentSchedules('),source.indexOf('function weeklyOverview(')),context);
+  const context=vm.createContext({childDashboardBar:student=>student,scheduleFor:()=>[{subject:'math',label:'Help session',optional:true,time:'09:00',endTime:'09:30'}],scheduleMinutes:()=>540,scheduleDay:()=> '2026-10-19',dateLabel:x=>x,profileAvatarMark:()=>'',nameOf:x=>x,esc:x=>x,subjectLabel:()=> 'Math',formatScheduleTime:x=>x,scheduleItemStyle:()=>''});
+  vm.runInContext(source.slice(source.indexOf('function scheduleLabel('),source.indexOf('function scheduleSnapshot('))+source.slice(source.indexOf('function parentSchedules('),source.indexOf('function openChildHelp(')),context);
   const html=context.parentSchedules();
   assert.equal((html.match(/<details open>/g)||[]).length,2);
   assert(html.includes('leon')&&html.includes('logan')&&html.includes('Optional · Math · Help session'));
@@ -304,7 +304,7 @@ test('parent navigation exposes tools directly and assignments open in a dialog'
   vm.runInContext(source.slice(source.indexOf('function setParentTab('),source.indexOf('function parentSchedules(')),context);
   const html=context.parentPage();
   for(const label of ['Edit schedule','Announcements &amp; reminders','Shared dashboard','Assignments'])assert(html.includes(label));
-  assert(!html.includes('Weekly overview'));assert(!html.includes('<editor/>'));assert(html.includes('<overview/>'));
+  assert(!html.includes('Weekly overview'));assert(!html.includes('<editor/>'));assert(!html.includes('<overview/>'));assert(html.includes('<schedules/>'));
   context.setParentTab('assignments');assert.equal(context.opened.id,'assignments');assert(context.opened.html.includes('<editor/>'));assert.equal(context.state.parentTab,'overview');
 });
 
@@ -397,4 +397,15 @@ test('student dashboard balance includes zero and negative values and links to t
   vm.runInContext(source.slice(source.indexOf('function studentBalanceButton('),source.indexOf('function openPointAward(')),context);
   assert(context.studentBalanceButton('leon').includes('>-2</span> points'));assert(context.studentBalanceButton('leon').includes('onclick="openRewards()"'));
   context.state.rewards.balances.leon=0;context.updatePointBalances();assert.equal(node.textContent,0);
+});
+
+test('child schedule headers show individual counts and route actions to that child',()=>{
+  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
+  const context=vm.createContext({state:{rewards:{balances:{leon:4,logan:9}}},scheduleDay:()=> '2026-10-20',allTasks:student=>student==='leon'?[{due:'2026-10-20',done:false},{due:'2026-10-19',done:false,needsHelp:true},{due:'2026-10-20',done:true,needsHelp:true}]:[],profileAvatarMark:()=>'',nameOf:x=>x});
+  vm.runInContext(source.slice(source.indexOf('function childDashboardBar('),source.indexOf('function parentSchedules(')),context);
+  const leon=context.childDashboardBar('leon'),logan=context.childDashboardBar('logan');
+  assert(leon.includes('Due today <b>1</b>'));assert(leon.includes('Past due <b>1</b>'));assert(leon.includes('leon help requests, 1 pending'));
+  for(const action of ['editStudent','openScheduleFor','openPointAward','openChildHelp'])assert(leon.includes(action+"('leon')"));
+  assert(logan.includes('Due today <b>0</b>'));assert(logan.includes('logan help requests, 0 pending'));assert(!logan.includes('has-requests'));
+  assert(!source.includes('function weeklyOverview('));
 });
