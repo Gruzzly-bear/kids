@@ -606,7 +606,12 @@ function previewTomorrowSchedule(student=state.view){
 }
 function showHub(){state.subjectView=null;render();}
 function optionalSessions(student=state.view){
-  const items=scheduleFor(student).filter(x=>x.optional&&scheduleMinutes(x.time)>=0).sort((a,b)=>scheduleMinutes(a.time)-scheduleMinutes(b.time));
+  const schedule=scheduleFor(student),required=new Set(schedule.filter(x=>!x.optional).map(scheduleAssignmentSubject).filter(Boolean)),seen=new Set();
+  const items=schedule.filter(x=>{
+    if(!x.optional||scheduleMinutes(x.time)<0||required.has(scheduleAssignmentSubject(x)))return false;
+    const key=JSON.stringify([scheduleAssignmentSubject(x),x.time,x.endTime||'',String(x.label||'').trim().toLowerCase()]);
+    if(seen.has(key))return false;seen.add(key);return true;
+  }).sort((a,b)=>scheduleMinutes(a.time)-scheduleMinutes(b.time));
   const pinned=['leon','logan'].includes(state.view)&&state.view===student,tag=pinned?'section':'details',heading=pinned?'h2':'summary';
   return `<${tag} id="${student}-optional-sessions" class="panel optional-sessions ${pinned?'fixed-schedule':'dashboard-disclosure'}" aria-label="Optional sessions"><${heading}>Optional sessions <span class="count">${items.length}</span></${heading}>${items.length?`<div class="schedule-list">${items.map(item=>`<div class="schedule-item" style="${scheduleItemStyle(item)}"><span>${esc(scheduleLabel(item,student))}</span><time>${formatScheduleTime(item.time)}${item.endTime?' – '+formatScheduleTime(item.endTime):''}</time></div>`).join('')}</div>`:'<p class="empty">No optional sessions today.</p>'}</${tag}>`;
 }

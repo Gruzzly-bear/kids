@@ -143,15 +143,17 @@ test('schedule imports retain overlapping optional support sessions and their ti
   assert(items.some(x=>x.optional&&x.label==='Open Office'));
   assert.equal(context.parseSchedulePaste(text,'leon').skipped.length,0);
 });
-test('optional sessions stay available without entering the class rotation',()=>{
+test('optional sessions omit regular subjects and duplicates without entering the class rotation',()=>{
   const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
   let minutes=555;
   const context=vm.createContext({state:{view:'leon'},scheduleFor:()=>[
     {subject:'math',time:'09:00'},
     {subject:'math',label:'Help session',optional:true,time:'09:10',endTime:'09:30'},
     {subject:'ela',time:'10:00',endTime:'10:45'},
-    {subject:'ela',label:'Open Office',optional:true,time:'11:00',endTime:'11:30'}
-  ],schoolMinutes:()=>minutes,scheduleMinutes:x=>Number(x.slice(0,2))*60+Number(x.slice(3)),scheduleItemStyle:()=>'',esc:x=>x,scheduleLabel:x=>x.label||x.subject,formatScheduleTime:x=>x});
+    {subject:'ela',label:'Open Office',optional:true,time:'11:00',endTime:'11:30'},
+    {subject:'science',label:'Science help',optional:true,time:'11:00',endTime:'11:30'},
+    {subject:'science',label:'Science help',optional:true,time:'11:00',endTime:'11:30'}
+  ],scheduleAssignmentSubject:x=>x.subject,schoolMinutes:()=>minutes,scheduleMinutes:x=>Number(x.slice(0,2))*60+Number(x.slice(3)),scheduleItemStyle:()=>'',esc:x=>x,scheduleLabel:x=>x.label||x.subject,formatScheduleTime:x=>x});
   vm.runInContext(source.slice(source.indexOf('function scheduleSnapshot('),source.indexOf('function classTimeline('))+source.slice(source.indexOf('function optionalSessions('),source.indexOf('function openSubject(')),context);
   let snapshot=context.scheduleSnapshot('leon');
   assert.equal(snapshot.items.length,2);
@@ -162,8 +164,9 @@ test('optional sessions stay available without entering the class rotation',()=>
   assert.equal(snapshot.current,-1,'Optional-only time has no current class');
   assert.equal(snapshot.next,-1);
   const html=context.optionalSessions('leon');
-  assert(html.includes('Help session')&&html.includes('Open Office'));
-  assert(html.includes('09:10')&&html.includes('11:30'));
+  assert(!html.includes('Help session')&&!html.includes('Open Office'));
+  assert.equal((html.match(/Science help/g)||[]).length,1,'Unscheduled subject remains once');
+  assert(html.includes('11:00')&&html.includes('11:30'));
   assert(source.includes('${workingAhead(subjects)}${optionalSessions(state.view)}'));
 });
 test('parent dashboard shows expanded schedules for both children and optional labels',()=>{
