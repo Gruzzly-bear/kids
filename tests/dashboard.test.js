@@ -326,7 +326,9 @@ test('kids see per-assignment point previews and totals for the exact work shown
   const subjects={math:[task('due-one',today),task('tomorrow-one','2026-10-20'),task('later','2026-10-22')],ela:[task('due-two',today),task('tomorrow-two','2026-10-20'),task('complete',today,{done:true,submittedDate:today}),task('late','2026-10-18')]};
   let html=context.workSection(subjects,'today');
   assert(!html.includes('points available'));assert(context.potentialPointsTotal(subjects.math.concat(subjects.ela).filter(x=>x.due===today),'leon').includes('⭐ 2 points available'));assert.equal((html.match(/1 point if submitted today/g)||[]).length,2);
-  assert(context.potentialPointsTotal(context.todayAndTomorrowWork(subjects),'leon').includes('⭐ 6 points available'));
+  assert(context.potentialPointsTotal(context.availableTodayWork(subjects),'leon').includes('⭐ 6 points available'));
+  const laterAhead={math:[task('today',today),task('next','2026-10-22'),task('beyond','2026-10-25')]};
+  assert(context.potentialPointsTotal(context.availableTodayWork(laterAhead),'leon').includes('⭐ 3 points available'),'Next due date counts even beyond tomorrow');
   html=context.workingAhead(subjects);assert(!html.includes('points available'));assert.equal((html.match(/2 points if submitted today/g)||[]).length,2);assert(!html.includes('data-task-id="later"'));
   assert.equal(context.potentialTaskPoints(task('no-date','')),0);assert.equal(context.potentialTaskPoints(task('late','2026-10-18')),0);assert.equal(context.potentialTaskPoints(task('done',today,{done:true})),0);
   subjects.math[0].done=true;assert(context.potentialPointsTotal(subjects.math.concat(subjects.ela).filter(x=>x.due===today),'leon').includes('⭐ 1 point available'));
