@@ -235,6 +235,7 @@ test('points use submission dates and rewards enforce prices, ownership and retr
 
 test('theme unlocks cost five points once per child and locked palettes cannot be saved',async()=>{
   const env=await fixture();
+  await env.DB.prepare("UPDATE assignments SET done=1 WHERE id='leon-3'").run();
   const {THEME_CATALOG,FREE_THEMES}=await import('../functions/api/theme-catalog.js');
   const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
   const palettes=vm.runInNewContext('('+source.match(/const THEME_PALETTES = (\{[\s\S]*?\n\});/)[1]+')');
@@ -264,6 +265,7 @@ test('theme unlocks cost five points once per child and locked palettes cannot b
 
 test('cosmetic purchases gate all appearance fields and share permanent font ownership',async()=>{
   const env=await fixture();
+  await env.DB.prepare("UPDATE assignments SET done=1 WHERE id='leon-3'").run();
   const {COSMETICS,COSMETIC_RULES}=await import('../functions/api/cosmetics.js');
   const image='data:image/webp;base64,AAAA';
   const premium={fontStyle:'montserrat',clockFont:'montserrat',visualStyle:'glass',cornerStyle:'pill',edgeStyle:'glow',surfaceTexture:'paper',backgroundEffect:'scanlines',avatar:'🐱',avatarFrame:'glow',avatarImage:image,backgroundImage:image,textSize:'large',motion:'reduced'};
@@ -335,7 +337,7 @@ test('kids see per-assignment point previews and totals for the exact work shown
 test('store catalog supports in-store browsing, confirming, buying and applying an unlock',async()=>{
   const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
   let owned=false,html='',applied='',toast='';
-  const context=vm.createContext({state:{view:'leon',auth:{role:'leon'},rewards:{balances:{leon:6},themePrice:5,cosmetics:{},items:[],history:[]}},THEME_PALETTES:{coastal:['Coastal','#000','#fff'],midnight:['Midnight','#fff','#000'],forest:['Forest','#080','#efe']},themeOwned:id=>['coastal','midnight'].includes(id)||owned,cosmeticOwned:()=>false,prefs:()=>({allowedFonts:[]}),esc:x=>x,jsArg:JSON.stringify,openDialog:(id,content)=>{html=content;},selectTheme:id=>applied=id,setPreference:()=>{},render:()=>{},showToast:message=>toast=message,fetch:async()=>{owned=true;return{ok:true,json:async()=>({rewards:{...context.state.rewards,balances:{leon:1}}})};},document:{getElementById:()=>null}});
+  const context=vm.createContext({state:{view:'leon',auth:{role:'leon'},rewards:{balances:{leon:6},themePrice:5,cosmetics:{},items:[],history:[]}},THEME_PALETTES:{coastal:['Coastal','#000','#fff'],midnight:['Midnight','#fff','#000'],forest:['Forest','#080','#efe']},themeOwned:id=>['coastal','midnight'].includes(id)||owned,cosmeticOwned:()=>false,prefs:()=>({allowedFonts:[]}),esc:x=>x,jsArg:JSON.stringify,openDialog:(id,content)=>{html=content;},selectTheme:id=>applied=id,setPreference:()=>{},render:()=>{},updatePointBalances:()=>{},showToast:message=>toast=message,fetch:async()=>{owned=true;return{ok:true,json:async()=>({rewards:{...context.state.rewards,balances:{leon:1}}})};},document:{getElementById:()=>null}});
   vm.runInContext(source.slice(source.indexOf('function storeNavigation('),source.indexOf('function editReward(')),context);
   vm.runInContext('let storeBusy=false;'+source.slice(source.indexOf('async function storeAction('),source.indexOf('function dashboardClock(')),context);
   context.drawUnlockCatalog('themes');assert(html.includes('Rewards Store categories'));assert(html.includes('Find themes'));assert(html.includes('Unlock · 5 points'));assert(!html.includes('openSettings()'));
@@ -350,4 +352,49 @@ test('kids notes and reminders stay visible without a collapse control',()=>{
   const context=vm.createContext({state:{displayCards:{leon:['Drink water']}},announcementBanner:()=>'<announcement/>',displayCards:()=>'<reminders/>',visibleAnnouncements:()=>[{}]});
   vm.runInContext(source.slice(source.indexOf('function studentAnnouncementStack('),source.indexOf('function refreshVisibleAnnouncements(')),context);
   const html=context.studentAnnouncementStack('leon');assert(html.startsWith('<section'));assert(!html.includes('<details'));assert(!html.includes('<summary'));assert(html.includes('<announcement/>'));assert(html.includes('<reminders/>'));assert(html.includes('id="student-announcements"'));
+});
+
+test('past-due assignments deduct one point each until complete and reduce spending power',async()=>{
+  const env=await fixture();
+  const data=async()=>(await (await post(auth,env,leon)).json()).rewards;
+  assert.equal((await data()).balances.leon,-1,'Existing unfinished past-due work counts');
+  assert.equal((await data()).balances.leon,-1,'Refreshing does not deduct again');
+  const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});
+  const shift=n=>{const date=new Date(today+'T12:00:00Z');date.setUTCDate(date.getUTCDate()+n);return date.toISOString().slice(0,10);};
+  const change={type:'update',id:'leon-0',student:'leon',subject:'math',title:'Overdue work',due:shift(-5),done:false};
+  await post(save,env,{...parent,change});assert.equal((await data()).balances.leon,-2,'Five days late is still only one point');
+  await post(save,env,{...parent,change:{...change,done:true,submittedDate:today}});assert.equal((await data()).balances.leon,-1,'Late completion removes deduction without earning');
+  await post(save,env,{...parent,change:{...change,due:today}});assert.equal((await data()).balances.leon,-1,'Due today is not late');
+  await post(save,env,{...parent,change:{...change,due:''}});assert.equal((await data()).balances.leon,-1,'Undated work is not late');
+  await post(save,env,{...parent,change:{...change,due:shift(1),done:true,submittedDate:today}});assert.equal((await data()).balances.leon,1,'Two early points minus one overdue point');
+  await post(save,env,{...parent,rewardAction:'save',id:'test-reward',title:'Test reward',cost:2});
+  assert.equal((await post(save,env,{...leon,rewardAction:'redeem',id:'test-reward',requestId:'penalty-check'})).status,409);
+  await post(save,env,{...parent,change:{type:'status',id:'leon-3',student:'leon',done:true}});assert.equal((await data()).balances.leon,2);
+  assert.equal((await post(save,env,{...leon,rewardAction:'redeem',id:'test-reward',requestId:'penalty-check'})).status,200);
+  await post(save,env,{...parent,change:{type:'status',id:'leon-3',student:'leon',done:false}});assert.equal((await data()).balances.leon,-1,'Reopening restores one deduction');
+});
+
+test('parents can award spendable bonus points per child with retry-safe history',async()=>{
+  const env=await fixture(),award={rewardAction:'awardPoints',id:'award-1',student:'leon',points:7,reason:'Great effort'};
+  const data=async(credentials=parent)=>(await (await post(auth,env,credentials)).json()).rewards;
+  const before=await data();
+  assert.equal((await post(save,env,{...leon,...award})).status,403);
+  for(const points of [0,-2,1.5,100001])assert.equal((await post(save,env,{...parent,...award,points})).status,400);
+  assert.equal((await post(save,env,{...parent,...award,student:'other'})).status,400);
+  assert.equal((await post(save,env,{...parent,...award})).status,200);
+  assert.equal((await post(save,env,{...parent,...award})).status,200);
+  let result=await data();assert.equal(result.balances.leon,before.balances.leon+7);assert.equal(result.balances.logan,before.balances.logan);
+  assert.equal(result.history.length,1);assert.equal(result.history[0].kind,'award');assert.equal(result.history[0].title,award.reason);
+  assert.equal((await data({role:'logan',password:'test-password'})).history.length,0);
+  assert.equal((await post(save,env,{...leon,rewardAction:'unlockTheme',id:'forest'})).status,200,'Bonus points can buy unlocks');
+  const response=await post(save,env,{...leon,change:{type:'status',student:'leon',id:'leon-0',done:true}});
+  const saved=await response.json();assert.equal(saved.rewards.balances.leon,(await data(leon)).balances.leon,'Assignment saves return current balance');
+});
+
+test('student dashboard balance includes zero and negative values and links to the store',()=>{
+  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
+  const node={dataset:{pointBalance:'leon'},textContent:''},context=vm.createContext({state:{rewards:{balances:{leon:-2}}},document:{querySelectorAll:()=>[node]}});
+  vm.runInContext(source.slice(source.indexOf('function studentBalanceButton('),source.indexOf('function openPointAward(')),context);
+  assert(context.studentBalanceButton('leon').includes('>-2</span> points'));assert(context.studentBalanceButton('leon').includes('onclick="openRewards()"'));
+  context.state.rewards.balances.leon=0;context.updatePointBalances();assert.equal(node.textContent,0);
 });

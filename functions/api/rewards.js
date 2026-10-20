@@ -27,11 +27,14 @@ export async function restrictThemes(env,student,prefs){
 
 // Calculate earnings from current assignment records so retries and reopening
 // cannot mint extra points. Submission dates, not completion dates, earn points.
-export const earnedSQL = `SELECT COALESCE(SUM(CASE WHEN a.done=1 AND a.due<>''
+export function earnedSQL(){
+  const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});
+  return `SELECT COALESCE(SUM(CASE WHEN a.done=0 AND a.due<>'' AND a.due<'${today}' THEN -1 WHEN a.done=1 AND a.due<>''
   AND date(json_extract(m.value,'$.submittedDate'))=json_extract(m.value,'$.submittedDate')
   AND json_extract(m.value,'$.submittedDate')<=a.due
   THEN CASE WHEN json_extract(m.value,'$.submittedDate')<a.due THEN 2 ELSE 1 END ELSE 0 END),0)
   FROM assignments a LEFT JOIN settings m ON m.key='assignment_meta_'||a.id WHERE a.student=?`;
+}
 export const spentSQL = `SELECT COALESCE(SUM(json_extract(value,'$.cost')),0) FROM settings
   WHERE key LIKE 'redemption_%' AND json_extract(value,'$.student')=?`;
 
@@ -41,7 +44,7 @@ export async function rewardsData(env, role) {
   for(const row of rows.results){const item=readJSON(row.value,{});if(row.key.startsWith('reward_'))items.push(item);else if(role==='parent'||item.student===role)history.push(item);}
   const balances={};
   for(const student of role==='parent'?['leon','logan']:['leon','logan'].includes(role)?[role]:[]){
-    const earned=await env.DB.prepare(earnedSQL).bind(student).first(),spent=await env.DB.prepare(spentSQL).bind(student).first();
+    const earned=await env.DB.prepare(earnedSQL()).bind(student).first(),spent=await env.DB.prepare(spentSQL).bind(student).first();
     balances[student]=Number(Object.values(earned)[0])-Number(Object.values(spent)[0]);
   }
   const unlocked={};
