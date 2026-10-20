@@ -228,7 +228,7 @@ test('points use submission dates and rewards enforce prices, ownership and retr
   assert.equal((await post(save,env,{...purchase,requestId:'purchase-2'})).status,409);
   assert(!(await data({role:'logan',password:'test-password'})).history.some(x=>x.kind==='award'));
   await update('leon-1','2026-10-21','2026-10-20',false);
-  assert.equal((await data()).balances.leon,-2,'Reopening cannot earn points twice');
+  assert.equal((await data()).balances.leon,0,'Reopening submitted work preserves its original earnings without debt');
   await update('leon-1','2026-10-21','2026-10-20');
   assert.equal((await data()).balances.leon,0);
   assert.equal((await post(save,env,{...leon,change:{type:'status',id:'leon-0',student:'leon',submittedDate:'2020-01-01'}})).status,400);
@@ -361,25 +361,19 @@ test('student announcements stay visible without the four reminder bars',()=>{
   const html=context.studentAnnouncementStack('leon');assert(html.startsWith('<section'));assert(!html.includes('<details'));assert(!html.includes('<summary'));assert(html.includes('<announcement/>'));assert(!html.includes('<reminders/>'));assert(html.includes('id="student-announcements"'));
 });
 
-test('past-due assignments incur a permanent one-time deduction before completion',async()=>{
-  const env=await fixture();
-  const data=async()=>(await (await post(auth,env,leon)).json()).rewards;
-  assert.equal((await data()).balances.leon,-1,'Existing unfinished past-due work counts');
-  assert.equal((await data()).balances.leon,-1,'Refreshing does not deduct again');
-  const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});
-  const shift=n=>{const date=new Date(today+'T12:00:00Z');date.setUTCDate(date.getUTCDate()+n);return date.toISOString().slice(0,10);};
-  const change={type:'update',id:'leon-0',student:'leon',subject:'math',title:'Overdue work',due:shift(-5),done:false};
-  await post(save,env,{...parent,change});assert.equal((await data()).balances.leon,-2,'Five days late is still only one point');
-  await post(save,env,{...parent,change:{...change,done:true,submittedDate:today}});assert.equal((await data()).balances.leon,-2,'Late completion does not refund the deduction');
-  await post(save,env,{...parent,change:{...change,due:today}});assert.equal((await data()).balances.leon,-2,'A corrected date does not erase an incurred penalty');
-  await post(save,env,{...parent,change:{...change,due:''}});assert.equal((await data()).balances.leon,-2,'Removing a date does not erase a penalty');
-  await post(save,env,{...parent,change:{...change,due:shift(1),done:true,submittedDate:today}});assert.equal((await data()).balances.leon,0,'Two early points minus two incurred penalties');
-  await post(save,env,{...parent,rewardAction:'save',id:'test-reward',title:'Test reward',cost:2});
-  assert.equal((await post(save,env,{...leon,rewardAction:'redeem',id:'test-reward',requestId:'penalty-check'})).status,409);
-  await post(save,env,{...parent,change:{type:'status',id:'leon-3',student:'leon',done:true}});assert.equal((await data()).balances.leon,0);
-  await post(save,env,{...parent,rewardAction:'awardPoints',id:'penalty-bonus',student:'leon',points:2});
-  assert.equal((await post(save,env,{...leon,rewardAction:'redeem',id:'test-reward',requestId:'penalty-check'})).status,200);
-  await post(save,env,{...parent,change:{type:'status',id:'leon-3',student:'leon',done:false}});assert.equal((await data()).balances.leon,0,'Reopening does not incur the same penalty again');
+test('past-due deductions stop at zero and never become future debt',async()=>{
+  const env=await fixture(),data=async()=>(await (await post(auth,env,leon)).json()).rewards;
+  assert.equal((await data()).balances.leon,0);
+  assert.equal((await data()).history.find(x=>x.kind==='penalty').cost,0,'Late at zero is recorded but not charged');
+  await post(save,env,{...parent,rewardAction:'awardPoints',id:'late-bonus',student:'leon',points:1});
+  assert.equal((await data()).balances.leon,1,'New earnings do not pay old debt');
+  const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'}),date=new Date(today+'T12:00:00Z');date.setUTCDate(date.getUTCDate()-1);const yesterday=date.toISOString().slice(0,10);
+  for(const id of ['leon-0','leon-1'])await post(save,env,{...parent,change:{type:'update',id,student:'leon',subject:'math',title:'Late work',due:yesterday,done:false}});
+  let result=await data();assert.equal(result.balances.leon,0);assert.equal(result.history.filter(x=>x.kind==='penalty').reduce((sum,x)=>sum+x.cost,0),1);
+  await post(save,env,{...leon,change:{type:'status',id:'leon-0',student:'leon',done:true,completedDate:today,submittedDate:today}});
+  assert.equal((await data()).balances.leon,0,'Late completion does not refund a charged penalty');
+  await post(save,env,{...parent,rewardAction:'awardPoints',id:'later-bonus',student:'leon',points:2});
+  assert.equal((await data()).balances.leon,2,'Zero-cost late entries never charge later');
 });
 
 test('parents can award spendable bonus points per child with retry-safe history',async()=>{
@@ -399,11 +393,11 @@ test('parents can award spendable bonus points per child with retry-safe history
   const saved=await response.json();assert.equal(saved.rewards.balances.leon,(await data(leon)).balances.leon,'Assignment saves return current balance');
 });
 
-test('student dashboard balance includes zero and negative values and links to the store',()=>{
+test('student dashboard balance floors stale negative values at zero and links to the store',()=>{
   const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
   const node={dataset:{pointBalance:'leon'},textContent:''},context=vm.createContext({state:{rewards:{balances:{leon:-2}}},document:{querySelectorAll:()=>[node]}});
   vm.runInContext(source.slice(source.indexOf('function studentBalanceButton('),source.indexOf('function openPointAward(')),context);
-  assert(context.studentBalanceButton('leon').includes('>-2</span> points'));assert(context.studentBalanceButton('leon').includes('onclick="openRewards()"'));
+  assert(context.studentBalanceButton('leon').includes('>0</span> points'));assert(context.studentBalanceButton('leon').includes('onclick="openRewards()"'));
   context.state.rewards.balances.leon=0;context.updatePointBalances();assert.equal(node.textContent,0);
 });
 
@@ -465,7 +459,7 @@ test('goals, reward delivery, breakdowns and parent activity persist with owners
   await post(save,env,{...leon,change});await post(save,env,{...leon,change});
   await post(save,env,{...leon,change:{type:'status',id:'leon-1',student:'leon',needsHelp:true}});
   const result=await data(),b=result.breakdown.leon;
-  assert.equal(b.earned,1);assert.equal(b.bonuses,10);assert.equal(b.deductions,1);assert.equal(b.spent,3);
+  assert.equal(b.earned,1);assert.equal(b.bonuses,10);assert.equal(b.deductions,0);assert.equal(b.spent,3);
   assert.equal(result.balances.leon,b.earned+b.bonuses-b.deductions-b.spent);
   assert.equal(result.activity.filter(x=>x.kind==='submission').length,1,'Retry does not duplicate activity');
   for(const kind of ['purchase','delivery','bonus','help','completion'])assert(result.activity.some(x=>x.kind===kind),kind);
@@ -489,4 +483,35 @@ test('shop preview is isolated and using state follows the selected appearance',
   vm.runInContext(source.slice(source.indexOf('function storeUnlockUsing('),source.indexOf('function drawUnlockCatalog(')),context);
   assert.equal(context.storeUnlockUsing(item),false);context.previewStoreUnlock('forest',true);assert(html.includes('sandbox'));assert(html.includes('srcdoc='));assert.equal(profile.lightTheme,'coastal','Preview never mutates saved preferences');
   profile.lightTheme='forest';assert.equal(context.storeUnlockUsing(item),true);
+});
+
+test('old negative balances are cleared once and all purchase types enforce spendable funds',async()=>{
+  const env=await fixture();
+  await env.DB.prepare('INSERT INTO settings(key,value) VALUES (?,?)').bind('redemption_old-debt',JSON.stringify({id:'old-debt',student:'leon',kind:'penalty',cost:8,title:'Old overdue work',date:new Date().toISOString()})).run();
+  const data=async()=>(await (await post(auth,env,leon)).json()).rewards;
+  let result=await data();assert.equal(result.balances.leon,0);assert.equal(result.breakdown.leon.adjustments,8);
+  assert.equal((await data()).history.filter(x=>x.kind==='balanceAdjustment').length,1);
+  for(const request of [{rewardAction:'unlockTheme',id:'forest'},{rewardAction:'unlockCosmetic',id:'style-glass'}])assert.equal((await post(save,env,{...leon,...request})).status,409);
+  await post(save,env,{...parent,rewardAction:'save',id:'one-point',title:'Small reward',cost:1});
+  assert.equal((await post(save,env,{...leon,rewardAction:'redeem',id:'one-point',requestId:'no-money'})).status,409);
+  await post(save,env,{...parent,rewardAction:'awardPoints',id:'fresh-point',student:'leon',points:1});
+  assert.equal((await data()).balances.leon,1,'No hidden debt consumes the new point');
+  assert.equal((await post(save,env,{...leon,rewardAction:'redeem',id:'one-point',requestId:'fresh-purchase'})).status,200);
+  assert.equal((await data()).balances.leon,0);
+});
+
+test('simultaneous reward, theme and cosmetic purchases cannot overspend',async()=>{
+  const env=await fixture();
+  await env.DB.prepare('UPDATE assignments SET done=1').run();
+  await post(save,env,{...parent,rewardAction:'awardPoints',id:'spend-budget',student:'leon',points:5});
+  await post(save,env,{...parent,rewardAction:'save',id:'four-points',title:'Reward',cost:4});
+  const responses=await Promise.all([
+    {rewardAction:'redeem',id:'four-points',requestId:'racing-purchase'},
+    {rewardAction:'unlockTheme',id:'forest'},
+    {rewardAction:'unlockCosmetic',id:'corners-pill'}
+  ].map(request=>post(save,env,{...leon,...request})));
+  assert(responses.every(response=>[200,409].includes(response.status)));
+  assert(responses.some(response=>response.status===409));
+  const result=(await (await post(auth,env,leon)).json()).rewards;
+  assert(result.balances.leon>=0);assert(result.breakdown.leon.spent<=5);assert.equal(result.balances.leon,5-result.breakdown.leon.spent);
 });
