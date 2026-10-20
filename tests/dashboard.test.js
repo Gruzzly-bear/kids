@@ -475,7 +475,7 @@ test('next action ignores historical completions and done-and-submitted saves bo
   const task={id:'next-task',title:'Read today',subject:'ela',student:'leon',due:'2026-10-20',done:false},found={student:'leon',subject:'ela',x:task};let saved=0;
   const context=vm.createContext({state:{auth:{role:'leon'}},allTasks:()=>[{id:'old',title:'Old complete',done:true,due:'2020-01-01'},task],scheduleDay:()=> '2026-10-20',addDays:()=> '2026-10-21',safeLink:()=>'',esc:x=>x,subjectLabel:()=> 'Language Arts',dateLabel:x=>x,potentialTaskPoints:()=>1,jsArg:JSON.stringify,findTask:()=>found,closeDialog:()=>{},render:()=>{},saveAssignmentChange:async()=>{saved++;assert.equal(task.done,true);assert.equal(task.completedDate,'2026-10-20');assert.equal(task.submittedDate,'2026-10-20');return true;},showToast:()=>{}});
   vm.runInContext(source.slice(source.indexOf('function nextAssignmentCard('),source.indexOf('function savingsGoal(')),context);
-  const html=context.nextAssignmentCard('leon');assert(html.includes('Read today'));assert(!html.includes('Old complete'));assert(html.includes('Done and submitted'));
+  const html=context.nextAssignmentCard('leon');assert(html.includes('Read today'));assert(!html.includes('Old complete'));assert(!html.includes('Done and submitted'));assert(html.includes('Mark complete'));
   await context.completeAndSubmit(task.id);assert.equal(saved,1);assert.equal(task.needsHelp,false);
 });
 
