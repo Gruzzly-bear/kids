@@ -315,3 +315,39 @@ test('assignment pop-out returns from child dialogs and closes cleanly',()=>{
   id='assignments';context.closeDialog(true);assert.equal(context.state.assignmentPopup,true,'Replacing editor keeps its return route');
   context.closeDialog();assert.equal(context.state.assignmentPopup,false);assert.equal(opens,1);
 });
+
+test('kids see per-assignment point previews and totals for the exact work shown',()=>{
+  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8'),today='2026-10-19';
+  const context=vm.createContext({state:{view:'leon',auth:{role:'leon'}},scheduleDay:()=>today,jsArg:JSON.stringify,safeLink:()=>'',esc:x=>x,dueChip:()=>'',dateLabel:x=>x,nameOf:x=>x,subjectLabel:x=>x,nextDueDate:subjects=>Object.values(subjects).flat().filter(x=>!x.done&&x.due>today).map(x=>x.due).sort()[0]||''});
+  vm.runInContext(source.slice(source.indexOf('function potentialTaskPoints('),source.indexOf('function scheduleMinutes(')),context);
+  const task=(id,due,extra={})=>({id,title:id,due,done:false,...extra});
+  const subjects={math:[task('due-one',today),task('tomorrow-one','2026-10-20'),task('later','2026-10-22')],ela:[task('due-two',today),task('tomorrow-two','2026-10-20'),task('complete',today,{done:true,submittedDate:today}),task('late','2026-10-18')]};
+  let html=context.workSection(subjects,'today');
+  assert(html.includes('⭐ 2 points available'));assert.equal((html.match(/1 point if submitted today/g)||[]).length,2);
+  html=context.workingAhead(subjects);assert(html.includes('⭐ 4 points available'));assert.equal((html.match(/2 points if submitted today/g)||[]).length,2);assert(!html.includes('data-task-id="later"'));
+  assert.equal(context.potentialTaskPoints(task('no-date','')),0);assert.equal(context.potentialTaskPoints(task('late','2026-10-18')),0);assert.equal(context.potentialTaskPoints(task('done',today,{done:true})),0);
+  subjects.math[0].done=true;assert(context.workSection(subjects,'today').includes('⭐ 1 point available'));
+  assert(context.workingAhead({}).includes('⭐ 0 points available'));
+  context.state.view='monitor';context.state.auth.role='monitor';assert(!context.workingAhead(subjects,'leon',true).includes('points available'));
+  context.state.view='parent';context.state.auth.role='parent';assert(!context.workSection(subjects,'today','leon').includes('potential-points'));
+});
+
+test('store catalog supports in-store browsing, confirming, buying and applying an unlock',async()=>{
+  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
+  let owned=false,html='',applied='',toast='';
+  const context=vm.createContext({state:{view:'leon',auth:{role:'leon'},rewards:{balances:{leon:6},themePrice:5,cosmetics:{},items:[],history:[]}},THEME_PALETTES:{coastal:['Coastal','#000','#fff'],midnight:['Midnight','#fff','#000'],forest:['Forest','#080','#efe']},themeOwned:id=>['coastal','midnight'].includes(id)||owned,cosmeticOwned:()=>false,prefs:()=>({allowedFonts:[]}),esc:x=>x,jsArg:JSON.stringify,openDialog:(id,content)=>{html=content;},selectTheme:id=>applied=id,setPreference:()=>{},render:()=>{},showToast:message=>toast=message,fetch:async()=>{owned=true;return{ok:true,json:async()=>({rewards:{...context.state.rewards,balances:{leon:1}}})};},document:{getElementById:()=>null}});
+  vm.runInContext(source.slice(source.indexOf('function storeNavigation('),source.indexOf('function editReward(')),context);
+  vm.runInContext('let storeBusy=false;'+source.slice(source.indexOf('async function storeAction('),source.indexOf('function dashboardClock(')),context);
+  context.drawUnlockCatalog('themes');assert(html.includes('Rewards Store categories'));assert(html.includes('Find themes'));assert(html.includes('Unlock · 5 points'));assert(!html.includes('openSettings()'));
+  context.confirmStoreUnlock('forest',true);assert(html.includes('Unlock Forest?'));assert(html.includes('Back to store'));
+  await context.storeAction({rewardAction:'unlockTheme',id:'forest'});
+  assert.equal(context.state.rewardCatalog,'themes');assert(html.includes('1 point to spend'));assert(html.includes('Unlocked'));assert(html.includes('>Use</button>'));assert(toast.includes('Unlocked'));
+  context.useStoreUnlock('forest',true);assert.equal(applied,'forest');assert.equal(context.state.rewardCatalog,'themes');
+});
+
+test('kids notes and reminders stay visible without a collapse control',()=>{
+  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
+  const context=vm.createContext({state:{displayCards:{leon:['Drink water']}},announcementBanner:()=>'<announcement/>',displayCards:()=>'<reminders/>',visibleAnnouncements:()=>[{}]});
+  vm.runInContext(source.slice(source.indexOf('function studentAnnouncementStack('),source.indexOf('function refreshVisibleAnnouncements(')),context);
+  const html=context.studentAnnouncementStack('leon');assert(html.startsWith('<section'));assert(!html.includes('<details'));assert(!html.includes('<summary'));assert(html.includes('<announcement/>'));assert(html.includes('<reminders/>'));assert(html.includes('id="student-announcements"'));
+});
