@@ -381,7 +381,7 @@ function nextDueDate(subjects,today=scheduleDay()){return Object.values(subjects
 function mast(){
   const student=['leon','logan'].includes(state.view);
   const calendarView=state.view==='calendar';
-  return `<header class="mast"><a href="#" class="brand" onclick="event.preventDefault();${calendarView?'closeCalendar()':student?'showHub()':state.view==='parent'?"setParentTab('overview')":'render()'}"><span class="brand-mark">${student?profileAvatarMark(state.view):'S'}</span><span><b>School Dashboard</b><small>${calendarView?'Family calendar':student?nameOf(state.view)+'’s school day':state.view==='parent'?'Parent workspace':'Your family’s school day'}</small></span></a><div class="header-actions">${state.auth&&state.auth.role!=='monitor'?'<button class="button light" onclick="openRewards()">⭐ Rewards Store</button>':''}<button class="button light" onclick="${calendarView?'closeCalendar()':'openCalendar()'}">${calendarView?'Back':'📅 Family Calendar'}</button>${student||state.view==='monitor'||state.view==='parent'?'<button class="button light" onclick="openResources()">School Resources</button>':''}<button class="button light" onclick="openSettings()">Settings</button>${state.view?'<button class="button light" onclick="'+(state.view==='monitor'?'closeMonitor()':'goHome()')+'">'+(state.view==='monitor'?(state.parentReturnSession?'Back to parent':'Close dashboard'):'Sign out')+'</button>':''}</div></header>`;
+  return `<header class="mast"><a href="#" class="brand" onclick="event.preventDefault();${calendarView?'closeCalendar()':student?'showHub()':state.view==='parent'?"setParentTab('overview')":'render()'}"><span class="brand-mark">${student?profileAvatarMark(state.view):'S'}</span><span><b>School Dashboard</b><small>${calendarView?'Family calendar':student?nameOf(state.view)+'’s school day':state.view==='parent'?'Parent workspace':'Your family’s school day'}</small></span></a>${state.auth?'<button class="button light dashboard-refresh" onclick="refreshDashboard()" aria-label="Refresh dashboard" title="Refresh dashboard"><svg aria-hidden="true" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7v5h-5"/><path d="M19.5 12a7.5 7.5 0 1 0-2 5.2"/></svg></button>':''}<div class="header-actions">${state.auth&&state.auth.role!=='monitor'?'<button class="button light" onclick="openRewards()">⭐ Rewards Store</button>':''}<button class="button light" onclick="${calendarView?'closeCalendar()':'openCalendar()'}">${calendarView?'Back':'📅 Family Calendar'}</button><button class="button light" onclick="openSettings()">Settings</button>${state.view?'<button class="button light" onclick="'+(state.view==='monitor'?'closeMonitor()':'goHome()')+'">'+(state.view==='monitor'?(state.parentReturnSession?'Back to parent':'Close dashboard'):'Sign out')+'</button>':''}</div></header>`;
 }
 async function openRewards(){
   if(!state.auth||state.auth.role==='monitor')return;
@@ -584,6 +584,7 @@ function render(){
   for(const node of app.querySelectorAll('details.work-section,details.dashboard-disclosure')){node.open=expanded.get(node.id)??(prefs().dashboardExpanded===true||node.classList.contains('work-section')&&!node.classList.contains('ahead')&&Number(node.querySelector('.count')?.textContent)>0);node.addEventListener('toggle',updateWorkOverflow);}
   for(const node of app.querySelectorAll('details.subject-group'))node.addEventListener('toggle',updateWorkOverflow);
   updateSyncStatus();updateWorkOverflow();
+  const editor=document.querySelector('dialog[data-dialog="assignments"] .assignment-popout-body');if(editor)editor.innerHTML=assignmentEditor();
 }
 async function openCalendar(){
   state.calendarReturnView=state.view||null;
@@ -725,11 +726,18 @@ function showToast(message,undo=null){const node=document.getElementById('toast'
 function undoToast(){const action=undoAction;undoAction=null;document.getElementById('toast').hidden=true;if(action)action();}
 
 function openDialog(id,content){
-  const returnFocus=document.activeElement;closeDialog();const dialog=document.createElement('dialog');dialog.id='app-dialog';dialog.dataset.dialog=id;
+  const returnFocus=document.activeElement;closeDialog(true);const dialog=document.createElement('dialog');dialog.id='app-dialog';dialog.dataset.dialog=id;
   dialog.innerHTML=`<div class="dialog-top"><button class="button light" onclick="closeDialog()" aria-label="Close dialog">Close</button></div>${content}`;
-  dialog.addEventListener('close',()=>{dialog.remove();if(!document.getElementById('app-dialog')){if(returnFocus?.isConnected&&!returnFocus.closest('dialog'))returnFocus.focus({preventScroll:true});else app.focus({preventScroll:true});}});document.body.append(dialog);dialog.showModal();dialog.querySelector('[autofocus],input,select')?.focus();
+  dialog.addEventListener('close',()=>{dialog.remove();if(!document.getElementById('app-dialog')){if(returnFocus?.isConnected&&!returnFocus.closest('dialog'))returnFocus.focus({preventScroll:true});else app.focus({preventScroll:true});}});dialog.addEventListener('cancel',event=>{event.preventDefault();closeDialog();});document.body.append(dialog);dialog.showModal();dialog.querySelector('[autofocus],input,select')?.focus();
 }
-function closeDialog(){document.getElementById('font-preview-dialog')?.close();const dialog=document.getElementById('app-dialog'),refreshSlots=dialog?.dataset.dialog==='schedule';dialog?.close();if(refreshSlots){ensureAssignmentSlots();render();}}
+function closeDialog(replacing=false){
+  document.getElementById('font-preview-dialog')?.close();
+  const dialog=document.getElementById('app-dialog'),id=dialog?.dataset.dialog,refreshSlots=id==='schedule';
+  dialog?.close();dialog?.remove();
+  if(!replacing&&id==='assignments')state.assignmentPopup=false;
+  if(refreshSlots){ensureAssignmentSlots();render();}
+  if(!replacing&&id&&id!=='assignments'&&state.assignmentPopup&&state.view==='parent')openAssignmentEditor();
+}
 function setFontEnabled(id,enabled){
   if(state.auth?.role!=='parent'||!FONT_STYLE_IDS.includes(id)||id==='theme')return;
   const p=prefs(state.settingsScope),allowed=new Set(p.allowedFonts);
@@ -810,6 +818,7 @@ function drawSettings(){
   if(parent&&['leon','logan','monitor'].includes(forScope))document.getElementById('app-dialog').insertAdjacentHTML('beforeend',`<label class="switch dashboard-detail-setting"><input type="checkbox" ${p.dashboardExpanded?'checked':''} onchange="setPreference('dashboardExpanded',this.checked,state.settingsScope)">Start dashboard with all details expanded</label>`);
   labelCosmeticPrices();
   organizeSettings();
+  document.querySelector('[data-settings-section="general"]')?.insertAdjacentHTML('beforeend',`<div class="settings-tools"><button class="button light" onclick="openResources()">School Resources</button>${state.auth?.role==='parent'?'<button class="button light" onclick="downloadBackup()">Download backup</button>':''}</div>`);
 }
 function showSettingsSection(section){
   state.settingsSection=section;
@@ -830,9 +839,6 @@ function organizeSettings(){
   for(const node of nodes){if(node===appearance||node.tagName==='P')looks.append(node);else general.append(node);}
   showSettingsSection(state.settingsSection||'general');
 }
-function openParentTools(){
-  openDialog('parent-tools',`<h2>Parent tools</h2><div class="parent-tools-list"><button class="button light" onclick="closeDialog();openFamilyEditorChooser('schedule')">Edit schedule</button><button class="button light" onclick="closeDialog();openFamilyEditorChooser('reminders')">Announcements & reminders</button><button class="button light" onclick="closeDialog();openMonitor()">Shared dashboard</button><button class="button light" onclick="closeDialog();refreshDashboard()">Refresh dashboard</button><button class="button light" onclick="downloadBackup()">Download backup</button></div>`);
-}
 function helpInboxButton(count,selected){
   return `<button class="button light inbox-button" aria-label="Help inbox, ${count} pending requests" title="Help inbox" aria-current="${selected?'page':'false'}" onclick="setParentTab('help')"><svg aria-hidden="true" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16l2 12v4H2v-4L4 4Z"/><path d="M2 15h6l2 3h4l2-3h6"/></svg><span class="inbox-count ${count?'has-requests':''}">${count}</span></button>`;
 }
@@ -849,11 +855,11 @@ async function changeParentPassword(event){
   }catch(problem){error.textContent=problem.message;button.disabled=false;}
 }
 
-function setParentTab(tab){state.parentTab=tab;render();}
+function setParentTab(tab){if(tab==='assignments'){openAssignmentEditor();return;}state.parentTab=tab;render();}
+function openAssignmentEditor(){if(state.auth?.role!=='parent')return;state.assignmentPopup=true;openDialog('assignments',`<h2>Assignments</h2><div class="assignment-popout-body">${assignmentEditor()}</div>`);}
 function parentPage(){
-  const helpCount=['leon','logan'].flatMap(student=>allTasks(student)).filter(x=>!x.done&&x.needsHelp).length,tabs=[['overview','Weekly overview'],['assignments','Assignments'],['help','Help inbox']];
-  const editActions=`<div class="parent-tab-actions"><button class="button light" onclick="openParentTools()">Tools</button></div>`;
-  return mast()+`<section class="page-heading"><div><p class="small">Family workspace</p><h1>Parent dashboard</h1></div></section><nav class="parent-tabs" aria-label="Parent workspace">${tabs.filter(([key])=>key!=='help').map(([key,label])=>`<button class="button ${state.parentTab===key?'':'light'}" aria-current="${state.parentTab===key?'page':'false'}" onclick="setParentTab('${key}')">${label}${key==='help'?` <span class="count">${helpCount}</span>`:''}</button>`).join('')}${helpInboxButton(helpCount,state.parentTab==='help')}${editActions}</nav>`+parentSchedules()+(state.parentTab==='assignments'?assignmentEditor():state.parentTab==='help'?helpInbox():weeklyOverview());
+  const helpCount=['leon','logan'].flatMap(student=>allTasks(student)).filter(x=>!x.done&&x.needsHelp).length;
+  return mast()+`<section class="page-heading"><div><p class="small">Family workspace</p><h1>Parent dashboard</h1></div></section><nav class="parent-tabs" aria-label="Parent workspace"><button class="button light" onclick="openFamilyEditorChooser('schedule')">Edit schedule</button><button class="button light" onclick="openFamilyEditorChooser('reminders')">Announcements &amp; reminders</button><button class="button light" onclick="openMonitor()">Shared dashboard</button><button class="button" onclick="openAssignmentEditor()" aria-haspopup="dialog">Assignments</button>${helpInboxButton(helpCount,state.parentTab==='help')}</nav>`+parentSchedules()+(state.parentTab==='help'?helpInbox():weeklyOverview());
 }
 function parentSchedules(){
   return `<section class="panel parent-schedules"><div class="section-heading"><h2>Kids’ schedules</h2><span class="small">${dateLabel(scheduleDay())} · Eastern Time</span></div><p class="small">Optional sessions are available if you need extra help.</p><div class="week-students">${['leon','logan'].map(student=>{const items=scheduleFor(student).sort((a,b)=>scheduleMinutes(a.time)-scheduleMinutes(b.time));return `<section class="week-student ${student}"><h3 class="child-label">${profileAvatarMark(student)}<span>${nameOf(student)}</span></h3><details open><summary>Today’s schedule <span class="count">${items.length}</span></summary>${items.length?`<div class="schedule-list">${items.map(item=>`<div class="schedule-item" style="${scheduleItemStyle(item)}"><span>${esc(scheduleLabel(item,student))}</span><time>${formatScheduleTime(item.time)}${item.endTime?' – '+formatScheduleTime(item.endTime):''}</time></div>`).join('')}</div>`:'<p class="empty">No schedule set for today.</p>'}</details><button class="text-button" onclick="previewTomorrowSchedule('${student}')">View tomorrow’s schedule →</button></section>`;}).join('')}</div></section>`;
@@ -868,7 +874,7 @@ function helpInbox(){
   const requests=['leon','logan'].flatMap(student=>allTasks(student).filter(x=>!x.done&&x.needsHelp).map(x=>({...x,student}))).sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999'));
   return `<section class="panel help-panel"><div class="section-heading"><h2>Needs help <span class="count">${requests.length}</span></h2><span class="small">Requests from Leon and Logan</span></div>${requests.length?requests.map(x=>`<article class="help-request"><div><strong>${iconOf(x.student)} ${nameOf(x.student)} · ${esc(subjectLabel(x.subject,x.student))}</strong><span>${esc(x.title)}</span><div class="task-meta">${dueChip(x)}</div></div><div class="actions">${x.url?`<a class="button light" href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">Open assignment ↗</a>`:''}<button class="button light" onclick="editStudent('${x.student}',${jsArg(x.subject)})">View assignment</button><button class="button" onclick="toggleHelp(${jsArg(x.id)})">Mark handled</button></div></article>`).join(''):'<p class="empty">No open help requests. New requests from the kids will appear here.</p>'}</section>`;
 }
-function editStudent(student,subject){state.editorStudent=student;state.editorSubject=subject||Object.keys(state.assignments[student])[0];state.parentTab='assignments';render();}
+function editStudent(student,subject){state.editorStudent=student;state.editorSubject=subject||Object.keys(state.assignments[student])[0];openAssignmentEditor();}
 function subjectCatalog(student){const catalog=state.assignmentSubjectCatalogs[student]||{added:[],hidden:[]};return{added:[...(catalog.added||[])],hidden:[...(catalog.hidden||[])]};}
 function saveSubjectCatalog(student){const catalog=subjectCatalog(student);state.assignmentSubjectCatalogs[student]=catalog;return queuedWrite({subjectsOnly:true,student,catalog},'Subjects');}
 function openSubjectManager(){
@@ -919,7 +925,7 @@ function removeTask(id){
 }
 function confirmRemove(id){const found=findTask(id);if(!found)return;state.assignments[found.student][found.subject].splice(found.index,1);saveAssignmentChange('remove',found);closeDialog();render();showToast('Assignment removed',()=>{state.assignments[found.student][found.subject].push(found.x);saveAssignmentChange('add',found);render();});}
 function downloadBackup(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({assignments:state.assignments,schedules:schedulePayload(),cards:dashboardCardsPayload(),calendar:state.familyCalendar,preferences:state.preferences,rewards:state.rewards},null,2)],{type:'application/json'}));a.download='school-dashboard-backup-'+scheduleDay()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
-function sharedPage(){const readonly=state.auth?.role!=='parent';return mast()+`<section class="page-heading"><div><p class="small">${dateLabel(scheduleDay())}</p><h1>Our school day</h1></div>${dashboardClock()}<button class="button light" onclick="refreshDashboard()">Refresh</button></section><p id="shared-refresh-status" class="small" role="status">${esc(state.refreshError||'')}</p><div class="shared-grid">${['leon','logan'].map(student=>`<article class="shared-child"><h2 class="profile-heading">${profileAvatarMark(student)}<span>${nameOf(student)}</span></h2><div class="work-board">${workSection(state.assignments[student],'late',student,readonly)}${workSection(state.assignments[student],'today',student,readonly)}${workingAhead(state.assignments[student],student,readonly)}${optionalSessions(student)}</div>${schedulePanel(student)}</article>`).join('')}</div>`;}
+function sharedPage(){const readonly=state.auth?.role!=='parent';return mast()+`<section class="page-heading"><div><p class="small">${dateLabel(scheduleDay())}</p><h1>Our school day</h1></div>${dashboardClock()}</section><p id="shared-refresh-status" class="small" role="status">${esc(state.refreshError||'')}</p><div class="shared-grid">${['leon','logan'].map(student=>`<article class="shared-child"><h2 class="profile-heading">${profileAvatarMark(student)}<span>${nameOf(student)}</span></h2><div class="work-board">${workSection(state.assignments[student],'late',student,readonly)}${workSection(state.assignments[student],'today',student,readonly)}${workingAhead(state.assignments[student],student,readonly)}${optionalSessions(student)}</div>${schedulePanel(student)}</article>`).join('')}</div>`;}
 async function refreshDashboard(silent=false){
   if(!state.auth||state.pending.length||pumping){if(!silent)showToast('Save your pending changes before refreshing.');return;}
   if(state.refreshing)return;state.refreshing=true;

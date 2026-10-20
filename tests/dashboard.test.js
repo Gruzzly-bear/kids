@@ -295,3 +295,23 @@ test('cosmetic purchases gate all appearance fields and share permanent font own
   await post(save,env,{...parent,change:{type:'status',id:'cosmetic-work-0',student:'leon',done:false}});
   assert((await data()).rewards.cosmeticUnlocks.leon.includes('style-glass'),'Purchases survive earnings corrections');
 });
+
+test('parent navigation exposes tools directly and assignments open in a dialog',()=>{
+  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
+  const context=vm.createContext({state:{auth:{role:'parent'},parentTab:'overview'},allTasks:()=>[],mast:()=>'<header></header>',parentSchedules:()=>'<schedules/>',weeklyOverview:()=>'<overview/>',helpInbox:()=>'<help/>',helpInboxButton:()=>'<inbox/>',assignmentEditor:()=>'<editor/>',openDialog:(id,html)=>{context.opened={id,html};}});
+  vm.runInContext(source.slice(source.indexOf('function setParentTab('),source.indexOf('function parentSchedules(')),context);
+  const html=context.parentPage();
+  for(const label of ['Edit schedule','Announcements &amp; reminders','Shared dashboard','Assignments'])assert(html.includes(label));
+  assert(!html.includes('Weekly overview'));assert(!html.includes('<editor/>'));assert(html.includes('<overview/>'));
+  context.setParentTab('assignments');assert.equal(context.opened.id,'assignments');assert(context.opened.html.includes('<editor/>'));assert.equal(context.state.parentTab,'overview');
+});
+
+test('assignment pop-out returns from child dialogs and closes cleanly',()=>{
+  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
+  let id='assignment-form',opens=0,closed=0;
+  const context=vm.createContext({state:{assignmentPopup:true,view:'parent'},document:{getElementById:key=>key==='app-dialog'?{dataset:{dialog:id},close:()=>closed++,remove:()=>{}}:null},openAssignmentEditor:()=>opens++,ensureAssignmentSlots:()=>{},render:()=>{}});
+  vm.runInContext(source.slice(source.indexOf('function closeDialog('),source.indexOf('\nfunction ',source.indexOf('function closeDialog(')+1)),context);
+  context.closeDialog();assert.equal(opens,1);assert.equal(closed,1);
+  id='assignments';context.closeDialog(true);assert.equal(context.state.assignmentPopup,true,'Replacing editor keeps its return route');
+  context.closeDialog();assert.equal(context.state.assignmentPopup,false);assert.equal(opens,1);
+});

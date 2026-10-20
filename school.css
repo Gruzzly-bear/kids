@@ -405,3 +405,11 @@ dialog[data-dialog="font-manager"]{width:min(900px,calc(100% - 32px))}.font-prev
 .dashboard-disclosure>summary{padding:0;min-height:28px;font-size:1rem;line-height:1.6}.dashboard-disclosure[open]>summary{margin-bottom:12px}.dashboard-notes .announcement{padding:14px 16px;margin-bottom:10px}.dashboard-notes .announcement h2{font-size:1.1rem}.dashboard-notes .announcement p{font-size:1rem}.dashboard-notes .quick-reminders h2{font-size:1rem}.shared-child .optional-sessions{grid-column:1/-1}.student-workspace .work-section,.shared-workspace .work-section{padding:14px 16px}.student-workspace .panel,.shared-workspace .panel{padding:14px 16px}.student-workspace .schedule-item,.shared-workspace .schedule-item{padding:10px 12px}.student-workspace .mast .button,.shared-workspace .mast .button{padding:8px 12px;min-height:38px;font-size:.875rem}.student-workspace .task,.shared-workspace .task{padding-top:10px;padding-bottom:10px}.dashboard-detail-setting{margin-top:18px}
 .fixed-schedule>h2{font-size:1rem;margin:0 0 12px;line-height:1.6}
 .reward-balances{display:flex;gap:1rem;flex-wrap:wrap;margin:1rem 0;padding:1rem;background:var(--panel);border:2px solid currentColor;border-radius:12px}.reward-list{display:grid;gap:.75rem;margin:1rem 0}.reward-card{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem}.reward-card h3,.reward-card p{margin:.25rem 0}@media(max-width:540px){.reward-card{align-items:flex-start;flex-direction:column}}
+/* Parent navigation and assignment pop-out. */
+.mast>.dashboard-refresh{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:38px;height:38px;min-height:38px;padding:8px;margin-left:-8px}
+.mast>.header-actions{margin-left:auto}
+.settings-tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+dialog[data-dialog="assignments"]{width:min(1100px,calc(100% - 32px));max-height:90dvh}
+dialog[data-dialog="assignments"] .parent-page{padding:0;border:0;box-shadow:none;background:transparent}
+dialog[data-dialog="assignments"] .editor-toolbar{margin-top:16px}
+@media(max-width:700px){.mast>.header-actions{margin-left:0;flex-basis:100%}.mast>.dashboard-refresh{margin-left:0}.parent-tabs{align-items:stretch}dialog[data-dialog="assignments"]{width:calc(100% - 16px);max-height:94dvh}}
