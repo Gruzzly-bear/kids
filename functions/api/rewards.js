@@ -28,8 +28,7 @@ export async function restrictThemes(env,student,prefs){
 // Calculate earnings from current assignment records so retries and reopening
 // cannot mint extra points. Submission dates, not completion dates, earn points.
 export function earnedSQL(){
-  const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});
-  return `SELECT COALESCE(SUM(CASE WHEN a.done=0 AND a.due<>'' AND a.due<'${today}' THEN -1 WHEN a.done=1 AND a.due<>''
+  return `SELECT COALESCE(SUM(CASE WHEN a.done=1 AND a.due<>''
   AND date(json_extract(m.value,'$.submittedDate'))=json_extract(m.value,'$.submittedDate')
   AND json_extract(m.value,'$.submittedDate')<=a.due
   THEN CASE WHEN json_extract(m.value,'$.submittedDate')<a.due THEN 2 ELSE 1 END ELSE 0 END),0)
@@ -38,10 +37,27 @@ export function earnedSQL(){
 export const spentSQL = `SELECT COALESCE(SUM(json_extract(value,'$.cost')),0) FROM settings
   WHERE key LIKE 'redemption_%' AND json_extract(value,'$.student')=?`;
 
+export async function recordOverduePenalties(env,role){
+  const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});
+  const students=role==='parent'?['leon','logan']:['leon','logan'].includes(role)?[role]:[];
+  for(const student of students){
+    const rows=await env.DB.prepare("SELECT a.*,m.value AS metadata FROM assignments a LEFT JOIN settings m ON m.key='assignment_meta_'||a.id WHERE student=? AND due<>'' AND due<?").bind(student,today).all();
+    const writes=[];
+    for(const assignment of rows.results){
+      const meta=readJSON(assignment.metadata);
+      if(assignment.done&&!(meta.submittedDate>assignment.due)&&!(meta.completedDate>assignment.due))continue;
+      const id='late-'+assignment.id,key='redemption_penalty_'+student+'_'+assignment.id;
+      writes.push(env.DB.prepare('INSERT INTO settings(key,value) VALUES (?,?) ON CONFLICT(key) DO NOTHING').bind(key,JSON.stringify({id,student,kind:'penalty',title:assignment.title,cost:1,dueDate:assignment.due,date:new Date().toISOString()})));
+    }
+    if(writes.length)await env.DB.batch(writes);
+  }
+}
+
 export async function rewardsData(env, role) {
+  await recordOverduePenalties(env,role);
   const rows=await env.DB.prepare("SELECT key,value FROM settings WHERE key LIKE 'reward_%' OR key LIKE 'redemption_%'").all();
   const items=[],history=[];
-  for(const row of rows.results){const item=readJSON(row.value,{});if(row.key.startsWith('reward_'))items.push(item);else if(role==='parent'||item.student===role)history.push(item);}
+  for(const row of rows.results){const item=readJSON(row.value,{});if(row.key.startsWith('reward_goal_'))continue;if(row.key.startsWith('reward_'))items.push(item);else if(role==='parent'||item.student===role)history.push(item);}
   const balances={};
   for(const student of role==='parent'?['leon','logan']:['leon','logan'].includes(role)?[role]:[]){
     const earned=await env.DB.prepare(earnedSQL()).bind(student).first(),spent=await env.DB.prepare(spentSQL).bind(student).first();
@@ -51,5 +67,22 @@ export async function rewardsData(env, role) {
   const cosmeticUnlocks={};
   for(const student of role==='parent'?['leon','logan']:['leon','logan'].includes(role)?[role]:[])unlocked[student]=await ownedThemes(env,student);
   for(const student of Object.keys(unlocked))cosmeticUnlocks[student]=await ownedCosmetics(env,student);
-  return {items,history:history.sort((a,b)=>b.date.localeCompare(a.date)),balances,unlocked,themePrice:THEME_PRICE,cosmetics:COSMETICS,cosmeticRules:COSMETIC_RULES,cosmeticUnlocks};
+  const breakdown={},goals={},today=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});
+  for(const student of Object.keys(balances)){
+    const work=await env.DB.prepare("SELECT a.*,m.value AS metadata FROM assignments a LEFT JOIN settings m ON m.key='assignment_meta_'||a.id WHERE student=?").bind(student).all();
+    let earned=0;
+    for(const assignment of work.results){const submitted=readJSON(assignment.metadata).submittedDate;if(assignment.done&&submitted&&assignment.due&&submitted<=assignment.due)earned+=submitted<assignment.due?2:1;}
+    const purchases=history.filter(item=>item.student===student);
+    breakdown[student]={earned,deductions:purchases.filter(item=>item.kind==='penalty').length,bonuses:purchases.filter(item=>item.kind==='award').reduce((sum,item)=>sum+item.points,0),spent:purchases.filter(item=>!['award','penalty'].includes(item.kind)).reduce((sum,item)=>sum+item.cost,0)};
+    const row=await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind('reward_goal_'+student).first();
+    goals[student]=items.find(item=>item.id===readJSON(row?.value).id)||null;
+  }
+  let activity=[];
+  if(role==='parent'){
+    const events=await env.DB.prepare("SELECT value FROM settings WHERE key LIKE 'activity_%' ORDER BY json_extract(value,'$.date') DESC LIMIT 100").all();
+    activity=events.results.map(row=>readJSON(row.value));
+    for(const item of history){activity.push({...item,kind:item.kind==='award'?'bonus':item.kind==='penalty'?'penalty':'purchase'});if(item.deliveredAt)activity.push({...item,kind:'delivery',date:item.deliveredAt});}
+    activity.sort((a,b)=>b.date.localeCompare(a.date));activity=activity.slice(0,100);
+  }
+  return {items,history:history.sort((a,b)=>b.date.localeCompare(a.date)),balances,unlocked,themePrice:THEME_PRICE,cosmetics:COSMETICS,cosmeticRules:COSMETIC_RULES,cosmeticUnlocks,breakdown,goals,activity};
 }

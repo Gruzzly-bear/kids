@@ -1,5 +1,5 @@
 import { authorized, hash, json, metadata, preferences, readJSON, safeURL, setting } from './shared.js';
-import { earnedSQL, spentSQL, rewardsData, restrictThemes } from './rewards.js';
+import { earnedSQL, spentSQL, rewardsData, restrictThemes, recordOverduePenalties } from './rewards.js';
 import { FREE_THEMES, THEME_CATALOG, THEME_PRICE } from './theme-catalog.js';
 import { COSMETICS } from './cosmetics.js';
 
@@ -8,10 +8,20 @@ export async function onRequestPost({ request, env }) {
     const body = await request.json();
     const { role, password, change } = body;
     if (!await authorized(env, role, password)) return json({ error: 'Please sign in again.' }, 401);
+    await recordOverduePenalties(env,role);
     if (body.rewardAction) {
       const { rewardAction: action, id }=body;
       if(typeof id!=='string'||! /^[a-zA-Z0-9-]{1,120}$/.test(id))return json({error:'Invalid reward.'},400);
-      if(action==='awardPoints'){
+      if(action==='setGoal'){
+        if(!['leon','logan'].includes(role))return json({error:'Only children can choose a savings goal.'},403);
+        if(id!=='clear'&&!await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind('reward_'+id).first())return json({error:'This reward is no longer available.'},404);
+        await setting(env,'reward_goal_'+role,{id:id==='clear'?'':id}).run();
+      } else if(action==='deliver'){
+        if(role!=='parent'||!['leon','logan'].includes(body.student))return json({error:'Only parents can mark rewards delivered.'},403);
+        const key='redemption_'+body.student+'_'+id,row=await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind(key).first(),purchase=readJSON(row?.value);
+        if(!row||purchase.kind||purchase.theme||purchase.cosmetic)return json({error:'Choose a purchased reward.'},404);
+        await env.DB.prepare("UPDATE settings SET value=json_set(value,'$.deliveredAt',COALESCE(json_extract(value,'$.deliveredAt'),?)) WHERE key=?").bind(new Date().toISOString(),key).run();
+      } else if(action==='awardPoints'){
         if(role!=='parent')return json({error:'Only parents can award points.'},403);
         const {student,points}=body,reason=typeof body.reason==='string'?body.reason.trim():'';
         if(!['leon','logan'].includes(student)||!Number.isSafeInteger(points)||points<1||points>100000||reason.length>240)return json({error:'Choose a child and award 1 to 100,000 whole points. Keep the reason under 240 characters.'},400);
@@ -133,12 +143,17 @@ export async function onRequestPost({ request, env }) {
         meta.receiptNote = change.receiptNote.trim();
       }
       if (Object.hasOwn(change, 'needsHelp')) meta.needsHelp = !!change.needsHelp;
+      const oldMeta=metadata(readJSON(metaRow?.value));
       const done = Object.hasOwn(change, 'done') ? !!change.done : !!existing?.done;
       if (done) meta.needsHelp = false;
       const statement = type === 'add'
         ? env.DB.prepare('INSERT INTO assignments (id,student,subject,title,due,done) VALUES (?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET subject=excluded.subject,title=excluded.title,due=excluded.due,done=excluded.done').bind(id, student, subject, title, due, done ? 1 : 0)
         : env.DB.prepare('UPDATE assignments SET title=?,due=?,subject=?,done=? WHERE id=? AND student=?').bind(title, due, subject, done ? 1 : 0, id, student);
-      await env.DB.batch([statement, setting(env, `assignment_meta_${id}`, meta)]);
+      const events=[];
+      for(const [kind,changed] of [['submission',!!meta.submittedDate&&meta.submittedDate!==oldMeta.submittedDate],['completion',done&&!existing?.done],['help',meta.needsHelp&&!oldMeta.needsHelp]]){
+        if(changed)events.push(setting(env,'activity_'+crypto.randomUUID(),{id:crypto.randomUUID(),student,kind,title,date:new Date().toISOString()}));
+      }
+      await env.DB.batch([statement, setting(env, `assignment_meta_${id}`, meta),...events]);
       return json({ ok: true, rewards:await rewardsData(env,role) });
     }
     if (body.scheduleOnly && role === 'parent') {

@@ -207,10 +207,11 @@ test('help inbox uses an accessible icon and highlights only waiting requests',(
 
 test('points use submission dates and rewards enforce prices, ownership and retry safety',async()=>{
   const env=await fixture();
+  await env.DB.prepare("UPDATE assignments SET done=1 WHERE id='leon-3'").run();
   const update=async(id,due,submittedDate,done=true)=>post(save,env,{...parent,change:{id,student:'leon',subject:'math',type:'update',title:id,due,submittedDate,done}});
   await update('leon-0','2026-10-20','2026-10-20');
   await update('leon-1','2026-10-21','2026-10-20');
-  await update('leon-2','2026-10-19','2026-10-20');
+  await update('leon-2','2026-10-20','2026-10-21');
   await update('leon-3','','2026-10-20');
   await update('leon-4','2026-10-21','');
   const data=async(credentials=leon)=>(await (await post(auth,env,credentials)).json()).rewards;
@@ -225,7 +226,7 @@ test('points use submission dates and rewards enforce prices, ownership and retr
   assert.equal((await data()).balances.leon,0);
   assert.equal((await data()).history.length,1);
   assert.equal((await post(save,env,{...purchase,requestId:'purchase-2'})).status,409);
-  assert.equal((await data({role:'logan',password:'test-password'})).history.length,0);
+  assert(!(await data({role:'logan',password:'test-password'})).history.some(x=>x.kind==='award'));
   await update('leon-1','2026-10-21','2026-10-20',false);
   assert.equal((await data()).balances.leon,-2,'Reopening cannot earn points twice');
   await update('leon-1','2026-10-21','2026-10-20');
@@ -303,7 +304,7 @@ test('cosmetic purchases gate all appearance fields and share permanent font own
 
 test('parent navigation exposes tools directly and assignments open in a dialog',()=>{
   const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
-  const context=vm.createContext({state:{auth:{role:'parent'},parentTab:'overview'},allTasks:()=>[],mast:()=>'<header></header>',parentSchedules:()=>'<schedules/>',weeklyOverview:()=>'<overview/>',helpInbox:()=>'<help/>',helpInboxButton:()=>'<inbox/>',assignmentEditor:()=>'<editor/>',openDialog:(id,html)=>{context.opened={id,html};}});
+  const context=vm.createContext({state:{auth:{role:'parent'},parentTab:'overview'},allTasks:()=>[],mast:()=>'<header></header>',parentSchedules:()=>'<schedules/>',pendingRewardDeliveries:()=>'<deliveries/>',parentActivityFeed:()=>'<activity/>',helpInbox:()=>'<help/>',helpInboxButton:()=>'<inbox/>',assignmentEditor:()=>'<editor/>',openDialog:(id,html)=>{context.opened={id,html};}});
   vm.runInContext(source.slice(source.indexOf('function setParentTab('),source.indexOf('function parentSchedules(')),context);
   const html=context.parentPage();
   for(const label of ['Edit schedule','Announcements &amp; reminders','Shared dashboard','Assignments'])assert(html.includes(label));
@@ -343,7 +344,7 @@ test('kids see per-assignment point previews and totals for the exact work shown
 test('store catalog supports in-store browsing, confirming, buying and applying an unlock',async()=>{
   const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
   let owned=false,html='',applied='',toast='';
-  const context=vm.createContext({state:{view:'leon',auth:{role:'leon'},rewards:{balances:{leon:6},themePrice:5,cosmetics:{},items:[],history:[]}},THEME_PALETTES:{coastal:['Coastal','#000','#fff'],midnight:['Midnight','#fff','#000'],forest:['Forest','#080','#efe']},themeOwned:id=>['coastal','midnight'].includes(id)||owned,cosmeticOwned:()=>false,prefs:()=>({allowedFonts:[]}),esc:x=>x,jsArg:JSON.stringify,openDialog:(id,content)=>{html=content;},selectTheme:id=>applied=id,setPreference:()=>{},render:()=>{},updatePointBalances:()=>{},showToast:message=>toast=message,fetch:async()=>{owned=true;return{ok:true,json:async()=>({rewards:{...context.state.rewards,balances:{leon:1}}})};},document:{getElementById:()=>null}});
+  const context=vm.createContext({state:{view:'leon',auth:{role:'leon'},rewards:{balances:{leon:6},themePrice:5,cosmetics:{},items:[],history:[]}},THEME_PALETTES:{coastal:['Coastal','#000','#fff'],midnight:['Midnight','#fff','#000'],forest:['Forest','#080','#efe']},activeTheme:()=> 'coastal',themeOwned:id=>['coastal','midnight'].includes(id)||owned,cosmeticOwned:()=>false,prefs:()=>({allowedFonts:[]}),esc:x=>x,jsArg:JSON.stringify,openDialog:(id,content)=>{html=content;},selectTheme:id=>applied=id,setPreference:()=>{},render:()=>{},updatePointBalances:()=>{},showToast:message=>toast=message,fetch:async()=>{owned=true;return{ok:true,json:async()=>({rewards:{...context.state.rewards,balances:{leon:1}}})};},document:{getElementById:()=>null}});
   vm.runInContext(source.slice(source.indexOf('function storeNavigation('),source.indexOf('function editReward(')),context);
   vm.runInContext('let storeBusy=false;'+source.slice(source.indexOf('async function storeAction('),source.indexOf('function dashboardClock(')),context);
   context.drawUnlockCatalog('themes');assert(html.includes('Rewards Store categories'));assert(html.includes('Find themes'));assert(html.includes('Unlock · 5 points'));assert(!html.includes('openSettings()'));
@@ -360,7 +361,7 @@ test('kids notes and reminders stay visible without a collapse control',()=>{
   const html=context.studentAnnouncementStack('leon');assert(html.startsWith('<section'));assert(!html.includes('<details'));assert(!html.includes('<summary'));assert(html.includes('<announcement/>'));assert(html.includes('<reminders/>'));assert(html.includes('id="student-announcements"'));
 });
 
-test('past-due assignments deduct one point each until complete and reduce spending power',async()=>{
+test('past-due assignments incur a permanent one-time deduction before completion',async()=>{
   const env=await fixture();
   const data=async()=>(await (await post(auth,env,leon)).json()).rewards;
   assert.equal((await data()).balances.leon,-1,'Existing unfinished past-due work counts');
@@ -369,15 +370,16 @@ test('past-due assignments deduct one point each until complete and reduce spend
   const shift=n=>{const date=new Date(today+'T12:00:00Z');date.setUTCDate(date.getUTCDate()+n);return date.toISOString().slice(0,10);};
   const change={type:'update',id:'leon-0',student:'leon',subject:'math',title:'Overdue work',due:shift(-5),done:false};
   await post(save,env,{...parent,change});assert.equal((await data()).balances.leon,-2,'Five days late is still only one point');
-  await post(save,env,{...parent,change:{...change,done:true,submittedDate:today}});assert.equal((await data()).balances.leon,-1,'Late completion removes deduction without earning');
-  await post(save,env,{...parent,change:{...change,due:today}});assert.equal((await data()).balances.leon,-1,'Due today is not late');
-  await post(save,env,{...parent,change:{...change,due:''}});assert.equal((await data()).balances.leon,-1,'Undated work is not late');
-  await post(save,env,{...parent,change:{...change,due:shift(1),done:true,submittedDate:today}});assert.equal((await data()).balances.leon,1,'Two early points minus one overdue point');
+  await post(save,env,{...parent,change:{...change,done:true,submittedDate:today}});assert.equal((await data()).balances.leon,-2,'Late completion does not refund the deduction');
+  await post(save,env,{...parent,change:{...change,due:today}});assert.equal((await data()).balances.leon,-2,'A corrected date does not erase an incurred penalty');
+  await post(save,env,{...parent,change:{...change,due:''}});assert.equal((await data()).balances.leon,-2,'Removing a date does not erase a penalty');
+  await post(save,env,{...parent,change:{...change,due:shift(1),done:true,submittedDate:today}});assert.equal((await data()).balances.leon,0,'Two early points minus two incurred penalties');
   await post(save,env,{...parent,rewardAction:'save',id:'test-reward',title:'Test reward',cost:2});
   assert.equal((await post(save,env,{...leon,rewardAction:'redeem',id:'test-reward',requestId:'penalty-check'})).status,409);
-  await post(save,env,{...parent,change:{type:'status',id:'leon-3',student:'leon',done:true}});assert.equal((await data()).balances.leon,2);
+  await post(save,env,{...parent,change:{type:'status',id:'leon-3',student:'leon',done:true}});assert.equal((await data()).balances.leon,0);
+  await post(save,env,{...parent,rewardAction:'awardPoints',id:'penalty-bonus',student:'leon',points:2});
   assert.equal((await post(save,env,{...leon,rewardAction:'redeem',id:'test-reward',requestId:'penalty-check'})).status,200);
-  await post(save,env,{...parent,change:{type:'status',id:'leon-3',student:'leon',done:false}});assert.equal((await data()).balances.leon,-1,'Reopening restores one deduction');
+  await post(save,env,{...parent,change:{type:'status',id:'leon-3',student:'leon',done:false}});assert.equal((await data()).balances.leon,0,'Reopening does not incur the same penalty again');
 });
 
 test('parents can award spendable bonus points per child with retry-safe history',async()=>{
@@ -390,8 +392,8 @@ test('parents can award spendable bonus points per child with retry-safe history
   assert.equal((await post(save,env,{...parent,...award})).status,200);
   assert.equal((await post(save,env,{...parent,...award})).status,200);
   let result=await data();assert.equal(result.balances.leon,before.balances.leon+7);assert.equal(result.balances.logan,before.balances.logan);
-  assert.equal(result.history.length,1);assert.equal(result.history[0].kind,'award');assert.equal(result.history[0].title,award.reason);
-  assert.equal((await data({role:'logan',password:'test-password'})).history.length,0);
+  assert.equal(result.history.filter(x=>x.kind==='award').length,1);assert.equal(result.history.find(x=>x.kind==='award').title,award.reason);
+  assert(!(await data({role:'logan',password:'test-password'})).history.some(x=>x.kind==='award'));
   assert.equal((await post(save,env,{...leon,rewardAction:'unlockTheme',id:'forest'})).status,200,'Bonus points can buy unlocks');
   const response=await post(save,env,{...leon,change:{type:'status',student:'leon',id:'leon-0',done:true}});
   const saved=await response.json();assert.equal(saved.rewards.balances.leon,(await data(leon)).balances.leon,'Assignment saves return current balance');
@@ -440,4 +442,51 @@ test('appearance refresh preserves profile images rather than replacing them wit
   const start=source.indexOf("document.querySelectorAll('[data-profile-avatar]').forEach",source.indexOf('function updateAppearanceControls('));
   vm.runInContext(source.slice(start,source.indexOf("document.querySelectorAll('.avatar-summary')",start)),context);
   assert.equal(avatar.innerHTML,'<img src="saved-image">');assert.equal(avatar.className,'profile-avatar avatar-frame-glow');
+});
+
+test('goals, reward delivery, breakdowns and parent activity persist with ownership checks',async()=>{
+  const env=await fixture(),logan={role:'logan',password:'test-password'};
+  const data=async(credentials=parent)=>(await (await post(auth,env,credentials)).json()).rewards;
+  await post(save,env,{...parent,rewardAction:'save',id:'movie',title:'Movie night',cost:3});
+  assert.equal((await post(save,env,{...leon,rewardAction:'setGoal',id:'missing'})).status,404);
+  assert.equal((await post(save,env,{...parent,rewardAction:'setGoal',id:'movie'})).status,403);
+  await post(save,env,{...leon,rewardAction:'setGoal',id:'movie'});
+  assert.equal((await data(leon)).goals.leon.title,'Movie night');assert.equal((await data(logan)).goals.logan,null);
+  await post(save,env,{...parent,rewardAction:'awardPoints',id:'goal-award',student:'leon',points:10});
+  await post(save,env,{...leon,rewardAction:'redeem',id:'movie',requestId:'movie-purchase'});
+  assert.equal((await post(save,env,{...leon,rewardAction:'deliver',id:'movie-purchase',student:'leon'})).status,403);
+  assert.equal((await post(save,env,{...parent,rewardAction:'deliver',id:'movie-purchase',student:'logan'})).status,404);
+  assert.equal((await post(save,env,{...parent,rewardAction:'deliver',id:'movie-purchase',student:'leon'})).status,200);
+  const delivered=(await data()).history.find(x=>x.id==='movie-purchase').deliveredAt;
+  await post(save,env,{...parent,rewardAction:'deliver',id:'movie-purchase',student:'leon'});
+  assert.equal((await data()).history.find(x=>x.id==='movie-purchase').deliveredAt,delivered);
+  const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});
+  const change={type:'status',id:'leon-0',student:'leon',done:true,completedDate:today,submittedDate:today,needsHelp:false};
+  await post(save,env,{...leon,change});await post(save,env,{...leon,change});
+  await post(save,env,{...leon,change:{type:'status',id:'leon-1',student:'leon',needsHelp:true}});
+  const result=await data(),b=result.breakdown.leon;
+  assert.equal(b.earned,1);assert.equal(b.bonuses,10);assert.equal(b.deductions,1);assert.equal(b.spent,3);
+  assert.equal(result.balances.leon,b.earned+b.bonuses-b.deductions-b.spent);
+  assert.equal(result.activity.filter(x=>x.kind==='submission').length,1,'Retry does not duplicate activity');
+  for(const kind of ['purchase','delivery','bonus','help','completion'])assert(result.activity.some(x=>x.kind===kind),kind);
+  assert.deepEqual((await data(leon)).activity,[],'Parent feed stays private');
+  await post(save,env,{...leon,rewardAction:'setGoal',id:'clear'});assert.equal((await data(leon)).goals.leon,null);
+});
+
+test('next action ignores historical completions and done-and-submitted saves both dates together',async()=>{
+  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
+  const task={id:'next-task',title:'Read today',subject:'ela',student:'leon',due:'2026-10-20',done:false},found={student:'leon',subject:'ela',x:task};let saved=0;
+  const context=vm.createContext({state:{auth:{role:'leon'}},allTasks:()=>[{id:'old',title:'Old complete',done:true,due:'2020-01-01'},task],scheduleDay:()=> '2026-10-20',safeLink:()=>'',esc:x=>x,subjectLabel:()=> 'Language Arts',dateLabel:x=>x,potentialTaskPoints:()=>1,jsArg:JSON.stringify,findTask:()=>found,closeDialog:()=>{},render:()=>{},saveAssignmentChange:async()=>{saved++;assert.equal(task.done,true);assert.equal(task.completedDate,'2026-10-20');assert.equal(task.submittedDate,'2026-10-20');return true;},showToast:()=>{}});
+  vm.runInContext(source.slice(source.indexOf('function nextAssignmentCard('),source.indexOf('function savingsGoal(')),context);
+  const html=context.nextAssignmentCard('leon');assert(html.includes('Read today'));assert(!html.includes('Old complete'));assert(html.includes('Done and submitted'));
+  await context.completeAndSubmit(task.id);assert.equal(saved,1);assert.equal(task.needsHelp,false);
+});
+
+test('shop preview is isolated and using state follows the selected appearance',()=>{
+  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');let html='';
+  const profile={visualStyle:'classic',appearance:'light',lightTheme:'coastal',fontStyle:'theme',cornerStyle:'theme',edgeStyle:'theme',surfaceTexture:'none'},item={id:'forest',title:'Forest',theme:true,cost:5,owned:false};
+  const context=vm.createContext({state:{auth:{role:'leon'},rewardCatalog:'themes',rewards:{balances:{leon:8}}},prefs:()=>profile,activeTheme:p=>p.lightTheme,THEME_PALETTES:{forest:['Forest','#080','#efe']},DARK_THEME_KEYS:[],storeUnlockItems:()=>[item],esc:x=>String(x).replace(/"/g,'&quot;'),jsArg:JSON.stringify,URL,location:{href:'https://school.example/'},openDialog:(id,content)=>html=content});
+  vm.runInContext(source.slice(source.indexOf('function storeUnlockUsing('),source.indexOf('function drawUnlockCatalog(')),context);
+  assert.equal(context.storeUnlockUsing(item),false);context.previewStoreUnlock('forest',true);assert(html.includes('sandbox'));assert(html.includes('srcdoc='));assert.equal(profile.lightTheme,'coastal','Preview never mutates saved preferences');
+  profile.lightTheme='forest';assert.equal(context.storeUnlockUsing(item),true);
 });
