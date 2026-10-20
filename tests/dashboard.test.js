@@ -354,11 +354,11 @@ test('store catalog supports in-store browsing, confirming, buying and applying 
   context.useStoreUnlock('forest',true);assert.equal(applied,'forest');assert.equal(context.state.rewardCatalog,'themes');
 });
 
-test('kids notes and reminders stay visible without a collapse control',()=>{
+test('student announcements stay visible without the four reminder bars',()=>{
   const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');
   const context=vm.createContext({state:{displayCards:{leon:['Drink water']}},announcementBanner:()=>'<announcement/>',displayCards:()=>'<reminders/>',visibleAnnouncements:()=>[{}]});
   vm.runInContext(source.slice(source.indexOf('function studentAnnouncementStack('),source.indexOf('function refreshVisibleAnnouncements(')),context);
-  const html=context.studentAnnouncementStack('leon');assert(html.startsWith('<section'));assert(!html.includes('<details'));assert(!html.includes('<summary'));assert(html.includes('<announcement/>'));assert(html.includes('<reminders/>'));assert(html.includes('id="student-announcements"'));
+  const html=context.studentAnnouncementStack('leon');assert(html.startsWith('<section'));assert(!html.includes('<details'));assert(!html.includes('<summary'));assert(html.includes('<announcement/>'));assert(!html.includes('<reminders/>'));assert(html.includes('id="student-announcements"'));
 });
 
 test('past-due assignments incur a permanent one-time deduction before completion',async()=>{
