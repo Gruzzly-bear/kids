@@ -638,3 +638,17 @@ test('Page Pals enforce prices, sequential upgrades, ownership and retry safety'
   await post(save,env,{...leon,rewardAction:'equipPal',id:'clear'});
   assert.equal((await (await post(auth,env,leon)).json()).rewards.equippedPals.leon,'');
 });
+
+
+test('parent and shared dashboards can freely equip every Page Pal form without purchases',()=>{
+  const source=readFileSync(new URL('../page-pals-ui.js',import.meta.url),'utf8'),saved=new Map();let html='';
+  const state={auth:{role:'parent'},view:'parent',rewards:{pagePalCatalog:{'001':[{file:'001-2.png'},{file:'001-3.png'}]},balances:{},pals:{},equippedPals:{}}};
+  const context=vm.createContext({state,localRead:(key,fallback)=>saved.get(key)??fallback,localWrite:(key,value)=>saved.set(key,value),openDialog:(id,body)=>html=body,storeNavigation:()=>'',esc:String,encodeURIComponent});
+  vm.runInContext(source,context);vm.runInContext('renderPagePal=()=>{}',context);
+  context.drawPagePals();assert(html.includes('Equip free'));assert(html.includes('Form 2'));assert(!html.includes('confirmPal('));
+  context.previewPagePal('001',1);assert.equal(saved.get('page-pal-preview-parent').stage,1);assert(html.includes('Put pal away'));
+  state.view='monitor';context.drawPagePals();assert(!html.includes('Put pal away'));context.previewPagePal('001',0);assert.equal(saved.get('page-pal-preview-monitor').stage,0);
+  state.auth.role='monitor';context.previewPagePal('001',1);assert.equal(saved.get('page-pal-preview-monitor').stage,1);
+  context.previewPagePal('clear',0);assert.equal(saved.get('page-pal-preview-monitor'),null);
+  state.auth.role='leon';context.previewPagePal('001',0);assert.equal(saved.get('page-pal-preview-monitor'),null);assert.deepEqual(state.rewards.pals,{});
+});
