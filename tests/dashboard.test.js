@@ -799,3 +799,20 @@ test('Page Pal catalog versions provide long-lived caching without hiding future
   const current=catalog({request:new Request('https://local/api/page-pals-catalog?page=0&v='+data.version)});assert(current.headers.get('Cache-Control').includes('immutable'));
   const stale=catalog({request:new Request('https://local/api/page-pals-catalog?page=0&v=old')});assert.equal(stale.headers.get('Cache-Control'),'no-cache');assert.equal((await stale.json()).version,data.version);
 });
+
+
+test('Page Pal form previews do not equip and numbered pagination marks both endpoints',()=>{
+  const state={auth:{role:'parent'},view:'parent',rewards:{pagePalCatalog:PAGE_PALS}};
+  const context=vm.createContext({state,esc:String,encodeURIComponent});
+  vm.runInContext(readFileSync(new URL('../page-pals-ui.js',import.meta.url),'utf8'),context);
+  let draws=0;context.drawPagePals=()=>draws++;
+  context.browsePalForm('025',2);
+  assert.equal(state.palFormPreviews.forms['025'],2);assert.equal(draws,1);
+  context.browsePalForm('025',99);assert.equal(draws,1);
+  for(const position of ['top','bottom']){
+    const html=context.palPagination(3,26,false,position);
+    assert(html.includes('aria-label="Page 4" aria-current="page"'));
+    assert(html.includes('aria-label="Page 1"'));assert(html.includes('aria-label="Page 26"'));
+    assert(html.includes('drawPagePals(4,false)'));assert(html.includes('Page 4 of 26'));
+  }
+});
