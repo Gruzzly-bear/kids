@@ -130,6 +130,8 @@ function renderPagePal(){
   const node=document.createElement('button');node.id='page-pal';node.dataset.palIdentity=identity;node.dataset.motion=palMotionAllowed()?'full':'reduced';node.className='page-pal';node.type='button';node.title=palName(id,stage)+' · Form '+palForm(id,stage)+' — click to hop; put away in the store';node.setAttribute('aria-label','Play with '+palName(id,stage)+' · Form '+palForm(id,stage));node.innerHTML=`<span class="pal-facing">${palSprite(id,stage,'pal-art')}</span>`;document.body.append(node);
   let x=24;node.style.left=x+'px';
   node.onclick=()=>{
+    const motion=prefs().motion;
+    node.dataset.hopMotion=motion==='reduced'||motion!=='full'&&window.matchMedia('(prefers-reduced-motion: reduce)').matches?'reduced':'full';
     clearTimeout(palTimer);
     x=Math.max(0,Math.min(Math.max(0,window.innerWidth-node.offsetWidth),node.getBoundingClientRect().left));
     node.style.setProperty('transition','none','important');node.style.left=x+'px';

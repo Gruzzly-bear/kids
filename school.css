@@ -498,5 +498,5 @@ dialog[data-dialog="rewards"]::backdrop,dialog[data-dialog="store-rewards"]::bac
 @keyframes pal-page-selected{from{transform:scale(.9)}to{transform:scale(1)}}
 @media(max-width:520px){.pal-page-numbers{order:3;flex-basis:100%}.pal-page-status{order:4}.pal-pagination{justify-content:space-between}}
 
-html .page-pal[data-motion="full"].pal-paused.pal-hop .pal-art{animation:pal-click-hop .4s ease-out both!important}
+html .page-pal[data-hop-motion="full"].pal-paused.pal-hop .pal-art{animation:pal-click-hop .4s ease-out both!important}
 @keyframes pal-click-hop{0%,100%{transform:translateY(0) scale(1)}20%{transform:translateY(0) scale(1.08,.9)}50%{transform:translateY(-24px) scale(.97,1.04)}80%{transform:translateY(0) scale(1.05,.94)}}
