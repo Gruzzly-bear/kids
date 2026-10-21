@@ -8507,4 +8507,4 @@ export const PAGE_PALS = {
   ]
 };
 
-for(const forms of Object.values(PAGE_PALS))for(const form of forms){if(PAGE_PAL_NAMES[form.file])form.name=PAGE_PAL_NAMES[form.file];}
+for(const forms of Object.values(PAGE_PALS))for(const form of forms){if(PAGE_PAL_NAMES[form.file]){form.name=PAGE_PAL_NAMES[form.file];form.nameOrigin='reference';}}

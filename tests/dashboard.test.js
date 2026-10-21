@@ -686,7 +686,7 @@ test('Page Pal names follow matched artwork while retaining IDs, physical forms,
   const {PAGE_PAL_NAMES}=await import('../functions/api/page-pal-names.js');
   assert.equal(PAGE_PALS['053'][0].name,'Ashtad');assert.equal(PAGE_PALS['053'][1].name,'Babak');assert.equal(PAGE_PALS['053'][2].name,'Artachsharta');
   assert.equal(PAGE_PALS['025'][1].name,'Amata');assert.equal(PAGE_PALS['025'][2].name,'Anagalmeshshu');
-  for(const [id,forms] of Object.entries(PAGE_PALS))for(const form of forms){assert.equal(form.file,id+'-'+form.form+'.png');assert(readFileSync(new URL('../assets/Page Pals/'+form.file,import.meta.url)).length>0);if(form.name)assert.equal(form.name,PAGE_PAL_NAMES[form.file]);}
+  for(const [id,forms] of Object.entries(PAGE_PALS))for(const form of forms){assert.equal(form.file,id+'-'+form.form+'.png');assert(readFileSync(new URL('../assets/Page Pals/'+form.file,import.meta.url)).length>0);if(form.nameOrigin==='reference')assert.equal(form.name,PAGE_PAL_NAMES[form.file]);}
   let html='';const context=vm.createContext({state:{rewards:{pagePalCatalog:PAGE_PALS,pagePalPrices:PAGE_PAL_PRICES}},esc:String,encodeURIComponent,openDialog:(id,body)=>html=body});
   vm.runInContext(readFileSync(new URL('../page-pals-ui.js',import.meta.url),'utf8'),context);
   assert.equal(context.palName('053',1),'Babak');assert.equal(context.palForm('001',0),2);assert.equal(context.palName('999',0),'Pal #999');
@@ -696,4 +696,31 @@ test('Page Pal names follow matched artwork while retaining IDs, physical forms,
   assert.equal(result.rewards.history.find(x=>x.pal==='053').title,'Ashtad · Form 1');assert.equal(result.rewards.pals.leon['053'],0);
   result=await (await post(save,env,{...leon,rewardAction:'buyPal',id:'053',stage:1})).json();
   assert.equal(result.rewards.history.find(x=>x.pal==='053'&&x.stage===1).title,'Babak · Form 2');assert.equal(result.rewards.pals.leon['053'],1);
+});
+
+
+test('Page Pal form changes preserve catalog page, filter, scroll and form focus',()=>{
+  let html='',dialog=null,focused='';const saved=new Map();
+  const catalog=Object.fromEntries(Array.from({length:60},(_,i)=>[String(i+1).padStart(3,'0'),[{file:'first.png',form:1},{file:'second.png',form:2}]]));
+  const state={auth:{role:'parent'},view:'parent',rewards:{pagePalCatalog:catalog,balances:{}}};
+  const context=vm.createContext({state,prefs:()=>({motion:'full'}),localRead:(key,fallback)=>saved.get(key)??fallback,localWrite:(key,value)=>saved.set(key,value),esc:String,encodeURIComponent,storeNavigation:()=>'',document:{activeElement:{dataset:{palForm:'030'}},getElementById:()=>dialog},openDialog:(id,body)=>{html=body;dialog={dataset:{dialog:id},scrollTop:0,querySelector:selector=>({focus:()=>focused=selector})};}});
+  vm.runInContext(readFileSync(new URL('../page-pals-ui.js',import.meta.url),'utf8'),context);vm.runInContext('renderPagePal=()=>{}',context);
+  context.drawPagePals(1,true);dialog.scrollTop=620;context.previewPagePal('030',1);
+  assert(html.includes('Page 2 of 3'));assert.equal(state.palBrowse.page,1);assert.equal(state.palBrowse.ownedOnly,true);assert.equal(dialog.scrollTop,620);assert.equal(focused,'[data-pal-form="030"]');
+  context.drawPagePals(2,true);assert.equal(dialog.scrollTop,0);assert(html.includes('Page 3 of 3'));
+  state.view='monitor';context.drawPagePals();assert(html.includes('Page 1 of 3'));assert.equal(state.palBrowse.ownedOnly,false);
+});
+
+
+test('all Page Pal names exactly match the sprite pack ID and evolution table',async()=>{
+  const {PAGE_PAL_NAMES}=await import('../functions/api/page-pal-names.js');
+  const source=readFileSync(new URL('../docs/page-pal-source-list.txt',import.meta.url),'utf8'),families={};
+  for(const line of source.split(/\r?\n/)){const match=/^\s*#(\d{3})\s+(.+?)\s*$/.exec(line);if(match)families[match[1]]=match[2].split(' - ');}
+  assert.equal(Object.keys(families).length,608);assert.equal(Object.keys(PAGE_PAL_NAMES).length,1822);
+  for(const [id,forms] of Object.entries(PAGE_PALS))for(const form of forms){
+    assert.equal(form.name,families[id][form.form-1]);assert.equal(form.name,PAGE_PAL_NAMES[form.file]);assert.equal(form.nameOrigin,'reference');assert.notEqual(form.name,'?');assert.equal(form.file,id+'-'+form.form+'.png');
+  }
+  assert.deepEqual(PAGE_PALS['001'].map(f=>[f.form,f.name]),[[2,'Jollyjack'],[3,'Hinkypunk']]);
+  assert.deepEqual(PAGE_PALS['002'].map(f=>[f.form,f.name]),[[2,"Mo'lagos"],[3,'Leep-a-Lil']]);
+  assert.equal(PAGE_PALS['585'][0].name,'Warqu');
 });

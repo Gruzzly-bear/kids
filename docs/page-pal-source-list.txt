@@ -1,0 +1,678 @@
+        8888888b.       .d88888b.     88888888888  
+        888  "Y88b     d88P" "Y88b        888      
+        888    888     888     888        888      
+        888    888     888     888        888      
+        888    888     888     888        888      
+        888    888     888     888        888      
+        888  .d88P d8b Y88b. .d88P d8b    888  d8b 
+        8888888P"  Y8P  "Y88888P"  Y8P    888  Y8P
+
+ .d8888b.                   d8b 888                     
+d88P  Y88b                  Y8P 888                     
+Y88b.                           888                     
+ "Y888b.   88888b.  888d888 888 888888 .d88b.  .d8888b  
+    "Y88b. 888 "88b 888P"   888 888   d8P  Y8b 88K      
+      "888 888  888 888     888 888   88888888 "Y8888b. 
+Y88b  d88P 888 d88P 888     888 Y88b. Y8b.          X88 
+ "Y8888P"  88888P"  888     888  "Y888 "Y8888   88888P' 
+           888                                          
+           888      
+           888
+           
+  ====================================================
+  ****************************************************
+    Within this folder is a collection of just about
+    every static sprite from the mobile app, DOT, or
+    rather Defender of Texel.   Every full character
+    sprite can be found in the folder titled Sprites
+    whereas just short of every character avatar can
+    be located in the Avatars folder.
+
+    The naming convention goes as such: [ABC-D]. The
+    [ABC]  element cooresponds to the left column of
+    the table below. In the right column is the name
+    of the fighters,  organized alphabetically based
+    on the first fighter in the evolution. The   [D]
+    simply refers to each member of the evolution.
+        
+    Despite being Tier-2 fighters, Hinkypunk & Leep-
+    a-Lil do not have an uncommon member.   For this
+    reason, they are listed as fighters 001 and 002.
+    Every other line has three members. 
+    
+        It should be noted that this naming
+        convention does not apply to any
+        folders within the Extras folder.
+
+    Power fodder and dungeon bosses can be found in
+    [\Extras\Unplayable].
+    
+    Use [ctrl + f] to find specific names or ###s.
+  ****************************************************
+  ====================================================
+   
+    ####    Fighters (Lowest evolution -> highest)
+    
+    #001    ? - Jollyjack - Hinkypunk
+    #002    ? - Mo'lagos - Leep-a-Lil
+    #003    Ab-Ba - Agarin - Adkid
+    #004    Abil-Kubi - Immertum - Labynetus
+    #005    Abulia - Noqu'ieren - Oneiros
+    #006    Acrasius - Eadneth - Sardanapali
+    #007    Acu - Balasu - Dilgan
+    #008    Acuernius - Lairnell - Philzerin
+    #009    Adad - Damu - Endursaga
+    #010    Addi - Betto - Ebbi
+    #011    Adeesh - Ahassunu - Ahati-waqrat
+    #012    Adila - Blis - Koikolida
+    #013    Adiur - Muati - Elulu
+    #014    Agu - Ilgi - Namtar
+    #015    Ah Mun - Zac Uac Nal - Uac Chuaac Nal
+    #016    Ahatsunu - Nin-Marki - Tiamat
+    #017    Aia - Dida - Hera
+    #018    Aidoneus - Clymenus - The Ruler of Many
+    #019    Aio - Bero - Emeric
+    #020    Albern - Petrus - Boldewin
+    #021    Alda - Aldwi - Iudith
+    #022    Alem - Walfrid - Gherard
+    #023    Alfia - Nerinai - Vivinna
+    #024    Allamu - Nin-Muk - Enheduana
+    #025    Allatu - Amata - Anagalmeshshu
+    #026    Alsedim - Gregant - Regolith Stonehewn
+    #027    Ama - Ata - Avva
+    #028    Amarud - Amaragu - Ariistuun
+    #029    Amberfew - Flaxburn - Fondwell
+    #030    Ambertross - Sprucewing - Inksparrow
+    #031    Amira - Mahnaz - Kohinoor
+    #032    Amusan - Migroemon - Wei-F'rar
+    #033    Anatu - Alittum - Attii'kusu
+    #034    Anno - Hige - Ovo
+    #035    Anshur - Birdu - Gaga
+    #036    Antigra - Champawa - Toran'dokht
+    #037    Anunit - Bel-Samu - Tiskhu
+    #038    Apatrui - Aranthur - Arnza
+    #039    Aplaa - Appan - Anti'iikusu
+    #040    Ar'siuqqa - Hillalum - Labashi
+    #041    Arabo - Kaboman - Momahk
+    #042    Aralu - Arahunaa - Anagalshu
+    #043    Arash - Farsakh - Tiregan
+    #044    Ares - Ares Imprecator - Ares Dreadsire
+    #045    Arnthi - Nesithva - Tanaquil
+    #046    Arria - Tulia - Sarsinaia
+    #047    Arstibara - Zuston - Speeros
+    #048    Arte - Caile - Vulca
+    #049    Arwia - Ashlultum - Atanah-Ili
+    #050    Asa - Polpum - Nemenepsa
+    #051    Asha - Bibiana - Tahirih
+    #052    Ashinas - Tamga - Qozmim
+    #053    Ashtad - Babak - Artachsharta
+    #054    Assim - Majeed - Zartosht
+    #055    Atalanta Boeotia - Atalanta Huntress - Atalanta Unfettered
+    #056    Atefeh - Soray - Maidie
+    #057    Ati - Panati - Seianti
+    #058    Ato - Udno - Windelmar
+    #059    Aule - Cutu - Plecu
+    #060    Autumn Prince - Dark Dauphin - Faeran the Fallen
+    #061    Avarga - Raksaka - Magjistar
+    #062    Avo - Baderic - Benno
+    #063    Azar - Gulistan - Vashti Endbringer
+    #064    Azila - Ziredd - Dracontos
+    #065    Azimua - Apulnidiszu - Ashnan
+    #066    Baassiia - Balashi - Balathu
+    #067    Baba-Giga - Hod-Me-Dod - Tattie-Bo
+    #068    Babur - Govad - Baraz the Lionheart
+    #069    Badgeleaf - Zebrindle - Basqunk
+    #070    Bahram - Koroush - Mehrdad
+    #071    Bahu - Gemekaa - Bel-Sum-Iscun
+    #072    Balewynd - Hyralinth - Fohncross
+    #073    Balhib - Haltamti - Aurignak
+    #074    Bankam - Llist - Tippitch
+    #075    Bastizi - Bikili - Burebista
+    #076    Bau - Belessunu - Belili
+    #077    Bayce - Drogue - Chrysostom
+    #078    Bayliege - Verdanock - Arcuriand
+    #079    Behruz - Hormuzd - Khodadad Bornfree
+    #080    Beithys - Cuporis - Amatokos
+    #081    Belibni - Nidaba - Bellabarisruk
+    #082    Bella - Bari - Sruk
+    #083    Beowulf Beholden - Beowulf Stalwart - Beowulf Wyrmbane
+    #084    Berejny - Gauthier - Jambaque
+    #085    Bern - Franko - Theodi
+    #086    Beru - Malu - Kanu
+    #087    Betta - Evergerd - Machtild
+    #088    Bewell - Bluesplint - Rosemane
+    #089    Bilit - Taauth - Nanaya
+    #090    Black Bos'n - Captain Zuro - Roarin' Zurobara
+    #091    Blackpeat - Brownbit - Redkohl
+    #092    Blackshard - Searose - Blacktide
+    #093    Bludruz - Sughilo - Charok
+    #094    Bluebelle - Malarylis - Esmellion
+    #095    Bluemidge - Pinkiebell - Chryspina
+    #096    Boilborn - Vertrance - Malakhloros
+    #097    Bolefang - Brickfoot - Bronzenail
+    #098    Bonnich - Ahbunhar - Kornook Opus
+    #099    Brasus - Mucapor - Zalmoxis
+    #100    Breotan - Spliddle - Ooberteub
+    #101    Brezna - Lucremet - Aurikhal
+    #102    Brulin - Ruganik - Onikys
+    #103    Buba - Aruru - Pubba
+    #104    Bubu - Sisit - Gigim
+    #105    Burntback - Witherclay - Slateshanks
+    #106    Bursin - Ilabrat - Enten
+    #107    Bym - Meggi - Yotan
+    #108    C'hola - Ekto-Yke - Kaan-Kun
+    #109    Cae - Venthi - Thefarie
+    #110    Cainei - Papni - Ramtha
+    #111    Callin - Cyannie - Consoleda
+    #112    Cataba - Withervine - Pyotraponge
+    #113    Ceine - Hercna - Tarchumenaia
+    #114    Centinal - Vangha - Mannatar
+    #115    Chakryl - Sulatungha - Mariana Gloria
+    #116    Cicatri - Adzen - Fortunato
+    #117    Cit - Gudea - Izdubar
+    #118    Clayfeather - Fawnlocks - Harrowfond
+    #119    Closed Burkitt - Wireless Fidel - Passive Aggressor
+    #120    Cloudshard - Iristost - Darkbloom
+    #121    Coiltress - Lilandula - Flamewinder
+    #122    Cokkelpek - Daegbrin - Lamcua
+    #123    Collibyrd - Daerydam - Tarbash
+    #124    Cono - Diggo - Ditmar
+    #125    Cotiso - Decebalus - Petoporus
+    #126    Cuinte - Rasce - Velthur
+    #127    Cyrus - Behnam - Darrius
+    #128    Dacina - Amalusta - Karopithla
+    #129    Daknakru - Kinulim - Hiatu-Hattu
+    #130    Damanais - Drilgisa - Diurpaneus
+    #131    Damkina - Davke - Ellat-Gula
+    #132    Dapyx - Zinnas - Pieporus
+    #133    Dardanos - Thiamarkos - Zyraxes
+    #134    Daubamok - Wellspryng - Insangel
+    #135    Deemethresi - Shamash-Bel - Orchamus
+    #136    Deligha - Owina - Ascepeyka
+    #137    Delshad - Khorvash - Gulbahar
+    #138    Diegis - Daizus - Dablosi
+    #139    Dii'duuresu - Ninurta - Utultar
+    #140    Dipatusu - Arishaka - Ugurnaszir
+    #141    Dipti - Idadu - Enzuna
+    #142    Divanya - Wildesssia - Askoreia
+    #143    Dokela - Khodela - Cucurbita
+    #144    Dolios - Empolaios - Hermes Wayfarer
+    #145    Dollcinea - Octavilani - Xiandiana
+    #146    Dolores - Estela - Rosaura
+    #147    Doloridan - Roarigal - Bonavoxa
+    #148    Drachen - Mornovazi - Ustpoluy
+    #149    Dromichaeta - Komakiza - Komozoi
+    #150    Dub - Anugia - Kibisegi
+    #151    Dudu - Nanum - Ishum
+    #152    Duncandre - Dayspringer - Heliotrooper
+    #153    Dustmote - Stonecast - Noosewane
+    #154    Dwiggy - Sphagnus - Entodon
+    #155    Dyn - Arum - Ebustrone
+    #156    Ea-nasir - Ekurzakir - Enshunu
+    #157    Ehecatl - Ce Acatl - Quetzalcoatl
+    #158    Ehrick - Khornan - Baarthok
+    #159    Ehsan - Elburz - Faridoon
+    #160    Eio - Edo - Ello
+    #161    Ekelu - Ezezu - Elelu
+    #162    Emes - Rishma - Aestasia Inferna
+    #163    Emesh - Ennugi - Enkimdu
+    #164    Emi - Cneve - Mamarce
+    #165    Endo - Tankslap - Zentenan
+    #166    Enna - Fida - Gela
+    #167    Eoban - Robbert - Willibrord
+    #168    Eridug - Kish - Uruk
+    #169    Erinys - Nemesis - Melpomene
+    #170    Erlene - Queenie - Lilla Redlace
+    #171    Erongo - Hesbaia - Acacus
+    #172    Etto - Wilbrom - Menfrid
+    #173    Ettu - Beltis - Gemeti
+    #174    Etty - Farideh - Gatha
+    #175    Eyaslin - Merifalk - Tiercelm
+    #176    Fairworm - Nightgrace - Sybillume
+    #177    Fallowfrost - Greysap - Griefall
+    #178    Falsweete - Rheonfrond - Pulorunner
+    #179    Farah - Jessamyn - Nasrin
+    #180    Feroze - Gaspar - Heydar
+    #181    Filmi - Pellu - Ansluca
+    #182    Flindra - Scintyll - Marglint
+    #183    Foertev - Klamdes - Ohblik
+    #184    Frakhas - Aphlig - Trubhel
+    #185    Fraxine - Oleace - Aescalina
+    #186    Fulmar - Natoporus - Thesanthei
+    #187    Fuulido - Mayimba - Theek-Iliko
+    #188    Fyrearm - Pummeloy - Rhosemadder
+    #189    Gabardis - Tarlathan - Bombazhin
+    #190    Ganymede - Deucalion - Aquarius
+    #191    Gareshon - Anshowyn - Flauntenblom
+    #192    Gebbo - Ecco - Wigo
+    #193    Geranya - Delpheen - Hsalvia
+    #194    Gish - Eren - Kir
+    #195    Goldengrasp - Ellendwing - Evengloom
+    #196    Goto - Iger - Ludbert
+    #197    Grassbat - Cloudcarver - Verdalance
+    #198    Greenfright - Feverhang - Vermilitas
+    #199    Grennythe - Mandarosa - Pelahallia
+    #200    Greta - Nousha - Morvarid
+    #201    Griffin - Antrim - Montelepre
+    #202    Grimalkus - Glenogre - Valiander
+    #203    Grimmasia - Fericora - Theahuna
+    #204    Gud - Suguguud - Eme-Gilimma
+    #205    Gulliban - Naifrye - Aprilvis
+    #206    Gusur - Otoug - Shamas
+    #207    Gutha - Ige - Ogiva
+    #208    Gwy - Llugwy - Mordifor
+    #209    Gwyddno - Guthlac - Hereward
+    #210    Hagan - Lambu - Ishpah
+    #211    Hahanu - Isimud - Zaidu
+    #212    Halflight - Darkbegone - Darlghast
+    #213    Hani - Mandanu - Ubaratutu
+    #214    Hathli - Cilni - Munati
+    #215    Hayasum - Timgiratee - Dee'qiteesu
+    #216    He Who Entices - Lord Izanagi - Izanagi Illflame
+    #217    Heartcloven - Fourleaf - Luckdraw
+    #218    Heartgnaw - Lilamurine - Fainglory
+    #219    Heartshorn - Everclove - Highsaddle
+    #220    Heartsweet - Heartswift - Illenswift
+    #221    Heasun - Nestur - Talmun
+    #222    Hema - Parisa - Shereen
+    #223    Henzer - Dimbha - Maru
+    #224    Hiddo - Wago - Onolff
+    #225    Hinnyboy - Redbaile - Assidhios
+    #226    Hnoss - Gersemi - Mistress of Seith
+    #227    Hob - Gobeau - Evreux
+    #228    Hodden - Woolsey - Gazaar
+    #229    Hollistar - Mistletann - Conifenius
+    #230    Hollyfly - Verdanza - Witchberry
+    #231    Hoo - Steppo - Khiddo
+    #232    Hoorn-Ving - Zwa-Grot - Gou-Vlag
+    #233    Hoxha - Afandi - Nasreddin
+    #234    Hunter Gatherer - Hunter Seeker - Hunter Victor
+    #235    Hyacineras - Erebloom - Everflower
+    #236    Hyndriss - Debhari - Rishalee
+    #237    Hyngr - Rhaapi - Steorhans
+    #238    Ia - Gula - Humusi
+    #239    Icaron - Onnychon - Nycterion
+    #240    Icemelt - Tuyaborn - Tancrevas
+    #241    Ide - Oda - Tetta
+    #242    Idu - Bulludhu - Kastubili
+    #243    Ifrazil - Shugana - Nilassine
+    #244    Ifriven - Yetasund - Evenclove
+    #245    Igmar - Wana - Udo
+    #246    Ihsan - Jahangir - Jamshad
+    #247    Ijiraq - Ijiraq Icetouch - Glacierwalker Ijiraq
+    #248    Illfond - Jadewing - Jinxan
+    #249    Iltani - Gamelat - Ubalnu
+    #250    Im - Erra - Urhammu
+    #251    Imma - Ligef - Oza Oathkeeper
+    #252    Inanna - Nineha - Mammetun
+    #253    Innin - Nin-Dar - Eriacu
+    #254    Io - Fot - Manno
+    #255    Ipqu-Aya - Ishme-Ea - Isiratuu
+    #256    Ira, Specter - Azure-Haired Ira - Ira, Hypnotic Specter
+    #257    Irascus - Mhoros - Cantaranc
+    #258    Irax - Hieros - Aistra
+    #259    Irbu - Sarrutu - Issiakku
+    #260    Istar-Su - Istar-Mes - Istar-Ses
+    #261    Iv - Sibert - Saxan
+    #262    Iwain - Gorgii - Falko
+    #263    Jamong - Gan-Lo - Shaqja
+    #264    Jasper - Javid - Kansbar
+    #265    Jilabhore - Merevill - Lathiane of Shude
+    #266    Jingaloo - Thuringon - Yuloboros
+    #267    Jonquil - Sablehead - Brightplume
+    #268    Jypetho - Cygnar - Onocros
+    #269    Kabta - Lulal - Paku
+    #270    Kaisie - Tite - Kavie
+    #271    Kalumtum - Kishar - Kissare
+    #272    Kargo - Freytis - Whelmer
+    #273    Karst - Glint - Izbar
+    #274    Karurin - Vermelia - Alectrya
+    #275    Kasr - Homera - Babil
+    #276    Kaveh - Manu - Ormazd
+    #277    Keensong - Threnodjin - Lamenkhaur
+    #278    Kelara - Deagan - Hudjam
+    #279    Khurshid - Shahpur - Khshayarsha
+    #280    Kianoush - Shahrokh - Xsayarsa
+    #281    Kiipluu - Kinaa - Kuri
+    #282    Kirimar - Futannis - Qwagutter
+    #283    Klobtund - Phlixander - Hassenrijden
+    #284    Knight of Bitterlake - Lancelot Lost - Lord of Dolor
+    #285    Knotwood - Cyannis - Goldfleece
+    #286    Kohmoo - Puhshi - Suyzin
+    #287    Koleri - Ikalit - Erascus
+    #288    Kombur - Eksogen - Machsymus
+    #289    Kotiata - Dicotella - Mendruta
+    #290    Kris - Nikolaos - Zinniklos
+    #291    Kronck - Gaolsen - Asteriskos
+    #292    Kullaa - Ku-Baba - Ku-Aya
+    #293    Kus - Sin - Zicu
+    #294    Lady Tillanza - Princess Anania - Queen Brumellia
+    #295    Laleh - Leila - Lila
+    #296    Lamenthyst - Mauvain - Amaralice
+    #297    Lamm - Vhamus - Hightagel
+    #298    Languinelle - Lymsinea - Lophidiana
+    #299    Lapinia - Applebliss - Cascalynd
+    #300    Laqip - Diipaa'ni - Ataneedusu
+    #301    Laraniia - Larthi - Messia
+    #302    Larce - Laris - Lecne
+    #303    Larsa - Sippar - Umma
+    #304    Lasam - Halaquin - Nabalkutu
+    #305    Lax - Crustane - Dinupula
+    #306    Leekan - Fancha - Tchanki
+    #307    Leepew - Varooka - Klammaswah
+    #308    Lewdekin - Vanguard - Flakkenbury
+    #309    Li-2 - R.I.S.H.A. - Promethea
+    #310    Libir - Dolomir - Fulminir
+    #311    Libluth - Ligish - Manishtusu
+    #312    Limefoot - Banelove - Lightbane
+    #313    Limmo - Nandino - Liopold
+    #314    Lithimian - Scampree - Savignul
+    #315    Livorwurt - Algoriquin - Pallormort Wormfeed
+    #316    Loatheill - Copperbite - Silverclaw
+    #317    Loki Scarlip - Loki of Vultures - Loki Hellraiser
+    #318    Lossill - Lovebane - Stonesong
+    #319    Lostling - Sandlily - Starfisher
+    #320    Lothison - Grenebit - Gawain Stoutheart
+    #321    Lou-Izza - Godey - Austinius
+    #322    Lumpopo - Grunmold - Algallen
+    #323    Luncio - Panderick - Yaguaris
+    #324    Luua - Heiga - Menika
+    #325    Maebh - Eibhlin - Caoimhe
+    #326    Maenam - Volganyx - Zambeza
+    #327    Mahtab - Taraneh - Hestia
+    #328    Maidenfern - Cherrybaby - Wyldenrose
+    #329    Marce - Thucer - Numesie
+    #330    Margnawna - Billowenda - Serollinda
+    #331    Margoldis - Tangerous - Cadmian
+    #332    Mariolette - Wayanga - Poppechik
+    #333    Maslu - Senbar - Lulim-Nisig
+    #334    Meadsnater - Groglanger - Flootherale
+    #335    Meg - Gemegish - Gemegishkirihallat
+    #336    Mehen - Urbor - Hentopan
+    #337    Melammu - Namru-Udo - Baum-Namr
+    #338    Meldling - Hungerfledge - Plumandias
+    #339    Meryam - Wegiddy - Seelidot
+    #340    Metli - Scarpia - Zertnai
+    #341    Mhabu - Sughen - Nimshah
+    #342    Mihrdat - Mirrikh - Mirza
+    #343    Minau - Amardad - Jaleh
+    #344    Minotaur - Asterion - Taurus
+    #345    Mintha Kokyta - Menthe Underfoot - Minthe Much-Loved
+    #346    Misa - Kal - Ammi
+    #347    Mitra - Darice - Anahita
+    #348    Mizela - Aprus - Cinouboila
+    #349    Mizutto - Pelagrand - Wasserdief
+    #350    Monir - Cyra - Amereta
+    #351    Montawilla - Perringem - Rozicrysti
+    #352    Montu - Weaponmaster Montu - Montu, God of War
+    #353    Moodi Catchfly - Violet Bello - Rega Snapdragon
+    #354    Morianna - Lisefaye - Sinecra
+    #355    Mossback - Lowluck - Makepeace
+    #356    Mot - Mummu - Munawwirtum
+    #357    Mu-Mu - Set-Set - Sabsi-u-Sabsi
+    #358    Mu - Basa - Merodak
+    #359    Mucklejon - Pideaway - Jester Bangs
+    #360    Mudpup - Roadrash - Torquistador
+    #361    Mudsplat - Bentoyne - Blaster Benny
+    #362    Mulagunnuna - Nidintabel - Sharyukin
+    #363    Mulge - Nabu-Ikbi - Lidunnamu
+    #364    Munu - Izisoob - Tak-Tak
+    #365    Murina - Suvin - Magin
+    #366    Musen - Tirigal - Anzud Zenith
+    #367    Mylitta - Neith - Tauthe
+    #368    Myrddin - Merlinus - Merlin the Sage
+    #369    Mysme - Aymurae - Beltayne
+    #370    Nabalu - Anahu - Nabonahid
+    #371    Nabobal - Balatir - Atirib
+    #372    Nabonidus - Manuiqapu - Shagaraktiyash
+    #373    Nabu-Erba - Nabu-Ekhi - Nabu-Belshum
+    #374    Nabu-Salim - Nabu-Kullani - Nabu-u-Sabsi
+    #375    Nabua - Tammuz - Sisuthrus
+    #376    Nadin-Ahu - Kassu - Druaga
+    #377    Nakki - Paasivesi - Surma-Snow
+    #378    Namala - Kloisonde - Zimarie
+    #379    Nana - Tabni-Ishtar - Tishpak
+    #380    Nanno - Eno - Rin the Rainmaker
+    #381    Nanshe - Namrat - Ngeshtin-Ana
+    #382    Napahu - Isatu - Sarapu
+    #383    Natrina - Vissera - Wrekhmira
+    #384    Navid - Merikh - Zhubin
+    #385    Nazarre - Tangrihan - Asphandiat
+    #386    Nehstor - F'oljean - Soucy-Dear
+    #387    Nellie-Jen - Cavalyra - Remissandra
+    #388    Nergal - Nergal-Edir - Nergal-Sar-Ussur
+    #389    Neriglissar - Laarsa - Kagar
+    #390    Nidintu - Gashansunu - Bit-Nur
+    #391    Niiqiarqusu - Nikanuur - Numunia
+    #392    Nimue - Viviane - Lady of the Lake
+    #393    Ningal - Ninkasi - Ninkarrak
+    #394    Ninsunu - Nin-Gelal - Nin-Akha-Guddu
+    #395    Nisanu - Aru - Simanu Scoresettler
+    #396    Nunadulaju - Cankpeopi - Heyoka Takini
+    #397    Nutesh - Nur-Ayya - Nigsummu
+    #398    Obbolis - Molishen - Palivore
+    #399    Od - Sumai - Ukani
+    #400    Odin Groundstrider - Odin - Odin Stormgod
+    #401    Odom - Nfan - Dzico
+    #402    Okhrosanct - Irataurih - Blasterion
+    #403    Olge - Maga - Sita
+    #404    Olma - Guoleta - Aurumetti
+    #405    Omid - Bahman - Shahrivar
+    #406    Oolig - Sthaga - Droglo
+    #407    Orion of Boeotia - Orion Immodest - Orion the Hunter
+    #408    Orolu - Mucatra - Decaeneus
+    #409    Osi - Ritger - Guthar
+    #410    Paeona - Gracepink - Cymbidia
+    #411    Paio - Tiego - Liddo
+    #412    Paledawn - Flareheart - Reckonsow
+    #413    Palna of Fyn - Palna She-wolf - Palna the Vanguard
+    #414    Panu-Nur - Nadu-Samu - Nesumuhhu
+    #415    Pari - Narda - Yasamin
+    #416    Parvana - Roxana - Zuleika
+    #417    Pashotan - Rostam - Esfandiyar
+    #418    Pattipan - Butternutt - Caboccia
+    #419    Peaseporridge - Broadbene - Leguminius
+    #420    Peci - Pevtha - Pinaria
+    #421    Pegrina - Bistort - Aniasse
+    #422    Pele - Urphe - Aril
+    #423    Pellajee - Andemersa - Tremarine
+    #424    Pelznikel - Snorri - Jolfaor Greenman
+    #425    Pepak - Shatrevar - Kerecacpa
+    #426    Perra - Wilhelmina - Elfinmarch
+    #427    Pesna - Ngerie - Teucer
+    #428    Phossi - Lominette - Kathodine
+    #429    Pi-Ru - Bai'leen - Ja'ira
+    #430    Plumstone - Lavandulas - Aubyzant
+    #431    Pollux - Castor - Dioskouri
+    #432    Polwygg - Taddecyn - Eirweard
+    #433    Porphyrion - Mimas - Eurymedon
+    #434    Poseidon Sea-Uru - Poseidon the Rock - Poseidon Hippios
+    #435    Pridefall - Swaylow - Braveburn
+    #436    Pujo - Parazho - Pishqabz
+    #437    Pulcino - Mr. Jakel - Plucky Laszlo
+    #438    Putu - Muhhu - Qaqqadu
+    #439    Qal - Girrabun - Kudurru
+    #440    Qaton - Sirhitu - Esemtu-Ezzu
+    #441    Quippaj - Sally-San - Grimaaldi
+    #442    Quwha - Nittiatte - Voider
+    #443    Rashabaar - Bayam - Santahna Solo
+    #444    Rashne - Bahadur - Urvak
+    #445    Red Jenny - Gwen Too-Fond - Queen Guinevere
+    #446    Redfang - Greengrief - Foolsgold
+    #447    Redsmith - Iridian - Lazarre
+    #448    Remundsen - Kathlatti - Abaminsk
+    #449    Rette - Jalo - Isa
+    #450    Revelim - Alkarouz - Jairakan
+    #451    Rheynus - Embestis - Dread Dysipius
+    #452    Rhusvaru - Sindoran - Kinnabari
+    #453    Ri - Ninissina - Gatumdug
+    #454    Rigozus - Scorylo - Tarbus
+    #455    Rimelia - Firnelle - Astruga
+    #456    Rimerobin - Pucklenuck - Weejabee
+    #457    Rimush - Ripaa - Samsuiluna
+    #458    Rosale - Pilea - Kaverinikola
+    #459    Rosewilt - Rustborn - Blackspill
+    #460    Roshan - Saeedh - Sarosh
+    #461    Roshani - Rousanak - Roshanara
+    #462    Roshente - Blyscandi - Arapynka
+    #463    Rubati - Shala - Tashmitum
+    #464    Ruewood - Greengloam - Neversaw
+    #465    Runnelas - Acquamarine - Volaikha
+    #466    Sabitum - Kingu - Adrahasis
+    #467    Sadalas - Rhemaxos - Zebeleizis
+    #468    Sadira - Mojgan - Niloufar
+    #469    Sail - Parc - Tamric
+    #470    Sakha - Mussoya - Shilanuy
+    #471    Sal - Mu-Lim - Maruduk
+    #472    Saltlily - Meratrice - Levithania
+    #473    Sanaqu - Pataru - Luruguda
+    #474    Sar - Telal - Zabu
+    #475    Sargon - Seluku - Shu-Turul
+    #476    Sarpanitum - Erishti-Aya - Mushezibitu
+    #477    Sathom - Tanghol - Llewnosk
+    #478    Scorilo - Oroles - Rholes
+    #479    Scurrinda - Spiderlily - Aranethea
+    #480    Seba - Budathla - Usazila
+    #481    Secannis - Ennistree - Oreison
+    #482    Sedd - Izitin - Froodi
+    #483    Seekoe - Duyun - Rellets
+    #484    Selo - Oger - Waszo
+    #485    Semapo - Deimathias - Agamidablo
+    #486    Sentrollion - Clearcott - Poddleflack
+    #487    Serakh - Maskim - Nebuchadnezzar
+    #488    Seresa - Imausi - Tengra
+    #489    Serpentell - Roval - Ttrenthon
+    #490    Servus - Traxat - Basekion
+    #491    Sethra - Velia - Hanunia
+    #492    Shadi - Melqart - Fravardin
+    #493    Shadural - Balasi - Utu-Hegal
+    #494    She Who Entices - Lady Izanami - Izanami Everwroth
+    #495    Shemanihil - Gilmorena - Sulagrand
+    #496    Sher - Gabr - Payam
+    #497    Shimka - Mitziya - Azuna the Amberling
+    #498    Shoestone - Graywacke - Brandensite
+    #499    Shooshinn - Pikabu - Kaytifo
+    #500    Shulgi - Lu-Khi - Nabu-Zar-Adan
+    #501    Shulsaga - Mupallidat - Nunbarsegunu
+    #502    Shutendot - Mahagin - Alleumad
+    #503    Siavash - Naseem - Ksathra
+    #504    Sidlewild - Holterren - Grimpenius
+    #505    Sidonai - Asmodee - Osmodeus
+    #506    Silik-Mu - Silik-Mu-Lu - Silik-Mu-Lu-Dug
+    #507    Sillashu - Kurigalzu - Iaazipaa
+    #508    Silvermane - Greythorn - Keratalios
+    #509    Silvyll - Hangoak - Birnam
+    #510    Simin - Azura - Ghoncheh
+    #511    Siris - Sirtir - Sirara
+    #512    Sispe - Calanice - Achmemrun
+    #513    Skemahr - Nictarion - Konkost
+    #514    Slyce - Phinn - Rollix
+    #515    Snakeapple - Maypop - Passifleur
+    #516    Sohbelle - Khulanna - Akhebina
+    #517    Sohrab - Darehn - Shajahn
+    #518    Somnam - Van Eeden - Dreamseer
+    #519    Sootnose - Heartwood - Ironclad
+    #520    Springfolly - Starblight - Starthwart
+    #521    Starkmole - Gripgrok - Wrangoliath
+    #522    Stenia - Thanchvil - Velthuria
+    #523    Strawspill - Summerslip - Sunback
+    #524    Stufur - Pottaskefill - Skyrgamur
+    #525    Summsu - Zoumalee - Vizz-a-zhu
+    #526    Suti - Umbin - Kidalam
+    #527    Sweet Stingan - Barb Orella - Skorpia Starlight
+    #528    Sweet Titania - Divine Sylvine - Antheia All-fair
+    #529    Sweetbane - Sweetgrief - Tideborn
+    #530    Syzette - Lauthra - Coenobetha
+    #531    Taranda - Cariban - Tungus
+    #532    Teitu - Metie - Sethre
+    #533    Tekniko - Ekzotiko - Rudho
+    #534    Tellus - Shridevi - Gaia Mater
+    #535    Teres - Ammadoc - Zalmodegicus
+    #536    Tetia - Semni - Araziia
+    #537    Teudila - Diellena - Pinpanella
+    #538    Thanusa - Palmithe - Elinei
+    #539    The Sleeper - Subject Z - Akkad Awakened
+    #540    Theobora - Karvounopsina - Zaoutzaina
+    #541    Thor Hammerstrike - Thor Giantkiller - Thor, Thunder-god
+    #542    Thoragg - Amadiori - Perendon the Pure
+    #543    Tiada - Ouda - Wela
+    #544    Tiati - Tsinna - Tsiru
+    #545    Tibbe - Sosso - Immo Truestrike
+    #546    Tir-Utur - Ul-Khum-Khum - Lidan-Gula
+    #547    Tita - Cafatia - Arathia
+    #548    Titus - Aengus - Konan
+    #549    Tlesnasa - Sesanseia - Voltumna
+    #550    Toro - Gugalanna - Moloch
+    #551    Trinket - Goldrake - Audelinea
+    #552    Tuntle - Evtucle - Meleacr
+    #553    Turan - Xinji - Wurunqi Warpslung
+    #554    Turntail - Twinlance - Ambarender
+    #555    Turtak - Lahar - Gerra
+    #556    Twila - Jeebee - Rocksee
+    #557    Typhaon Slowburn - Typhos Korukos - Typhon Monster-Sire
+    #558    Tyrat - Dhespo - Ottokras
+    #559    Tzitzak - Eudokia - Tahmineh
+    #560    Ubar - Dicomes - Comosicus
+    #561    Ubie - Miss Sakh - Bast Unabashed
+    #562    Uktannu - Tattannu - Naram-Sin
+    #563    Umay - Od'ata - Sarykhiz
+    #564    Umberfoot - Wellfond - Wheatsap
+    #565    Undina - Isis - Polyhymnia
+    #566    Upemba - Luba - Meroe
+    #567    Uppulu - Enusat - Suusaandar
+    #568    Ura - Adabi - Lagashe
+    #569    Urhamsi - Nin-Ridu - Enmesarra
+    #570    Utuaa - Yahatti-Il - Zuuthusu
+    #571    Utukku - Lamassu - Pazuzu
+    #572    Utyemo - Neemye - Odumeh
+    #573    Vanadis - Mardoll - Freyja
+    #574    Vanoos - Koxure - Orboscess
+    #575    Vel - Thresu - Tarquin
+    #576    Venel - Spurie - Thocero
+    #577    Verdoffer - Rindrake - Serslough
+    #578    Veredy - Lederia - Lithaline
+    #579    Vergie - N'Teevil - Jetsam the Jinn
+    #580    Vesia - Thana - Gratia
+    #581    Vitellia - Raunthu - Tiphilia
+    #582    Vykis - Thulin - Narokken
+    #583    Wallflower - Bloomhoof - Evenglory
+    #584    Wardu - Magaru - Apputtu
+    #585    Warqu - Suzagin - Irsim
+    #586    Welkinborn - Skychild - Celestia
+    #587    Wenzo - Getti - Igo
+    #588    Whitespore - Redrime - Rendfoot
+    #589    Winespill - Leesdown - Drymead
+    #590    Wio - Meniko - Herard
+    #591    Witbiero - Zellager - Dottelbock
+    #592    Wizakaa - Qoobilbi - Reineke
+    #593    Woadheart - Kyaneos - Mayehem
+    #594    Wolber - Knut - Odric Oldsoul
+    #595    Xenres - Soroush - Parvaiz
+    #596    Yadidatum - Zakiti - Zirat-Banit
+    #597    Yelpen - Boomerlin - Keekeval
+    #598    Yinyin - Aisa - Liodys
+    #599    Yut - Sur - Kudur
+    #600    Zena - Koadama - Arpopria
+    #601    Zenana - Minoo - Darya
+    #602    Zera - Julina - Krisa
+    #603    Zeus - Zeus Astrapios - Zeus Olympios
+    #604    Zib - Gunu - Imhamun
+    #605    Zinco - Xuti - Oyeb
+    #606    Ziodela - Serradella - Kerkeraphron
+    #607    Zroyia - Aghasa - Quabelona
+    #608    Zuste - Tutrastra - Polypodia
+
+===========================================================
+***********************************************************
+        8888888888                                               
+        888                                                      
+        888                                                      
+        8888888    .d88888 888  888 888  888 .d8888b             
+        888       d88" 888 888  888 888  888 88K                 
+        888       888  888 888  888 888  888 "Y8888b.            
+        888       Y88b 888 Y88b 888 Y88b 888      X88            
+        8888888888 "Y88888  "Y88888  "Y88888  88888P'            
+                       888
+***********************888*********************************
+=======================888=================================
+                       888

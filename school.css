@@ -453,6 +453,19 @@ dialog[data-dialog="assignments"] .editor-toolbar{margin-top:16px}
 @media(max-width:700px){.parent-dashboard-layout{grid-template-areas:"controls" "leon" "logan" "main" "activity"}}
 
 .pal-preview{width:96px;height:96px;object-fit:contain;image-rendering:pixelated;justify-self:center}.pal-next{width:56px;height:56px;object-fit:contain;image-rendering:pixelated;justify-self:center}
+dialog[data-dialog="page-pals"]{width:min(980px,calc(100% - 32px));padding:clamp(20px,3vw,32px)}
+.pal-pagination{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:20px 0;padding:16px 0;border-block:1px solid var(--line)}
+.pal-pagination span{font-variant-numeric:tabular-nums;text-align:center}
+.pal-grid{gap:20px;padding:4px 0 12px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.pal-grid .pal-card{padding:22px;gap:14px;align-items:stretch;overflow-wrap:anywhere}
+.pal-card>.pal-preview,.pal-card>.pal-next{display:block;flex:none;align-self:center;margin:8px auto 12px}
+.pal-card>.pal-preview{width:128px;height:112px}
+.pal-card>.pal-next{width:80px;height:64px}
+.pal-card h4{line-height:1.4}.pal-card p.small{margin:0}
+.pal-card-actions{display:flex;flex-direction:column;gap:12px;margin-top:auto;padding-top:18px;border-top:1px solid var(--line)}
+.pal-card-actions label{display:grid;gap:8px;margin:0}.pal-card-actions select{width:100%;min-width:0;max-width:100%}
+.pal-card-actions .button{width:100%;white-space:normal;min-height:44px;margin:0}
+@media(max-width:520px){.pal-grid{grid-template-columns:1fr;gap:16px}.pal-grid .pal-card{padding:20px}.pal-pagination{gap:8px}.pal-pagination .button{padding:10px 12px}}
 .page-pal{position:fixed;bottom:12px;width:80px;height:88px;padding:0;border:0;background:transparent;z-index:30;cursor:pointer;touch-action:manipulation}.page-pal:focus-visible{outline:3px solid currentColor;border-radius:12px}.pal-facing{display:block}.page-pal img{width:80px;height:80px;object-fit:contain;image-rendering:pixelated;transform-origin:center bottom;animation:pal-idle 3s ease-in-out infinite;filter:drop-shadow(0 4px 2px #0003)}.page-pal.pal-walking img{animation:pal-walk .38s ease-in-out infinite}.page-pal img.pal-hop{animation:pal-hop .55s ease-out}
 @keyframes pal-idle{50%{transform:translateY(-3px) rotate(2deg)}}@keyframes pal-walk{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-7px) rotate(4deg)}}@keyframes pal-hop{50%{transform:translateY(-25px) rotate(-8deg)}}
 @media(prefers-reduced-motion:reduce){.page-pal,.page-pal img{animation:none!important;transition:none!important}}
