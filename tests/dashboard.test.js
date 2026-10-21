@@ -749,13 +749,13 @@ test('store catalog is named, matches source modules, and is kept out of dashboa
   const response=await (await post(store,env,parent)).json();assert(response.rewards.balances);assert(!response.assignments);assert.deepEqual(response.rewards.pagePalCatalog,{});
 });
 
-test('Rewards Store opens immediately before its balance refresh and remains usable on failure',async()=>{
-  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');let resolveFetch,opened=0,error='';
-  const node={set textContent(value){error=value;}};
-  const context=vm.createContext({state:{auth:{role:'leon'},rewards:{balances:{leon:3}}},drawRewards:()=>opened++,pumpWrites:async()=>true,fetch:()=>new Promise(resolve=>resolveFetch=resolve),document:{getElementById:id=>id==='store-error'?node:{dataset:{dialog:'rewards'}}},updatePointBalances:()=>{}});
-  vm.runInContext(source.slice(source.indexOf('async function openRewards('),source.indexOf('function studentBalanceButton(')),context);
-  const pending=context.openRewards();assert.equal(opened,1);await new Promise(resolve=>setImmediate(resolve));resolveFetch({ok:false,json:async()=>({error:'Offline'})});await pending;assert(error.includes('last loaded balance'));assert.equal(opened,1);
+test('Rewards Store opens without waiting for network or pending saves',async()=>{
+  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');let opened=0,requests=0,saves=0;
+  const context=vm.createContext({state:{auth:{role:'leon'},rewards:{balances:{leon:3}}},drawRewards:()=>opened++,pumpWrites:()=>{saves++;return new Promise(()=>{});},fetch:()=>{requests++;return new Promise(()=>{});}});
+  vm.runInContext(source.slice(source.indexOf('async function openRewards('),source.indexOf('async function refreshStoreBalance(')),context);
+  const pending=context.openRewards();assert.equal(opened,1);await pending;assert.equal(requests,0);assert.equal(saves,0);
 });
+
 
 test('store landing uses departments while point rules live on the dashboard',()=>{
   let html='';const context=vm.createContext({state:{auth:{role:'parent'},rewards:{balances:{leon:4,logan:2}}},nameOf:x=>x,pointBreakdown:()=>'',savingsGoal:()=>'',openDialog:(id,body)=>html=body});

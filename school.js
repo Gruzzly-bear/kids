@@ -384,15 +384,21 @@ function mast(){
   return `<header class="mast"><a href="#" class="brand" onclick="event.preventDefault();${calendarView?'closeCalendar()':student?'showHub()':state.view==='parent'?"setParentTab('overview')":'render()'}">${student?`<span class="student-brand-title">${nameOf(state.view)}’s School day</span>`:`<span class="brand-mark">S</span><span><b>School Dashboard</b><small>${calendarView?'Family calendar':state.view==='parent'?'Parent workspace':'Your family’s school day'}</small></span>`}</a>${state.auth?'<button class="button light dashboard-refresh" onclick="refreshDashboard()" aria-label="Refresh dashboard" title="Refresh dashboard"><svg aria-hidden="true" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7v5h-5"/><path d="M19.5 12a7.5 7.5 0 1 0-2 5.2"/></svg></button>':''}<div class="header-actions">${state.auth?(student?studentBalanceButton(state.view):'<button class="button light" onclick="openRewards()">⭐ Rewards Store</button>'):''}<button class="button light" onclick="${calendarView?'closeCalendar()':'openCalendar()'}">${calendarView?'Back':'📅 Family Calendar'}</button><button class="button light" onclick="openSettings()">Settings</button>${state.view?'<button class="button light" onclick="'+(state.view==='monitor'?'closeMonitor()':'goHome()')+'">'+(state.view==='monitor'?(state.parentReturnSession?'Back to parent':'Close dashboard'):'Sign out')+'</button>':''}</div></header>`;
 }
 async function openRewards(){
-  if(!state.auth)return;
-  drawRewards();
+  if(state.auth)drawRewards();
+}
+async function refreshStoreBalance(){
+  const session=state.auth;if(!session||state.storeRefreshing)return;
+  state.storeRefreshing=true;
+  const button=document.getElementById('store-refresh');if(button){button.disabled=true;button.textContent='Refreshing…';}
   try{
-    if(state.auth.role!=='monitor'&&!await pumpWrites())return;
-    const response=await fetch('/api/rewards-store',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(state.auth)}),data=await response.json();
-    if(!response.ok)throw Error(data.error||'Could not refresh the store.');
+    if(session.role!=='monitor'&&!await pumpWrites())throw Error('Save pending changes first.');
+    const response=await fetch('/api/rewards-store',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(session)}),data=await response.json();
+    if(!response.ok)throw Error(data.error||'Could not refresh balance.');
+    if(state.auth!==session)return;
     state.rewards=data.rewards;updatePointBalances();
     if(document.getElementById('app-dialog')?.dataset.dialog==='rewards')drawRewards();
-  }catch(error){const node=document.getElementById('store-error');if(node)node.textContent='Showing your last loaded balance. '+(error.message||'Please try again.');}
+  }catch(error){const node=document.getElementById('store-error');if(node)node.textContent=error.message||'Could not refresh. Please try again.';}
+  finally{state.storeRefreshing=false;if(button?.isConnected){button.disabled=false;button.textContent='Refresh balance';}}
 }
 
 function studentBalanceButton(student){return `<button class="button light student-point-balance" onclick="openRewards()"><span>⭐ <span data-point-balance="${student}" aria-live="polite">${Math.max(0,state.rewards?.balances?.[student]??0)}</span> points</span><span>Rewards Store →</span></button>`;}

@@ -1,2 +1,17 @@
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
+
+/
+  Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache
+/school.js
+  Cache-Control: no-cache
+/school-core.js
+  Cache-Control: no-cache
+/page-pals-ui.js
+  Cache-Control: no-cache
+/rewards-store-ui.js
+  Cache-Control: no-cache
+/school.css
+  Cache-Control: no-cache
