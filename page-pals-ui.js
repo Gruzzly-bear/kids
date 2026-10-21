@@ -131,7 +131,7 @@ function renderPagePal(){
   let x=24;node.style.left=x+'px';
   node.onclick=()=>{
     clearTimeout(palTimer);
-    x=Math.max(0,Math.min(Math.max(0,window.innerWidth-96),node.getBoundingClientRect().left));
+    x=Math.max(0,Math.min(Math.max(0,window.innerWidth-node.offsetWidth),node.getBoundingClientRect().left));
     node.style.setProperty('transition','none','important');node.style.left=x+'px';
     node.classList.remove('pal-walking');node.classList.add('pal-paused');
     palTimer=setTimeout(()=>{if(!node.isConnected)return;node.classList.remove('pal-paused');step();},1500);
@@ -140,7 +140,7 @@ function renderPagePal(){
     if(!node.isConnected)return;
     const reduced=!palMotionAllowed();node.dataset.motion=reduced?'reduced':'full';
     if(document.hidden||reduced){node.classList.remove('pal-walking');palTimer=setTimeout(step,3000);return;}
-    const maxX=Math.max(0,window.innerWidth-96),distance=120+Math.random()*180;
+    const maxX=Math.max(0,window.innerWidth-node.offsetWidth),distance=120+Math.random()*180;
     const target=Math.max(0,Math.min(maxX,x+(x<maxX/2?distance:-distance))),duration=Math.max(1200,Math.abs(target-x)/32*1000);
     node.querySelector('.pal-facing').style.transform=target<x?'scaleX(-1)':'scaleX(1)';node.classList.add('pal-walking');node.style.setProperty('transition','left '+duration+'ms linear','important');node.style.left=target+'px';x=target;
     palTimer=setTimeout(()=>{node.classList.remove('pal-walking');palTimer=setTimeout(step,2500+Math.random()*5000);},duration);
