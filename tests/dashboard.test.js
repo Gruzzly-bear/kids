@@ -732,7 +732,7 @@ test('clicking a Page Pal stops at its current position, pauses, then restarts r
   vm.runInContext(readFileSync(new URL('../page-pals-ui.js',import.meta.url),'utf8'),context);
   const tick=()=>{const [id,timer]=[...timers][0];timers.delete(id);timer.fn();};
   context.renderPagePal();tick();assert(classes.has('pal-walking'));
-  for(let i=0;i<3;i++){node.onclick();assert(!classes.has('pal-walking'));assert(classes.has('pal-paused'));assert.equal(node.style.left,'123px');assert.equal(timers.size,1);assert.equal([...timers.values()][0].delay,1500);tick();assert(classes.has('pal-walking'));assert(!classes.has('pal-paused'));}
+  for(let i=0;i<3;i++){node.onclick();assert(!classes.has('pal-walking'));assert(classes.has('pal-paused'));assert(classes.has('pal-hop'));assert.equal(node.style.left,'123px');assert.equal(timers.size,1);assert.equal([...timers.values()][0].delay,1500);tick();assert(classes.has('pal-walking'));assert(!classes.has('pal-paused'));assert(!classes.has('pal-hop'));}
   node.onclick();node.onclick();assert.equal(timers.size,1);tick();assert(classes.has('pal-walking'));
 });
 
