@@ -1,3 +1,4 @@
+import { PAGE_PALS } from './page-pals.js';
 import { authorized, hash, json, metadata, preferences, readJSON, safeURL, setting } from './shared.js';
 import { earnedSQL, spentSQL, rewardsData, restrictThemes, recordOverduePenalties } from './rewards.js';
 import { FREE_THEMES, THEME_CATALOG, THEME_PRICE } from './theme-catalog.js';
@@ -13,7 +14,22 @@ export async function onRequestPost({ request, env }) {
     if (body.rewardAction) {
       const { rewardAction: action, id }=body;
       if(typeof id!=='string'||! /^[a-zA-Z0-9-]{1,120}$/.test(id))return json({error:'Invalid reward.'},400);
-      if(action==='deductPoints'){
+      if(action==='buyPal'){
+        if(!['leon','logan'].includes(role))return json({error:'Sign in as a child to buy Page Pals.'},403);
+        const forms=Object.hasOwn(PAGE_PALS,id)?PAGE_PALS[id]:null,index=body.stage;
+        if(!forms||!Number.isInteger(index)||index<0||index>=forms.length)return json({error:'Choose a valid pal and form.'},400);
+        const key='redemption_pal_'+role+'_'+id+'_'+index,cost=5*(index+1),previous='redemption_pal_'+role+'_'+id+'_'+(index-1);
+        await env.DB.prepare(`INSERT INTO settings(key,value) SELECT ?,? WHERE ?<=(${earnedSQL()})-(${spentSQL}) AND (?=0 OR EXISTS(SELECT 1 FROM settings WHERE key=?)) ON CONFLICT(key) DO NOTHING`)
+          .bind(key,JSON.stringify({id:id+'-'+index,student:role,pal:id,stage:index,title:'Page Pal #'+id+' · Form '+(index+1),cost,date:new Date().toISOString()}),cost,role,role,index,previous).run();
+        if(!await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind(key).first())return json({error:'You need enough points and the previous form to buy this upgrade.'},409);
+      } else if(action==='equipPal'){
+        if(!['leon','logan'].includes(role))return json({error:'Only children can equip Page Pals.'},403);
+        if(id!=='clear'){
+          if(!Object.hasOwn(PAGE_PALS,id)||!await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind('redemption_pal_'+role+'_'+id+'_0').first())return json({error:'Buy this pal first.'},403);
+        }
+        await setting(env,'reward_pal_'+role,{id:id==='clear'?'':id}).run();
+      } else if(action==='deductPoints'){
+
         if(role!=='parent')return json({error:'Only parents can record deductions.'},403);
         const rule=Object.hasOwn(POINT_RULES,body.rule)?POINT_RULES[body.rule]:null,notes=typeof body.notes==='string'?body.notes.trim():'';
         if(!rule||!['leon','logan'].includes(body.student)||notes.length>240||body.rule==='other'&&!notes)return json({error:'Choose a child and a valid rule. Explain other deductions and keep notes under 240 characters.'},400);
@@ -33,7 +49,7 @@ export async function onRequestPost({ request, env }) {
       } else if(action==='deliver'){
         if(role!=='parent'||!['leon','logan'].includes(body.student))return json({error:'Only parents can mark rewards delivered.'},403);
         const key='redemption_'+body.student+'_'+id,row=await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind(key).first(),purchase=readJSON(row?.value);
-        if(!row||purchase.kind||purchase.theme||purchase.cosmetic)return json({error:'Choose a purchased reward.'},404);
+        if(!row||purchase.kind||purchase.theme||purchase.cosmetic||purchase.pal)return json({error:'Choose a purchased reward.'},404);
         await env.DB.prepare("UPDATE settings SET value=json_set(value,'$.deliveredAt',COALESCE(json_extract(value,'$.deliveredAt'),?)) WHERE key=?").bind(new Date().toISOString(),key).run();
       } else if(action==='awardPoints'){
         if(role!=='parent')return json({error:'Only parents can award points.'},403);

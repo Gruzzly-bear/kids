@@ -1,0 +1,41 @@
+import { metadata, preferences, readJSON } from './shared.js';
+import { restrictThemes } from './rewards.js';
+import { seedAssignments } from "../seed.js";
+
+const json=(body,status=200)=>Response.json(body,{status});
+const hash=async value=>{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")};
+function easternNow(){const parts=Object.fromEntries(new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",hourCycle:"h23"}).formatToParts(new Date()).filter(x=>x.type!=="literal").map(x=>[x.type,x.value]));return{date:`${parts.year}-${parts.month}-${parts.day}`,hour:Number(parts.hour)}}
+function previousDay(date){const d=new Date(date+"T12:00:00Z");d.setUTCDate(d.getUTCDate()-1);return d.toISOString().slice(0,10)}
+function pruneSchedule(value){if(!value||Array.isArray(value)||!value.days)return{value,changed:false};const now=easternNow(),keepFrom=now.hour>=13?now.date:previousDay(now.date),days=Object.fromEntries(Object.entries(value.days).filter(([date])=>date>=keepFrom));return{value:{...value,days},changed:Object.keys(days).length!==Object.keys(value.days).length}}
+async function seed(env){const exists=await env.DB.prepare("SELECT id FROM assignments LIMIT 1").first();if(exists)return;const parent=env.INITIAL_PARENT_PASSWORD,leon=env.LEON_PASSWORD,logan=env.LOGAN_PASSWORD;if(!parent||!leon||!logan)throw Error("Passwords have not been configured.");const rows=[];for(const [student,subjects] of Object.entries(seedAssignments))for(const [subject,items] of Object.entries(subjects))items.forEach((x,i)=>rows.push({id:`${student}-${subject}-${i}`,student,subject,title:x[0],due:x[1]==="N/A"?"":new Date(x[1]).toISOString().slice(0,10),done:x[2]?1:0}));await env.DB.batch([...rows.map(x=>env.DB.prepare("INSERT INTO assignments (id,student,subject,title,due,done) VALUES (?,?,?,?,?,?)").bind(x.id,x.student,x.subject,x.title,x.due,x.done)),env.DB.prepare("INSERT INTO settings (key,value) VALUES ('parent_password',?)").bind(await hash(parent)),env.DB.prepare("INSERT INTO settings (key,value) VALUES ('leon_password',?)").bind(await hash(leon)),env.DB.prepare("INSERT INTO settings (key,value) VALUES ('logan_password',?)").bind(await hash(logan))]);}
+export async function onRequestPost({request,env}){
+  try{
+    await seed(env);
+    const {role,password}=await request.json();
+    if(!["parent","leon","logan","monitor"].includes(role))return json({error:"Sign-in failed."},401);
+    if(role!=="monitor"){
+      if(!password)return json({error:"Sign-in failed."},401);
+      const saved=await env.DB.prepare("SELECT value FROM settings WHERE key=?").bind(`${role}_password`).first();
+      if(!saved||await hash(password)!==saved.value)return json({error:"Sign-in failed."},401);
+    }
+    const all=role==="parent"||role==="monitor",query=all?"SELECT * FROM assignments":"SELECT * FROM assignments WHERE student=?",result=all?await env.DB.prepare(query).all():await env.DB.prepare(query).bind(role).all();
+    const scheduleRows=await env.DB.prepare("SELECT key,value FROM settings WHERE key IN ('leon_schedule','logan_schedule')").all(),schedules={leon:[],logan:[]},cleanup=[];
+    for(const row of scheduleRows.results)try{const cleaned=pruneSchedule(JSON.parse(row.value));schedules[row.key.replace('_schedule','')]=cleaned.value;if(cleaned.changed)cleanup.push(env.DB.prepare("UPDATE settings SET value=? WHERE key=?").bind(JSON.stringify(cleaned.value),row.key));}catch{}
+    if(cleanup.length)await env.DB.batch(cleanup);
+    const cardsRow=await env.DB.prepare("SELECT value FROM settings WHERE key='dashboard_cards'").first();let cards=null;
+    try{cards=cardsRow?JSON.parse(cardsRow.value):null}catch{}
+    const calendarRow=await env.DB.prepare("SELECT value FROM settings WHERE key='family_calendar'").first();let calendar=[];
+    try{calendar=JSON.parse(calendarRow?.value||'[]');if(!Array.isArray(calendar))calendar=[];}catch{}
+    const extraRows=await env.DB.prepare("SELECT key,value FROM settings WHERE key LIKE 'assignment_meta_%' OR key LIKE 'preferences_%' OR key LIKE 'assignment_subjects_%'").all(),extras=new Map(extraRows.results.map(row=>[row.key,row.value]));
+    const assignments=result.results.map(row=>({...row,...metadata(readJSON(extras.get('assignment_meta_'+row.id)))})),scopes=all?['leon','logan','parent','monitor']:[role];
+    const prefs=Object.fromEntries(scopes.filter(scope=>extras.has('preferences_'+scope)).map(scope=>[scope,preferences(readJSON(extras.get('preferences_'+scope)))]));
+    for(const scope of Object.keys(prefs))await restrictThemes(env,scope,prefs[scope]);
+    const students=all?['leon','logan']:[role],assignmentSubjectCatalogs={};
+    for(const student of students){
+      const raw=readJSON(extras.get(`assignment_subjects_${student}`),{}),added=Array.isArray(raw.added)?raw.added.filter(item=>item&&typeof item.id==='string'&&typeof item.label==='string').map(item=>({id:item.id,label:item.label})):[],hidden=Array.isArray(raw.hidden)?raw.hidden.filter(id=>typeof id==='string'):[];
+      assignmentSubjectCatalogs[student]={added,hidden};
+    }
+    const { rewardsData }=await import('./rewards.js');
+    return json({role,assignments,schedules,cards,calendar,preferences:prefs,assignmentSubjectCatalogs,rewards:await rewardsData(env,role)});
+  }catch(e){return json({error:"Setup is incomplete. Run schema.sql in D1, then confirm the three secrets are saved."},500)}
+}

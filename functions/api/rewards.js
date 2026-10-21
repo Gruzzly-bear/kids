@@ -1,3 +1,4 @@
+import { PAGE_PALS } from './page-pals.js';
 import { readJSON } from './shared.js';
 import { FREE_THEMES, THEME_CATALOG, THEME_PRICE } from './theme-catalog.js';
 import { COSMETICS, COSMETIC_RULES } from './cosmetics.js';
@@ -73,7 +74,7 @@ export async function rewardsData(env, role) {
   await recordOverduePenalties(env,role);
   const rows=await env.DB.prepare("SELECT key,value FROM settings WHERE key LIKE 'reward_%' OR key LIKE 'redemption_%'").all();
   const items=[],history=[];
-  for(const row of rows.results){const item=readJSON(row.value,{});if(row.key.startsWith('reward_goal_'))continue;if(row.key.startsWith('reward_'))items.push(item);else if(role==='parent'||item.student===role)history.push(item);}
+  for(const row of rows.results){const item=readJSON(row.value,{});if(row.key.startsWith('reward_goal_')||row.key.startsWith('reward_pal_'))continue;if(row.key.startsWith('reward_'))items.push(item);else if(role==='parent'||item.student===role)history.push(item);}
   const balances={};
   for(const student of role==='parent'?['leon','logan']:['leon','logan'].includes(role)?[role]:[]){
     const earned=await env.DB.prepare(earnedSQL()).bind(student).first(),spent=await env.DB.prepare(spentSQL).bind(student).first();
@@ -100,5 +101,11 @@ export async function rewardsData(env, role) {
     for(const item of history){activity.push({...item,kind:item.kind==='award'?'bonus':['penalty','deduction','balanceAdjustment'].includes(item.kind)?item.kind:'purchase'});if(item.deliveredAt)activity.push({...item,kind:'delivery',date:item.deliveredAt});}
     activity.sort((a,b)=>b.date.localeCompare(a.date));activity=activity.slice(0,100);
   }
-  return {items,history:history.sort((a,b)=>b.date.localeCompare(a.date)),balances,unlocked,themePrice:THEME_PRICE,cosmetics:COSMETICS,cosmeticRules:COSMETIC_RULES,cosmeticUnlocks,breakdown,goals,activity,pointRules:POINT_RULES};
+  const pals={},equippedPals={};
+  for(const student of Object.keys(balances)){
+    pals[student]={};for(const entry of history.filter(x=>x.student===student&&x.pal&&PAGE_PALS[x.pal]))pals[student][entry.pal]=Math.max(pals[student][entry.pal]??-1,entry.stage);
+    const row=await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind('reward_pal_'+student).first(),id=readJSON(row?.value).id;
+    equippedPals[student]=Object.hasOwn(pals[student],id)?id:'';
+  }
+  return {pagePalCatalog:PAGE_PALS,pals,equippedPals,items,history:history.sort((a,b)=>b.date.localeCompare(a.date)),balances,unlocked,themePrice:THEME_PRICE,cosmetics:COSMETICS,cosmeticRules:COSMETIC_RULES,cosmeticUnlocks,breakdown,goals,activity,pointRules:POINT_RULES};
 }

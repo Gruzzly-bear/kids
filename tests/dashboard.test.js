@@ -613,3 +613,28 @@ test('reminder visibility is saved separately per child and defaults off',async(
   assert(context.studentAnnouncementStack('leon').includes('<reminder>leon</reminder>'));assert(!context.studentAnnouncementStack('logan').includes('<reminder>'));assert(context.studentAnnouncementStack('logan').includes('<announcement/>'));
   core.loadCards({});assert.equal(vm.runInContext('state.reminderDisplay.leon',core),false);
 });
+
+
+test('Page Pals enforce prices, sequential upgrades, ownership and retry safety',async()=>{
+  const env=await fixture();
+  const buy=(id,stage,credentials=leon)=>post(save,env,{...credentials,rewardAction:'buyPal',id,stage,cost:0});
+  assert.equal((await buy('001',0)).status,409);
+  assert.equal((await buy('001',0,parent)).status,403);
+  await post(save,env,{...parent,rewardAction:'awardPoints',id:'pal-funds',student:'leon',points:40});
+  assert.equal((await buy('003',2)).status,409);
+  assert.equal((await buy('001',0)).status,200);
+  assert.equal((await buy('001',0)).status,200);
+  let r=(await (await post(auth,env,leon)).json()).rewards;
+  assert.equal(r.balances.leon,35);assert.equal(r.pagePalCatalog['001'][0].form,2);assert.equal(r.pagePalCatalog['003'][0].form,1);
+  assert.equal((await buy('001',1)).status,200);
+  assert.equal((await buy('001',2)).status,400);
+  assert.equal((await buy('missing',0)).status,400);
+  assert.equal((await post(save,env,{...leon,rewardAction:'equipPal',id:'003'})).status,403);
+  assert.equal((await post(save,env,{...leon,rewardAction:'equipPal',id:'001'})).status,200);
+  r=(await (await post(auth,env,leon)).json()).rewards;
+  assert.equal(r.balances.leon,25);assert.equal(r.pals.leon['001'],1);assert.equal(r.equippedPals.leon,'001');
+  assert.equal((await post(save,env,{role:'logan',password:'test-password',rewardAction:'equipPal',id:'001'})).status,403);
+  assert.equal((await post(save,env,{...parent,rewardAction:'deliver',id:'001-0',student:'leon'})).status,404);
+  await post(save,env,{...leon,rewardAction:'equipPal',id:'clear'});
+  assert.equal((await (await post(auth,env,leon)).json()).rewards.equippedPals.leon,'');
+});
