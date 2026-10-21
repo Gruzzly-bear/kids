@@ -656,16 +656,16 @@ test('parent and shared dashboards can freely equip every Page Pal form without 
 });
 
 
-test('Page Pal walks promptly, keeps its position on refresh, and honors explicit motion',()=>{
+test('Page Pal walks promptly, keeps its position on refresh, with full animation for every profile',()=>{
   let node=null;const timers=[],saved=new Map(),classes=new Set();
   const makeNode=()=>({dataset:{},style:{setProperty(key,value){this[key]=value;}},classList:{add:x=>classes.add(x),remove:x=>classes.delete(x)},setAttribute(){},querySelector:()=>({style:{},classList:{add(){},remove(){}}}),remove(){this.isConnected=false;node=null;},isConnected:true});
   let motion='full';
   const context=vm.createContext({esc:String,state:{auth:{role:'leon'},view:'leon',rewards:{pagePalCatalog:{'001':[{file:'001-2.png'}]},equippedPals:{leon:'001'},pals:{leon:{'001':0}}}},prefs:()=>({motion}),window:{innerWidth:1000,matchMedia:()=>({matches:true})},document:{hidden:false,getElementById:()=>node,createElement:makeNode,body:{append:n=>node=n}},localRead:(key,fallback)=>saved.get(key)??fallback,localWrite:(key,value)=>saved.set(key,value),setTimeout:(fn,delay)=>{timers.push({fn,delay});return timers.length;},clearTimeout(){},encodeURIComponent});
   vm.runInContext(readFileSync(new URL('../page-pals-ui.js',import.meta.url),'utf8'),context);
-  assert.equal(context.palMotionAllowed(),true,'Full motion overrides device reduction');
+
   context.renderPagePal();assert.equal(timers[0].delay,150);timers.shift().fn();assert(classes.has('pal-walking'));assert.notEqual(node.style.left,'24px');
   const original=node,left=node.style.left;context.renderPagePal();assert.equal(node,original);assert.equal(node.style.left,left);
-  motion='system';assert.equal(context.palMotionAllowed(),false);saved.set('page-pal-motion','full');assert.equal(context.palMotionAllowed(),true);saved.set('page-pal-motion','reduced');assert.equal(context.palMotionAllowed(),false);
+  motion='reduced';saved.set('page-pal-motion','reduced');node.remove();context.renderPagePal();assert.equal(node.dataset.motion,'full');
 });
 
 

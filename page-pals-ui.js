@@ -97,7 +97,7 @@ function drawPagePals(page,ownedOnly){
     const displayStage=selected!==undefined&&forms[selected]?selected:Math.max(stage,0),isEquipped=equipped===id&&(!parent||freePalSelection()?.stage===displayStage);
     return `<article class="panel store-unlock-card pal-card">${palSprite(id,displayStage)}<h4>${esc(palName(id,displayStage))}</h4><p class="small">${palCost(id)} points base</p><p class="small">${parent?'Form '+palForm(id,displayStage):stage<0?'Not owned':'Form '+palForm(id,stage)}${isEquipped?' · Equipped':''}</p>${stage>=0&&next<forms.length?`${palSprite(id,next,'pal-next')}`:''}<div class="pal-card-actions">${parent?`<label>Form<select data-pal-form="${id}" onchange="browsePalForm('${id}',Number(this.value))">${forms.map((form,index)=>`<option value="${index}" ${displayStage===index?'selected':''}>${esc(form.name||'Pal #'+id)} · Form ${form.form??index+1}</option>`).join('')}</select></label><button class="button" onclick="previewPagePal('${id}',${displayStage})" ${isEquipped?'disabled':''}>${isEquipped?'Equipped':'Equip free'}</button>`:`${next<forms.length?`<button class="button" ${balance<cost?'disabled':''} onclick="confirmPal('${id}',${next})">${stage<0?'Buy':'Upgrade'} · ${cost} points</button>`:'<span class="small">Fully upgraded</span>'}${stage>=0?`<button class="button light" ${equipped===id?'disabled':''} onclick="storeAction({rewardAction:'equipPal',id:'${id}'})">${equipped===id?'Equipped':'Equip'}</button>`:''}`}</div></article>`;
   }).join('');
-  openDialog('page-pals',`<h2>⭐ Rewards Store</h2>${storeNavigation('pals')}<h3>Page Pals</h3><p>${parent?'All pals and forms are free to try.':'Pals from 5 points. Each upgrade costs 5 more. Equip one at a time.'}</p><div class="actions"><button class="button light" onclick="togglePalMotion()">${palMotionAllowed()?'Pause pal movement':'Start pal movement'}</button><strong>${parent?'Free access':balance+' points'}</strong><button class="button light" onclick="drawPagePals(0,${!ownedOnly})">${ownedOnly?'Show all pals':'My pals'}</button>${equipped?`<button class="button light" onclick="${parent?`previewPagePal('clear',0)`:`storeAction({rewardAction:'equipPal',id:'clear'})`}">Put pal away</button>`:''}</div>${pagination('top')}<div class="store-unlock-grid pal-grid">${cards||'<p>No pals yet. Browse all pals to find your first companion.</p>'}</div>${pagination('bottom')}<p id="store-error" class="form-error" role="alert"></p>`);
+  openDialog('page-pals',`<h2>⭐ Rewards Store</h2>${storeNavigation('pals')}<h3>Page Pals</h3><p>${parent?'All pals and forms are free to try.':'Pals from 5 points. Each upgrade costs 5 more. Equip one at a time.'}</p><div class="actions"><strong>${parent?'Free access':balance+' points'}</strong><button class="button light" onclick="drawPagePals(0,${!ownedOnly})">${ownedOnly?'Show all pals':'My pals'}</button>${equipped?`<button class="button light" onclick="${parent?`previewPagePal('clear',0)`:`storeAction({rewardAction:'equipPal',id:'clear'})`}">Put pal away</button>`:''}</div>${pagination('top')}<div class="store-unlock-grid pal-grid">${cards||'<p>No pals yet. Browse all pals to find your first companion.</p>'}</div>${pagination('bottom')}<p id="store-error" class="form-error" role="alert"></p>`);
   if(typeof document!=='undefined'){
     const updated=document.getElementById('app-dialog');
     if(focusedPal)updated?.querySelector('[data-pal-form="'+focusedPal+'"]')?.focus({preventScroll:true});
@@ -108,16 +108,6 @@ function confirmPal(id,stage){
   const cost=palCost(id,stage);
   openDialog('pal-confirm',`<h2>${stage?'Upgrade to':'Buy'} ${esc(palName(id,stage))}?</h2>${palSprite(id,stage)}<p>Form ${palForm(id,stage)} costs ${cost} points. Yours permanently.</p><div class="actions"><button class="button" onclick="storeAction({rewardAction:'buyPal',id:'${id}',stage:${stage}})">Spend ${cost} points</button><button class="button light" onclick="drawPagePals()">Back to Page Pals</button></div><p id="store-error" class="form-error" role="alert"></p>`);
 }
-function palMotionAllowed(){
-  const override=localRead('page-pal-motion','system');
-  if(override!=='system')return override==='full';
-  const motion=prefs().motion;
-  return motion==='full'||motion!=='reduced'&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
-function togglePalMotion(){
-  localWrite('page-pal-motion',palMotionAllowed()?'reduced':'full');
-  document.getElementById('page-pal')?.remove();renderPagePal();drawPagePals();
-}
 let palTimer=null;
 function renderPagePal(){
   const existing=document.getElementById('page-pal');
@@ -127,11 +117,10 @@ function renderPagePal(){
   clearTimeout(palTimer);existing?.remove();
   if(!state.view||stage===undefined)return;
   if(!palImage(id,stage))return;
-  const node=document.createElement('button');node.id='page-pal';node.dataset.palIdentity=identity;node.dataset.motion=palMotionAllowed()?'full':'reduced';node.className='page-pal';node.type='button';node.title=palName(id,stage)+' · Form '+palForm(id,stage)+' — click to hop; put away in the store';node.setAttribute('aria-label','Play with '+palName(id,stage)+' · Form '+palForm(id,stage));node.innerHTML=`<span class="pal-facing">${palSprite(id,stage,'pal-art')}</span>`;document.body.append(node);
+  const node=document.createElement('button');node.id='page-pal';node.dataset.palIdentity=identity;node.dataset.motion='full';node.className='page-pal';node.type='button';node.title=palName(id,stage)+' · Form '+palForm(id,stage)+' — click to hop; put away in the store';node.setAttribute('aria-label','Play with '+palName(id,stage)+' · Form '+palForm(id,stage));node.innerHTML=`<span class="pal-facing">${palSprite(id,stage,'pal-art')}</span>`;document.body.append(node);
   let x=24;node.style.left=x+'px';
   node.onclick=()=>{
-    const motion=prefs().motion;
-    node.dataset.hopMotion=motion==='reduced'||motion!=='full'&&window.matchMedia('(prefers-reduced-motion: reduce)').matches?'reduced':'full';
+    node.dataset.hopMotion='full';
     clearTimeout(palTimer);
     x=Math.max(0,Math.min(Math.max(0,window.innerWidth-node.offsetWidth),node.getBoundingClientRect().left));
     node.style.setProperty('transition','none','important');node.style.left=x+'px';
@@ -141,8 +130,7 @@ function renderPagePal(){
   };
   const step=()=>{
     if(!node.isConnected)return;
-    const reduced=!palMotionAllowed();node.dataset.motion=reduced?'reduced':'full';
-    if(document.hidden||reduced){node.classList.remove('pal-walking');palTimer=setTimeout(step,3000);return;}
+    if(document.hidden){node.classList.remove('pal-walking');palTimer=setTimeout(step,3000);return;}
     const maxX=Math.max(0,window.innerWidth-node.offsetWidth),distance=120+Math.random()*180;
     const target=Math.max(0,Math.min(maxX,x+(x<maxX/2?distance:-distance))),duration=Math.max(1200,Math.abs(target-x)/32*1000);
     node.querySelector('.pal-facing').style.transform=target<x?'scaleX(-1)':'scaleX(1)';node.classList.add('pal-walking');node.style.setProperty('transition','left '+duration+'ms linear','important');node.style.left=target+'px';x=target;

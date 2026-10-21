@@ -33,7 +33,7 @@ await page.getByRole('button',{name:'Close dialog'}).click();
  assert.equal(await page.locator('#page-pal').evaluate(el=>el.classList.contains('pal-paused')),false);
  }
  }
- await page.evaluate(()=>{state.preferences.leon={...prefs(),motion:'reduced'};applyPreferences();});
- await page.locator('#page-pal').click({force:true});assert.equal(await page.locator('#page-pal .pal-art').evaluate(el=>getComputedStyle(el).animationName),'none');
- assert.deepEqual(errors,[]);console.log('Child click hop verified repeatedly with roaming enabled and paused; reduced motion respected.');
+ await page.emulateMedia({reducedMotion:'reduce'});await page.evaluate(()=>{state.preferences.leon={...prefs(),motion:'reduced'};applyPreferences();});
+ await page.locator('#page-pal').click({force:true});assert.equal(await page.locator('#page-pal .pal-art').evaluate(el=>getComputedStyle(el).animationName),'pal-click-hop');assert.equal(await page.locator('#page-pal .pal-art').evaluate(el=>getComputedStyle(el).animationDuration),'0.4s');
+ assert.deepEqual(errors,[]);console.log('Child click hop always animates, including with old paused settings and device/profile reduced motion.');
  }finally{await browser?.close();server.close();}})().catch(e=>{console.error(e);process.exitCode=1});
