@@ -1,3 +1,5 @@
+import { PAGE_PAL_PRICES, pagePalCost } from '../functions/api/page-pal-prices.js';
+import { PAGE_PALS } from '../functions/api/page-pals.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { fixture } from './test-server.js';
@@ -625,14 +627,14 @@ test('Page Pals enforce prices, sequential upgrades, ownership and retry safety'
   assert.equal((await buy('001',0)).status,200);
   assert.equal((await buy('001',0)).status,200);
   let r=(await (await post(auth,env,leon)).json()).rewards;
-  assert.equal(r.balances.leon,35);assert.equal(r.pagePalCatalog['001'][0].form,2);assert.equal(r.pagePalCatalog['003'][0].form,1);
+  assert.equal(r.balances.leon,40-pagePalCost('001'));assert.equal(r.pagePalCatalog['001'][0].form,2);assert.equal(r.pagePalCatalog['003'][0].form,1);
   assert.equal((await buy('001',1)).status,200);
   assert.equal((await buy('001',2)).status,400);
   assert.equal((await buy('missing',0)).status,400);
   assert.equal((await post(save,env,{...leon,rewardAction:'equipPal',id:'003'})).status,403);
   assert.equal((await post(save,env,{...leon,rewardAction:'equipPal',id:'001'})).status,200);
   r=(await (await post(auth,env,leon)).json()).rewards;
-  assert.equal(r.balances.leon,25);assert.equal(r.pals.leon['001'],1);assert.equal(r.equippedPals.leon,'001');
+  assert.equal(r.balances.leon,40-pagePalCost('001')-pagePalCost('001',1));assert.equal(r.pals.leon['001'],1);assert.equal(r.equippedPals.leon,'001');
   assert.equal((await post(save,env,{role:'logan',password:'test-password',rewardAction:'equipPal',id:'001'})).status,403);
   assert.equal((await post(save,env,{...parent,rewardAction:'deliver',id:'001-0',student:'leon'})).status,404);
   await post(save,env,{...leon,rewardAction:'equipPal',id:'clear'});
@@ -643,7 +645,7 @@ test('Page Pals enforce prices, sequential upgrades, ownership and retry safety'
 test('parent and shared dashboards can freely equip every Page Pal form without purchases',()=>{
   const source=readFileSync(new URL('../page-pals-ui.js',import.meta.url),'utf8'),saved=new Map();let html='';
   const state={auth:{role:'parent'},view:'parent',rewards:{pagePalCatalog:{'001':[{file:'001-2.png'},{file:'001-3.png'}]},balances:{},pals:{},equippedPals:{}}};
-  const context=vm.createContext({state,localRead:(key,fallback)=>saved.get(key)??fallback,localWrite:(key,value)=>saved.set(key,value),openDialog:(id,body)=>html=body,storeNavigation:()=>'',esc:String,encodeURIComponent});
+  const context=vm.createContext({state,prefs:()=>({motion:'full'}),localRead:(key,fallback)=>saved.get(key)??fallback,localWrite:(key,value)=>saved.set(key,value),openDialog:(id,body)=>html=body,storeNavigation:()=>'',esc:String,encodeURIComponent});
   vm.runInContext(source,context);vm.runInContext('renderPagePal=()=>{}',context);
   context.drawPagePals();assert(html.includes('Equip free'));assert(html.includes('Form 2'));assert(!html.includes('confirmPal('));
   context.previewPagePal('001',1);assert.equal(saved.get('page-pal-preview-parent').stage,1);assert(html.includes('Put pal away'));
@@ -651,4 +653,47 @@ test('parent and shared dashboards can freely equip every Page Pal form without 
   state.auth.role='monitor';context.previewPagePal('001',1);assert.equal(saved.get('page-pal-preview-monitor').stage,1);
   context.previewPagePal('clear',0);assert.equal(saved.get('page-pal-preview-monitor'),null);
   state.auth.role='leon';context.previewPagePal('001',0);assert.equal(saved.get('page-pal-preview-monitor'),null);assert.deepEqual(state.rewards.pals,{});
+});
+
+
+test('Page Pal walks promptly, keeps its position on refresh, and honors explicit motion',()=>{
+  let node=null;const timers=[],saved=new Map(),classes=new Set();
+  const makeNode=()=>({dataset:{},style:{setProperty(key,value){this[key]=value;}},classList:{add:x=>classes.add(x),remove:x=>classes.delete(x)},setAttribute(){},querySelector:()=>({style:{},classList:{add(){},remove(){}}}),remove(){this.isConnected=false;node=null;},isConnected:true});
+  let motion='full';
+  const context=vm.createContext({state:{auth:{role:'leon'},view:'leon',rewards:{pagePalCatalog:{'001':[{file:'001-2.png'}]},equippedPals:{leon:'001'},pals:{leon:{'001':0}}}},prefs:()=>({motion}),window:{innerWidth:1000,matchMedia:()=>({matches:true})},document:{hidden:false,getElementById:()=>node,createElement:makeNode,body:{append:n=>node=n}},localRead:(key,fallback)=>saved.get(key)??fallback,localWrite:(key,value)=>saved.set(key,value),setTimeout:(fn,delay)=>{timers.push({fn,delay});return timers.length;},clearTimeout(){},encodeURIComponent});
+  vm.runInContext(readFileSync(new URL('../page-pals-ui.js',import.meta.url),'utf8'),context);
+  assert.equal(context.palMotionAllowed(),true,'Full motion overrides device reduction');
+  context.renderPagePal();assert.equal(timers[0].delay,150);timers.shift().fn();assert(classes.has('pal-walking'));assert.notEqual(node.style.left,'24px');
+  const original=node,left=node.style.left;context.renderPagePal();assert.equal(node,original);assert.equal(node.style.left,left);
+  motion='system';assert.equal(context.palMotionAllowed(),false);saved.set('page-pal-motion','full');assert.equal(context.palMotionAllowed(),true);saved.set('page-pal-motion','reduced');assert.equal(context.palMotionAllowed(),false);
+});
+
+
+test('curated Page Pal pricing covers every pal and charges authoritative tier prices',async()=>{
+  assert.deepEqual(Object.keys(PAGE_PAL_PRICES).sort(),Object.keys(PAGE_PALS).sort());
+  assert.deepEqual([...new Set(Object.values(PAGE_PAL_PRICES))].sort((a,b)=>a-b),[5,7,9,12]);
+  for(const id of Object.keys(PAGE_PALS))assert.equal(pagePalCost(id,1),pagePalCost(id)+5);
+  const env=await fixture();
+  await post(save,env,{...parent,rewardAction:'awardPoints',id:'tier-funds',student:'leon',points:11});
+  assert.equal((await post(save,env,{...leon,rewardAction:'buyPal',id:'001',stage:0,cost:5})).status,409);
+  await post(save,env,{...parent,rewardAction:'awardPoints',id:'tier-topup',student:'leon',points:1});
+  const result=await (await post(save,env,{...leon,rewardAction:'buyPal',id:'001',stage:0,cost:5})).json();
+  assert.equal(result.rewards.balances.leon,0);assert.equal(result.rewards.history.find(x=>x.pal==='001').cost,12);assert.equal(result.rewards.pagePalPrices['001'],12);
+});
+
+
+test('Page Pal names follow matched artwork while retaining IDs, physical forms, and purchase history',async()=>{
+  const {PAGE_PAL_NAMES}=await import('../functions/api/page-pal-names.js');
+  assert.equal(PAGE_PALS['053'][0].name,'Ashtad');assert.equal(PAGE_PALS['053'][1].name,'Babak');assert.equal(PAGE_PALS['053'][2].name,'Artachsharta');
+  assert.equal(PAGE_PALS['025'][1].name,'Amata');assert.equal(PAGE_PALS['025'][2].name,'Anagalmeshshu');
+  for(const [id,forms] of Object.entries(PAGE_PALS))for(const form of forms){assert.equal(form.file,id+'-'+form.form+'.png');assert(readFileSync(new URL('../assets/Page Pals/'+form.file,import.meta.url)).length>0);if(form.name)assert.equal(form.name,PAGE_PAL_NAMES[form.file]);}
+  let html='';const context=vm.createContext({state:{rewards:{pagePalCatalog:PAGE_PALS,pagePalPrices:PAGE_PAL_PRICES}},esc:String,encodeURIComponent,openDialog:(id,body)=>html=body});
+  vm.runInContext(readFileSync(new URL('../page-pals-ui.js',import.meta.url),'utf8'),context);
+  assert.equal(context.palName('053',1),'Babak');assert.equal(context.palForm('001',0),2);assert.equal(context.palName('999',0),'Pal #999');
+  context.confirmPal('053',1);assert(html.includes('Upgrade to Babak?'));assert(html.includes('053-2.png'));assert(html.includes('Form 2 costs 10 points'));
+  const env=await fixture();await post(save,env,{...parent,rewardAction:'awardPoints',id:'name-funds',student:'leon',points:30});
+  let result=await (await post(save,env,{...leon,rewardAction:'buyPal',id:'053',stage:0})).json();
+  assert.equal(result.rewards.history.find(x=>x.pal==='053').title,'Ashtad · Form 1');assert.equal(result.rewards.pals.leon['053'],0);
+  result=await (await post(save,env,{...leon,rewardAction:'buyPal',id:'053',stage:1})).json();
+  assert.equal(result.rewards.history.find(x=>x.pal==='053'&&x.stage===1).title,'Babak · Form 2');assert.equal(result.rewards.pals.leon['053'],1);
 });

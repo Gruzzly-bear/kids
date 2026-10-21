@@ -1,0 +1,5638 @@
+{
+  "source": "TCT LITE - 17OCT.xlsx",
+  "sheetUrl": "https://docs.google.com/spreadsheets/d/1cOQq5zZ11PtZ2ofP4ijkOk9mRLgoO0OV2eamHkNw36Y/edit",
+  "method": "Visual comparison of reference portraits and local sprites; explicit wiki evolution-family links identify form names. Spreadsheet row order is never used to identify local sprite IDs. Missing or ambiguous matches keep numbered labels.",
+  "matches": {
+    "053-1.png": {
+      "name": "Ashtad",
+      "sheet": 1,
+      "row": 9,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ashtad_-_Babak_-_Artachsharta",
+      "matchedReference": "Artachsharta",
+      "matchedSprite": "053-3.png"
+    },
+    "053-2.png": {
+      "name": "Babak",
+      "sheet": 1,
+      "row": 10,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ashtad_-_Babak_-_Artachsharta",
+      "matchedReference": "Artachsharta",
+      "matchedSprite": "053-3.png"
+    },
+    "053-3.png": {
+      "name": "Artachsharta",
+      "sheet": 1,
+      "row": 330,
+      "link": "http://defenderoftexel.wikia.com/wiki/Artachsharta",
+      "matchedSprite": "053-3.png"
+    },
+    "159-1.png": {
+      "name": "Ehsan",
+      "sheet": 1,
+      "row": 12,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ehsan_-_Elburz_-_Faridoon",
+      "matchedReference": "Faridoon",
+      "matchedSprite": "159-3.png"
+    },
+    "159-2.png": {
+      "name": "Elburz",
+      "sheet": 1,
+      "row": 13,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ehsan_-_Elburz_-_Faridoon",
+      "matchedReference": "Faridoon",
+      "matchedSprite": "159-3.png"
+    },
+    "159-3.png": {
+      "name": "Faridoon",
+      "sheet": 1,
+      "row": 423,
+      "link": "http://defenderoftexel.wikia.com/wiki/Faridoon",
+      "matchedSprite": "159-3.png"
+    },
+    "174-1.png": {
+      "name": "Etty",
+      "sheet": 1,
+      "row": 15,
+      "link": "http://defenderoftexel.wikia.com/wiki/Etty_-_Farideh_-_Gatha",
+      "matchedReference": "Gatha",
+      "matchedSprite": "174-3.png"
+    },
+    "174-2.png": {
+      "name": "Farideh",
+      "sheet": 1,
+      "row": 16,
+      "link": "http://defenderoftexel.wikia.com/wiki/Etty_-_Farideh_-_Gatha",
+      "matchedReference": "Gatha",
+      "matchedSprite": "174-3.png"
+    },
+    "174-3.png": {
+      "name": "Gatha",
+      "sheet": 1,
+      "row": 434,
+      "link": "http://defenderoftexel.wikia.com/wiki/Gatha",
+      "matchedSprite": "174-3.png"
+    },
+    "295-1.png": {
+      "name": "Laleh",
+      "sheet": 1,
+      "row": 18,
+      "link": "http://defenderoftexel.wikia.com/wiki/Laleh_-_Leila_-_Lila",
+      "matchedReference": "Lila",
+      "matchedSprite": "295-3.png"
+    },
+    "295-2.png": {
+      "name": "Leila",
+      "sheet": 1,
+      "row": 19,
+      "link": "http://defenderoftexel.wikia.com/wiki/Laleh_-_Leila_-_Lila",
+      "matchedReference": "Lila",
+      "matchedSprite": "295-3.png"
+    },
+    "295-3.png": {
+      "name": "Lila",
+      "sheet": 1,
+      "row": 529,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lila",
+      "matchedSprite": "295-3.png"
+    },
+    "276-1.png": {
+      "name": "Kaveh",
+      "sheet": 1,
+      "row": 21,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kaveh_-_Manu_-_Ormazd",
+      "matchedReference": "Ormazd",
+      "matchedSprite": "276-3.png"
+    },
+    "276-2.png": {
+      "name": "Manu",
+      "sheet": 1,
+      "row": 22,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kaveh_-_Manu_-_Ormazd",
+      "matchedReference": "Ormazd",
+      "matchedSprite": "276-3.png"
+    },
+    "276-3.png": {
+      "name": "Ormazd",
+      "sheet": 1,
+      "row": 596,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ormazd",
+      "matchedSprite": "276-3.png"
+    },
+    "342-1.png": {
+      "name": "Mihrdat",
+      "sheet": 1,
+      "row": 24,
+      "link": "http://defenderoftexel.wikia.com/wiki/Mihrdat_-_Mirrikh_-_Mirza",
+      "matchedReference": "Mirza",
+      "matchedSprite": "342-3.png"
+    },
+    "342-2.png": {
+      "name": "Mirrikh",
+      "sheet": 1,
+      "row": 25,
+      "link": "http://defenderoftexel.wikia.com/wiki/Mihrdat_-_Mirrikh_-_Mirza",
+      "matchedReference": "Mirza",
+      "matchedSprite": "342-3.png"
+    },
+    "342-3.png": {
+      "name": "Mirza",
+      "sheet": 1,
+      "row": 556,
+      "link": "http://defenderoftexel.wikia.com/wiki/Mirza",
+      "matchedSprite": "342-3.png"
+    },
+    "460-1.png": {
+      "name": "Roshan",
+      "sheet": 1,
+      "row": 27,
+      "link": "http://defenderoftexel.wikia.com/wiki/Roshan_-_Saeedh_-_Sarosh",
+      "matchedReference": "Sarosh",
+      "matchedSprite": "460-3.png"
+    },
+    "460-2.png": {
+      "name": "Saeedh",
+      "sheet": 1,
+      "row": 28,
+      "link": "http://defenderoftexel.wikia.com/wiki/Roshan_-_Saeedh_-_Sarosh",
+      "matchedReference": "Sarosh",
+      "matchedSprite": "460-3.png"
+    },
+    "460-3.png": {
+      "name": "Sarosh",
+      "sheet": 1,
+      "row": 643,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sarosh",
+      "matchedSprite": "460-3.png"
+    },
+    "302-1.png": {
+      "name": "Larce",
+      "sheet": 2,
+      "row": 42,
+      "link": "https://defenderoftexel.fandom.com/wiki/Larce_-_Laris_-_Lecne",
+      "matchedReference": "Lecne",
+      "matchedSprite": "302-3.png"
+    },
+    "302-2.png": {
+      "name": "Laris",
+      "sheet": 2,
+      "row": 43,
+      "link": "https://defenderoftexel.fandom.com/wiki/Larce_-_Laris_-_Lecne",
+      "matchedReference": "Lecne",
+      "matchedSprite": "302-3.png"
+    },
+    "302-3.png": {
+      "name": "Lecne",
+      "sheet": 1,
+      "row": 523,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lecne",
+      "matchedSprite": "302-3.png"
+    },
+    "038-1.png": {
+      "name": "Apatrui",
+      "sheet": 1,
+      "row": 33,
+      "link": "http://defenderoftexel.wikia.com/wiki/Apatrui_-_Aranthur_-_Arnza",
+      "matchedReference": "Arnza",
+      "matchedSprite": "038-3.png"
+    },
+    "038-2.png": {
+      "name": "Aranthur",
+      "sheet": 1,
+      "row": 34,
+      "link": "http://defenderoftexel.wikia.com/wiki/Apatrui_-_Aranthur_-_Arnza",
+      "matchedReference": "Arnza",
+      "matchedSprite": "038-3.png"
+    },
+    "038-3.png": {
+      "name": "Arnza",
+      "sheet": 1,
+      "row": 328,
+      "link": "http://defenderoftexel.wikia.com/wiki/Arnza",
+      "matchedSprite": "038-3.png"
+    },
+    "075-1.png": {
+      "name": "Bastizi",
+      "sheet": 1,
+      "row": 36,
+      "link": "http://defenderoftexel.wikia.com/wiki/Bastizi_-_Bikili_-_Burebista",
+      "matchedReference": "Burebista",
+      "matchedSprite": "075-2.png"
+    },
+    "075-2.png": {
+      "name": "Bikili",
+      "sheet": 1,
+      "row": 37,
+      "link": "http://defenderoftexel.wikia.com/wiki/Bastizi_-_Bikili_-_Burebista",
+      "matchedReference": "Burebista",
+      "matchedSprite": "075-2.png"
+    },
+    "075-3.png": {
+      "name": "Burebista",
+      "sheet": 1,
+      "row": 38,
+      "link": "http://defenderoftexel.wikia.com/wiki/Bastizi_-_Bikili_-_Burebista",
+      "matchedReference": "Burebista",
+      "matchedSprite": "075-2.png"
+    },
+    "149-1.png": {
+      "name": "Dromichaeta",
+      "sheet": 1,
+      "row": 39,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dromichaeta_-_Komakiza_-_Komozoi",
+      "matchedReference": "Komozoi",
+      "matchedSprite": "149-3.png"
+    },
+    "149-2.png": {
+      "name": "Komakiza",
+      "sheet": 1,
+      "row": 40,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dromichaeta_-_Komakiza_-_Komozoi",
+      "matchedReference": "Komozoi",
+      "matchedSprite": "149-3.png"
+    },
+    "149-3.png": {
+      "name": "Komozoi",
+      "sheet": 1,
+      "row": 509,
+      "link": "http://defenderoftexel.wikia.com/wiki/Komozoi",
+      "matchedSprite": "149-3.png"
+    },
+    "207-1.png": {
+      "name": "Gutha",
+      "sheet": 1,
+      "row": 42,
+      "link": "http://defenderoftexel.wikia.com/wiki/Gutha_-_Ige_-_Ogiva",
+      "matchedReference": "Ogiva",
+      "matchedSprite": "207-3.png"
+    },
+    "207-2.png": {
+      "name": "Ige",
+      "sheet": 1,
+      "row": 43,
+      "link": "http://defenderoftexel.wikia.com/wiki/Gutha_-_Ige_-_Ogiva",
+      "matchedReference": "Ogiva",
+      "matchedSprite": "207-3.png"
+    },
+    "207-3.png": {
+      "name": "Ogiva",
+      "sheet": 1,
+      "row": 591,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ogiva",
+      "matchedSprite": "207-3.png"
+    },
+    "543-1.png": {
+      "name": "Tiada",
+      "sheet": 1,
+      "row": 45,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tiada_-_Ouda_-_Wela",
+      "matchedReference": "Wela",
+      "matchedSprite": "543-3.png"
+    },
+    "543-2.png": {
+      "name": "Ouda",
+      "sheet": 1,
+      "row": 46,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tiada_-_Ouda_-_Wela",
+      "matchedReference": "Wela",
+      "matchedSprite": "543-3.png"
+    },
+    "543-3.png": {
+      "name": "Wela",
+      "sheet": 1,
+      "row": 723,
+      "link": "http://defenderoftexel.wikia.com/wiki/Wela",
+      "matchedSprite": "543-3.png"
+    },
+    "027-1.png": {
+      "name": "Ama",
+      "sheet": 1,
+      "row": 48,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ama_-_Ata_-_Avva",
+      "matchedReference": "Avva",
+      "matchedSprite": "027-3.png"
+    },
+    "027-2.png": {
+      "name": "Ata",
+      "sheet": 1,
+      "row": 49,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ama_-_Ata_-_Avva",
+      "matchedReference": "Avva",
+      "matchedSprite": "027-3.png"
+    },
+    "027-3.png": {
+      "name": "Avva",
+      "sheet": 1,
+      "row": 347,
+      "link": "http://defenderoftexel.wikia.com/wiki/Avva",
+      "matchedSprite": "027-3.png"
+    },
+    "264-1.png": {
+      "name": "Jasper",
+      "sheet": 1,
+      "row": 51,
+      "link": "http://defenderoftexel.wikia.com/wiki/Jasper_-_Javid_-_Kansbar",
+      "matchedReference": "Kansbar",
+      "matchedSprite": "264-3.png"
+    },
+    "264-2.png": {
+      "name": "Javid",
+      "sheet": 1,
+      "row": 52,
+      "link": "http://defenderoftexel.wikia.com/wiki/Jasper_-_Javid_-_Kansbar",
+      "matchedReference": "Kansbar",
+      "matchedSprite": "264-3.png"
+    },
+    "264-3.png": {
+      "name": "Kansbar",
+      "sheet": 1,
+      "row": 492,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kansbar",
+      "matchedSprite": "264-3.png"
+    },
+    "246-1.png": {
+      "name": "Ihsan",
+      "sheet": 1,
+      "row": 54,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ihsan_-_Jahangir_-_Jamshad",
+      "matchedReference": "Jamshad",
+      "matchedSprite": "246-3.png"
+    },
+    "246-2.png": {
+      "name": "Jahangir",
+      "sheet": 1,
+      "row": 55,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ihsan_-_Jahangir_-_Jamshad",
+      "matchedReference": "Jamshad",
+      "matchedSprite": "246-3.png"
+    },
+    "246-3.png": {
+      "name": "Jamshad",
+      "sheet": 1,
+      "row": 488,
+      "link": "http://defenderoftexel.wikia.com/wiki/Jamshad",
+      "matchedSprite": "246-3.png"
+    },
+    "301-1.png": {
+      "name": "Laraniia",
+      "sheet": 1,
+      "row": 57,
+      "link": "http://defenderoftexel.wikia.com/wiki/Laraniia_-_Larthi_-_Messia",
+      "matchedReference": "Messia",
+      "matchedSprite": "301-3.png"
+    },
+    "301-2.png": {
+      "name": "Larthi",
+      "sheet": 1,
+      "row": 58,
+      "link": "http://defenderoftexel.wikia.com/wiki/Laraniia_-_Larthi_-_Messia",
+      "matchedReference": "Messia",
+      "matchedSprite": "301-3.png"
+    },
+    "301-3.png": {
+      "name": "Messia",
+      "sheet": 1,
+      "row": 555,
+      "link": "http://defenderoftexel.wikia.com/wiki/Messia",
+      "matchedSprite": "301-3.png"
+    },
+    "420-1.png": {
+      "name": "Peci",
+      "sheet": 1,
+      "row": 60,
+      "link": "http://defenderoftexel.wikia.com/wiki/Peci_-_Pevtha_-_Pinaria",
+      "matchedReference": "Pinaria",
+      "matchedSprite": "420-3.png"
+    },
+    "420-2.png": {
+      "name": "Pevtha",
+      "sheet": 1,
+      "row": 61,
+      "link": "http://defenderoftexel.wikia.com/wiki/Peci_-_Pevtha_-_Pinaria",
+      "matchedReference": "Pinaria",
+      "matchedSprite": "420-3.png"
+    },
+    "420-3.png": {
+      "name": "Pinaria",
+      "sheet": 1,
+      "row": 613,
+      "link": "http://defenderoftexel.wikia.com/wiki/Pinaria",
+      "matchedSprite": "420-3.png"
+    },
+    "099-1.png": {
+      "name": "Brasus",
+      "sheet": 1,
+      "row": 63,
+      "link": "http://defenderoftexel.wikia.com/wiki/Brasus_-_Mucapor_-_Zalmoxis",
+      "matchedReference": "Zalmoxis",
+      "matchedSprite": "099-3.png"
+    },
+    "099-2.png": {
+      "name": "Mucapor",
+      "sheet": 1,
+      "row": 64,
+      "link": "http://defenderoftexel.wikia.com/wiki/Brasus_-_Mucapor_-_Zalmoxis",
+      "matchedReference": "Zalmoxis",
+      "matchedSprite": "099-3.png"
+    },
+    "099-3.png": {
+      "name": "Zalmoxis",
+      "sheet": 1,
+      "row": 741,
+      "link": "http://defenderoftexel.wikia.com/wiki/Zalmoxis",
+      "matchedSprite": "099-3.png"
+    },
+    "408-1.png": {
+      "name": "Orolu",
+      "sheet": 1,
+      "row": 66,
+      "link": "http://defenderoftexel.wikia.com/wiki/Orolu_-_Mucatra_-_Decaeneus",
+      "matchedReference": "Decaeneus",
+      "matchedSprite": "408-3.png"
+    },
+    "408-2.png": {
+      "name": "Mucatra",
+      "sheet": 1,
+      "row": 67,
+      "link": "http://defenderoftexel.wikia.com/wiki/Orolu_-_Mucatra_-_Decaeneus",
+      "matchedReference": "Decaeneus",
+      "matchedSprite": "408-3.png"
+    },
+    "408-3.png": {
+      "name": "Decaeneus",
+      "sheet": 1,
+      "row": 383,
+      "link": "http://defenderoftexel.wikia.com/wiki/Decaeneus",
+      "matchedSprite": "408-3.png"
+    },
+    "029-1.png": {
+      "name": "Amberfew",
+      "sheet": 1,
+      "row": 72,
+      "link": "http://defenderoftexel.wikia.com/wiki/Amberfew_-_Flaxburn_-_Fondwell",
+      "matchedReference": "Fondwell",
+      "matchedSprite": "029-3.png"
+    },
+    "029-2.png": {
+      "name": "Flaxburn",
+      "sheet": 1,
+      "row": 73,
+      "link": "http://defenderoftexel.wikia.com/wiki/Amberfew_-_Flaxburn_-_Fondwell",
+      "matchedReference": "Fondwell",
+      "matchedSprite": "029-3.png"
+    },
+    "029-3.png": {
+      "name": "Fondwell",
+      "sheet": 1,
+      "row": 74,
+      "link": "http://defenderoftexel.wikia.com/wiki/Amberfew_-_Flaxburn_-_Fondwell",
+      "matchedReference": "Fondwell",
+      "matchedSprite": "029-3.png"
+    },
+    "088-1.png": {
+      "name": "Bewell",
+      "sheet": 1,
+      "row": 75,
+      "link": "http://defenderoftexel.wikia.com/wiki/Bewell_-_Bluesplint_-_Rosemane",
+      "matchedReference": "Rosemane",
+      "matchedSprite": "088-3.png"
+    },
+    "088-2.png": {
+      "name": "Bluesplint",
+      "sheet": 1,
+      "row": 76,
+      "link": "http://defenderoftexel.wikia.com/wiki/Bewell_-_Bluesplint_-_Rosemane",
+      "matchedReference": "Rosemane",
+      "matchedSprite": "088-3.png"
+    },
+    "088-3.png": {
+      "name": "Rosemane",
+      "sheet": 1,
+      "row": 77,
+      "link": "http://defenderoftexel.wikia.com/wiki/Bewell_-_Bluesplint_-_Rosemane",
+      "matchedReference": "Rosemane",
+      "matchedSprite": "088-3.png"
+    },
+    "105-1.png": {
+      "name": "Burntback",
+      "sheet": 1,
+      "row": 81,
+      "link": "http://defenderoftexel.wikia.com/wiki/Burntback_-_Witherclay_-_Slateshanks",
+      "matchedReference": "Burntback",
+      "matchedSprite": "105-1.png"
+    },
+    "105-2.png": {
+      "name": "Witherclay",
+      "sheet": 1,
+      "row": 82,
+      "link": "http://defenderoftexel.wikia.com/wiki/Burntback_-_Witherclay_-_Slateshanks",
+      "matchedReference": "Burntback",
+      "matchedSprite": "105-1.png"
+    },
+    "105-3.png": {
+      "name": "Slateshanks",
+      "sheet": 2,
+      "row": 83,
+      "link": "http://defenderoftexel.wikia.com/wiki/Slateshanks",
+      "matchedSprite": "105-3.png"
+    },
+    "316-1.png": {
+      "name": "Loatheill",
+      "sheet": 1,
+      "row": 105,
+      "link": "http://defenderoftexel.wikia.com/wiki/Loatheill_-_Copperbite_-_Silverclaw",
+      "matchedReference": "Silverclaw",
+      "matchedSprite": "316-3.png"
+    },
+    "316-2.png": {
+      "name": "Copperbite",
+      "sheet": 1,
+      "row": 106,
+      "link": "http://defenderoftexel.wikia.com/wiki/Loatheill_-_Copperbite_-_Silverclaw",
+      "matchedReference": "Silverclaw",
+      "matchedSprite": "316-3.png"
+    },
+    "316-3.png": {
+      "name": "Silverclaw",
+      "sheet": 1,
+      "row": 107,
+      "link": "http://defenderoftexel.wikia.com/wiki/Loatheill_-_Copperbite_-_Silverclaw",
+      "matchedReference": "Silverclaw",
+      "matchedSprite": "316-3.png"
+    },
+    "355-1.png": {
+      "name": "Mossback",
+      "sheet": 2,
+      "row": 87,
+      "link": "http://defenderoftexel.wikia.com/wiki/Makepeace",
+      "matchedSprite": "355-1.png"
+    },
+    "355-2.png": {
+      "name": "Lowluck",
+      "sheet": 2,
+      "row": 88,
+      "link": "http://defenderoftexel.wikia.com/wiki/Makepeace",
+      "matchedSprite": "355-2.png"
+    },
+    "459-1.png": {
+      "name": "Rosewilt",
+      "sheet": 1,
+      "row": 114,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rosewilt_-_Rustborn_-_Blackspill",
+      "matchedReference": "Rustborn",
+      "matchedSprite": "459-2.png"
+    },
+    "459-2.png": {
+      "name": "Rustborn",
+      "sheet": 1,
+      "row": 115,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rosewilt_-_Rustborn_-_Blackspill",
+      "matchedReference": "Rustborn",
+      "matchedSprite": "459-2.png"
+    },
+    "459-3.png": {
+      "name": "Blackspill",
+      "sheet": 2,
+      "row": 95,
+      "link": "http://defenderoftexel.wikia.com/wiki/Blackspill",
+      "matchedSprite": "459-3.png"
+    },
+    "318-1.png": {
+      "name": "Lossill",
+      "sheet": 1,
+      "row": 117,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lossill_-_Lovebane_-_Stonesong",
+      "matchedReference": "Lovebane",
+      "matchedSprite": "318-2.png"
+    },
+    "318-2.png": {
+      "name": "Lovebane",
+      "sheet": 1,
+      "row": 118,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lossill_-_Lovebane_-_Stonesong",
+      "matchedReference": "Lovebane",
+      "matchedSprite": "318-2.png"
+    },
+    "318-3.png": {
+      "name": "Stonesong",
+      "sheet": 2,
+      "row": 98,
+      "link": "http://defenderoftexel.wikia.com/wiki/Stonesong",
+      "matchedSprite": "318-3.png"
+    },
+    "523-1.png": {
+      "name": "Strawspill",
+      "sheet": 1,
+      "row": 123,
+      "link": "http://defenderoftexel.wikia.com/wiki/Strawspill_-_Summerslip_-_Sunback",
+      "matchedReference": "Summerslip",
+      "matchedSprite": "523-2.png"
+    },
+    "523-2.png": {
+      "name": "Summerslip",
+      "sheet": 1,
+      "row": 124,
+      "link": "http://defenderoftexel.wikia.com/wiki/Strawspill_-_Summerslip_-_Sunback",
+      "matchedReference": "Summerslip",
+      "matchedSprite": "523-2.png"
+    },
+    "523-3.png": {
+      "name": "Sunback",
+      "sheet": 2,
+      "row": 104,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sunback",
+      "matchedSprite": "523-3.png"
+    },
+    "570-1.png": {
+      "name": "Utuaa",
+      "sheet": 2,
+      "row": 126,
+      "link": "http://defenderoftexel.wikia.com/wiki/Zuuthusu",
+      "matchedSprite": "570-1.png"
+    },
+    "570-2.png": {
+      "name": "Yahatt-Il",
+      "sheet": 2,
+      "row": 127,
+      "link": "http://defenderoftexel.wikia.com/wiki/Zuuthusu",
+      "matchedSprite": "570-2.png"
+    },
+    "570-3.png": {
+      "name": "Zuuthusu",
+      "sheet": 2,
+      "row": 128,
+      "link": "http://defenderoftexel.wikia.com/wiki/Zuuthusu",
+      "matchedSprite": "570-3.png"
+    },
+    "066-1.png": {
+      "name": "Baassiia",
+      "sheet": 1,
+      "row": 144,
+      "link": "http://defenderoftexel.wikia.com/wiki/Baassiia_-_Balashi_-_Balathu",
+      "matchedReference": "Baassiia",
+      "matchedSprite": "066-1.png"
+    },
+    "066-2.png": {
+      "name": "Balashi",
+      "sheet": 1,
+      "row": 145,
+      "link": "http://defenderoftexel.wikia.com/wiki/Baassiia_-_Balashi_-_Balathu",
+      "matchedReference": "Baassiia",
+      "matchedSprite": "066-1.png"
+    },
+    "066-3.png": {
+      "name": "Balathu",
+      "sheet": 2,
+      "row": 131,
+      "link": "http://defenderoftexel.wikia.com/wiki/Balathu",
+      "matchedSprite": "066-3.png"
+    },
+    "596-1.png": {
+      "name": "Yadidatum",
+      "sheet": 1,
+      "row": 147,
+      "link": "http://defenderoftexel.wikia.com/wiki/Yadidatum_-_Zakiti_-_Zirat-Banit",
+      "matchedReference": "Zakiti",
+      "matchedSprite": "596-2.png"
+    },
+    "596-2.png": {
+      "name": "Zakiti",
+      "sheet": 1,
+      "row": 148,
+      "link": "http://defenderoftexel.wikia.com/wiki/Yadidatum_-_Zakiti_-_Zirat-Banit",
+      "matchedReference": "Zakiti",
+      "matchedSprite": "596-2.png"
+    },
+    "596-3.png": {
+      "name": "Zirat-Banit",
+      "sheet": 2,
+      "row": 134,
+      "link": "http://defenderoftexel.wikia.com/wiki/Zirat-Banit",
+      "matchedSprite": "596-3.png"
+    },
+    "271-2.png": {
+      "name": "Kishar",
+      "sheet": 2,
+      "row": 145,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kissare",
+      "matchedSprite": "271-2.png"
+    },
+    "567-1.png": {
+      "name": "Uppulu",
+      "sheet": 1,
+      "row": 168,
+      "link": "http://defenderoftexel.wikia.com/wiki/Suusaandar",
+      "matchedSprite": "567-1.png"
+    },
+    "567-2.png": {
+      "name": "Enusat",
+      "sheet": 1,
+      "row": 169,
+      "link": "http://defenderoftexel.wikia.com/wiki/Suusaandar",
+      "matchedSprite": "567-2.png"
+    },
+    "028-1.png": {
+      "name": "Amarud",
+      "sheet": 1,
+      "row": 171,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ariistuun",
+      "matchedSprite": "028-1.png"
+    },
+    "028-2.png": {
+      "name": "Amaragu",
+      "sheet": 1,
+      "row": 172,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ariistuun",
+      "matchedSprite": "028-2.png"
+    },
+    "463-1.png": {
+      "name": "Rubati",
+      "sheet": 1,
+      "row": 174,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rubati_-_Shala_-_Tashmitum",
+      "matchedReference": "Shala",
+      "matchedSprite": "463-2.png"
+    },
+    "463-2.png": {
+      "name": "Shala",
+      "sheet": 1,
+      "row": 175,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rubati_-_Shala_-_Tashmitum",
+      "matchedReference": "Shala",
+      "matchedSprite": "463-2.png"
+    },
+    "463-3.png": {
+      "name": "Tashmitum",
+      "sheet": 2,
+      "row": 152,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tashmitum",
+      "matchedSprite": "463-3.png"
+    },
+    "475-1.png": {
+      "name": "Sargon",
+      "sheet": 1,
+      "row": 177,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sargon_-_Seluku_-_Shu-Turul",
+      "matchedReference": "Seluku",
+      "matchedSprite": "475-2.png"
+    },
+    "475-2.png": {
+      "name": "Seluku",
+      "sheet": 1,
+      "row": 178,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sargon_-_Seluku_-_Shu-Turul",
+      "matchedReference": "Seluku",
+      "matchedSprite": "475-2.png"
+    },
+    "475-3.png": {
+      "name": "Shu-Turul",
+      "sheet": 2,
+      "row": 155,
+      "link": "http://defenderoftexel.wikia.com/wiki/Shu-Turul",
+      "matchedSprite": "475-3.png"
+    },
+    "014-1.png": {
+      "name": "Agu",
+      "sheet": 1,
+      "row": 180,
+      "link": "http://defenderoftexel.wikia.com/wiki/Agu_-_Ilgi_-_Namtar",
+      "matchedReference": "Ilgi",
+      "matchedSprite": "014-1.png"
+    },
+    "014-2.png": {
+      "name": "Ilgi",
+      "sheet": 1,
+      "row": 181,
+      "link": "http://defenderoftexel.wikia.com/wiki/Agu_-_Ilgi_-_Namtar",
+      "matchedReference": "Ilgi",
+      "matchedSprite": "014-1.png"
+    },
+    "014-3.png": {
+      "name": "Namtar",
+      "sheet": 1,
+      "row": 182,
+      "link": "http://defenderoftexel.wikia.com/wiki/Namtar",
+      "matchedSprite": "014-3.png"
+    },
+    "185-3.png": {
+      "name": "Aescalina",
+      "sheet": 1,
+      "row": 194,
+      "link": "http://defenderoftexel.wikia.com/wiki/Aescalina",
+      "matchedSprite": "185-3.png"
+    },
+    "162-3.png": {
+      "name": "Aestasia Inferna",
+      "sheet": 1,
+      "row": 195,
+      "link": "http://defenderoftexel.wikia.com/wiki/Aestasia_Inferna",
+      "matchedSprite": "162-3.png"
+    },
+    "154-1.png": {
+      "name": "Dwiggy",
+      "sheet": 1,
+      "row": 198,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dwiggy_-_Sphagnus_-_Entodon",
+      "matchedReference": "Entodon",
+      "matchedSprite": "154-3.png"
+    },
+    "154-2.png": {
+      "name": "Sphagnus",
+      "sheet": 1,
+      "row": 199,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dwiggy_-_Sphagnus_-_Entodon",
+      "matchedReference": "Entodon",
+      "matchedSprite": "154-3.png"
+    },
+    "154-3.png": {
+      "name": "Entodon",
+      "sheet": 1,
+      "row": 200,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dwiggy_-_Sphagnus_-_Entodon",
+      "matchedReference": "Entodon",
+      "matchedSprite": "154-3.png"
+    },
+    "598-1.png": {
+      "name": "Yinyin",
+      "sheet": 1,
+      "row": 216,
+      "link": "http://defenderoftexel.wikia.com/wiki/Yinyin_-_Aisa_-_Liodys",
+      "matchedReference": "Liodys",
+      "matchedSprite": "598-3.png"
+    },
+    "598-2.png": {
+      "name": "Aisa",
+      "sheet": 1,
+      "row": 217,
+      "link": "http://defenderoftexel.wikia.com/wiki/Yinyin_-_Aisa_-_Liodys",
+      "matchedReference": "Liodys",
+      "matchedSprite": "598-3.png"
+    },
+    "598-3.png": {
+      "name": "Liodys",
+      "sheet": 1,
+      "row": 218,
+      "link": "http://defenderoftexel.wikia.com/wiki/Yinyin_-_Aisa_-_Liodys",
+      "matchedReference": "Liodys",
+      "matchedSprite": "598-3.png"
+    },
+    "093-1.png": {
+      "name": "Bludruz",
+      "sheet": 1,
+      "row": 219,
+      "link": "http://defenderoftexel.wikia.com/wiki/Bludruz_-_Sughilo_-_Charok",
+      "matchedReference": "Charok",
+      "matchedSprite": "093-3.png"
+    },
+    "093-2.png": {
+      "name": "Sughilo",
+      "sheet": 1,
+      "row": 220,
+      "link": "http://defenderoftexel.wikia.com/wiki/Bludruz_-_Sughilo_-_Charok",
+      "matchedReference": "Charok",
+      "matchedSprite": "093-3.png"
+    },
+    "093-3.png": {
+      "name": "Charok",
+      "sheet": 1,
+      "row": 221,
+      "link": "http://defenderoftexel.wikia.com/wiki/Bludruz_-_Sughilo_-_Charok",
+      "matchedReference": "Charok",
+      "matchedSprite": "093-3.png"
+    },
+    "100-1.png": {
+      "name": "Breotan",
+      "sheet": 1,
+      "row": 222,
+      "link": "http://defenderoftexel.wikia.com/wiki/Breotan_-_Spliddle_-_Ooberteub",
+      "matchedReference": "Oobereub",
+      "matchedSprite": "100-3.png"
+    },
+    "100-2.png": {
+      "name": "Spliddle",
+      "sheet": 1,
+      "row": 224,
+      "link": "http://defenderoftexel.wikia.com/wiki/Breotan_-_Spliddle_-_Ooberteub",
+      "matchedReference": "Oobereub",
+      "matchedSprite": "100-3.png"
+    },
+    "100-3.png": {
+      "name": "Ooberteub",
+      "sheet": 1,
+      "row": 224,
+      "link": "http://defenderoftexel.wikia.com/wiki/Breotan_-_Spliddle_-_Ooberteub",
+      "matchedReference": "Oobereub",
+      "matchedSprite": "100-3.png"
+    },
+    "424-1.png": {
+      "name": "Pelznikel",
+      "sheet": 1,
+      "row": 227,
+      "link": "http://defenderoftexel.wikia.com/wiki/Pelznikel_-_Snorri_-_Jolfaor_Greenman",
+      "matchedReference": "Greenman",
+      "matchedSprite": "424-2.png"
+    },
+    "424-2.png": {
+      "name": "Snorri",
+      "sheet": 1,
+      "row": 226,
+      "link": "http://defenderoftexel.wikia.com/wiki/Pelznikel_-_Snorri_-_Jolfaor_Greenman",
+      "matchedReference": "Greenman",
+      "matchedSprite": "424-2.png"
+    },
+    "424-3.png": {
+      "name": "Jolfaor Greenman",
+      "sheet": 1,
+      "row": 227,
+      "link": "http://defenderoftexel.wikia.com/wiki/Pelznikel_-_Snorri_-_Jolfaor_Greenman",
+      "matchedReference": "Greenman",
+      "matchedSprite": "424-2.png"
+    },
+    "365-1.png": {
+      "name": "Murina",
+      "sheet": 1,
+      "row": 228,
+      "link": "http://defenderoftexel.wikia.com/wiki/Murina_-_Suvin_-_Magin",
+      "matchedReference": "Magin",
+      "matchedSprite": "365-3.png"
+    },
+    "365-2.png": {
+      "name": "Suvin",
+      "sheet": 1,
+      "row": 229,
+      "link": "http://defenderoftexel.wikia.com/wiki/Murina_-_Suvin_-_Magin",
+      "matchedReference": "Magin",
+      "matchedSprite": "365-3.png"
+    },
+    "365-3.png": {
+      "name": "Magin",
+      "sheet": 1,
+      "row": 230,
+      "link": "http://defenderoftexel.wikia.com/wiki/Murina_-_Suvin_-_Magin",
+      "matchedReference": "Magin",
+      "matchedSprite": "365-3.png"
+    },
+    "321-1.png": {
+      "name": "Lou-Izza",
+      "sheet": 1,
+      "row": 231,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lou-Izza_-_Godey_-_Austinius",
+      "matchedReference": "Austinius",
+      "matchedSprite": "321-2.png"
+    },
+    "321-2.png": {
+      "name": "Godey",
+      "sheet": 1,
+      "row": 232,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lou-Izza_-_Godey_-_Austinius",
+      "matchedReference": "Austinius",
+      "matchedSprite": "321-2.png"
+    },
+    "321-3.png": {
+      "name": "Austinius",
+      "sheet": 1,
+      "row": 233,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lou-Izza_-_Godey_-_Austinius",
+      "matchedReference": "Austinius",
+      "matchedSprite": "321-2.png"
+    },
+    "333-1.png": {
+      "name": "Maslu",
+      "sheet": 1,
+      "row": 234,
+      "link": "http://defenderoftexel.wikia.com/wiki/Maslu_-_Senbar_-_Lulim-Nisig",
+      "matchedReference": "Lulim-Nisig",
+      "matchedSprite": "333-2.png"
+    },
+    "333-2.png": {
+      "name": "Senbar",
+      "sheet": 1,
+      "row": 235,
+      "link": "http://defenderoftexel.wikia.com/wiki/Maslu_-_Senbar_-_Lulim-Nisig",
+      "matchedReference": "Lulim-Nisig",
+      "matchedSprite": "333-2.png"
+    },
+    "333-3.png": {
+      "name": "Lulim-Nisig",
+      "sheet": 1,
+      "row": 236,
+      "link": "http://defenderoftexel.wikia.com/wiki/Maslu_-_Senbar_-_Lulim-Nisig",
+      "matchedReference": "Lulim-Nisig",
+      "matchedSprite": "333-2.png"
+    },
+    "290-1.png": {
+      "name": "Kris",
+      "sheet": 1,
+      "row": 237,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kris_-_Nikolaos_-_Zinniklos",
+      "matchedReference": "Zinniklos",
+      "matchedSprite": "290-1.png"
+    },
+    "290-2.png": {
+      "name": "Nikolaos",
+      "sheet": 1,
+      "row": 238,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kris_-_Nikolaos_-_Zinniklos",
+      "matchedReference": "Zinniklos",
+      "matchedSprite": "290-1.png"
+    },
+    "290-3.png": {
+      "name": "Zinniklos",
+      "sheet": 1,
+      "row": 239,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kris_-_Nikolaos_-_Zinniklos",
+      "matchedReference": "Zinniklos",
+      "matchedSprite": "290-1.png"
+    },
+    "204-1.png": {
+      "name": "???",
+      "sheet": 1,
+      "row": 242,
+      "link": "http://defenderoftexel.wikia.com/wiki/%3F%3F%3F_-_Suguguud_-_%3F%3F%3F",
+      "matchedReference": "Eme-Gilimma",
+      "matchedSprite": "204-2.png"
+    },
+    "204-2.png": {
+      "name": "Suguguud",
+      "sheet": 1,
+      "row": 241,
+      "link": "http://defenderoftexel.wikia.com/wiki/%3F%3F%3F_-_Suguguud_-_%3F%3F%3F",
+      "matchedReference": "Eme-Gilimma",
+      "matchedSprite": "204-2.png"
+    },
+    "204-3.png": {
+      "name": "???",
+      "sheet": 1,
+      "row": 242,
+      "link": "http://defenderoftexel.wikia.com/wiki/%3F%3F%3F_-_Suguguud_-_%3F%3F%3F",
+      "matchedReference": "Eme-Gilimma",
+      "matchedSprite": "204-2.png"
+    },
+    "548-1.png": {
+      "name": "Titus",
+      "sheet": 1,
+      "row": 243,
+      "link": "http://defenderoftexel.wikia.com/wiki/Titus_-_Aengus_-_Konan",
+      "matchedReference": "Konan",
+      "matchedSprite": "548-2.png"
+    },
+    "548-2.png": {
+      "name": "Aengus",
+      "sheet": 1,
+      "row": 244,
+      "link": "http://defenderoftexel.wikia.com/wiki/Titus_-_Aengus_-_Konan",
+      "matchedReference": "Konan",
+      "matchedSprite": "548-2.png"
+    },
+    "548-3.png": {
+      "name": "Konan",
+      "sheet": 1,
+      "row": 245,
+      "link": "http://defenderoftexel.wikia.com/wiki/Titus_-_Aengus_-_Konan",
+      "matchedReference": "Konan",
+      "matchedSprite": "548-2.png"
+    },
+    "261-1.png": {
+      "name": "Iv",
+      "sheet": 1,
+      "row": 246,
+      "link": "http://defenderoftexel.wikia.com/wiki/Iv_-_Sibert_-_Saxan",
+      "matchedReference": "Saxan",
+      "matchedSprite": "261-2.png"
+    },
+    "261-2.png": {
+      "name": "Sibert",
+      "sheet": 1,
+      "row": 247,
+      "link": "http://defenderoftexel.wikia.com/wiki/Iv_-_Sibert_-_Saxan",
+      "matchedReference": "Saxan",
+      "matchedSprite": "261-2.png"
+    },
+    "261-3.png": {
+      "name": "Saxan",
+      "sheet": 1,
+      "row": 248,
+      "link": "http://defenderoftexel.wikia.com/wiki/Iv_-_Sibert_-_Saxan",
+      "matchedReference": "Saxan",
+      "matchedSprite": "261-2.png"
+    },
+    "440-1.png": {
+      "name": "Qaton",
+      "sheet": 1,
+      "row": 249,
+      "link": "http://defenderoftexel.wikia.com/wiki/Qaton_-_Sirhitu_-_Esemtu-Ezzu",
+      "matchedReference": "Esemtu-Ezzu",
+      "matchedSprite": "440-3.png"
+    },
+    "440-2.png": {
+      "name": "Sirhitu",
+      "sheet": 1,
+      "row": 250,
+      "link": "http://defenderoftexel.wikia.com/wiki/Qaton_-_Sirhitu_-_Esemtu-Ezzu",
+      "matchedReference": "Esemtu-Ezzu",
+      "matchedSprite": "440-3.png"
+    },
+    "440-3.png": {
+      "name": "Esemtu-Ezzu",
+      "sheet": 1,
+      "row": 251,
+      "link": "http://defenderoftexel.wikia.com/wiki/Qaton_-_Sirhitu_-_Esemtu-Ezzu",
+      "matchedReference": "Esemtu-Ezzu",
+      "matchedSprite": "440-3.png"
+    },
+    "304-1.png": {
+      "name": "Lasam",
+      "sheet": 1,
+      "row": 252,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lasam_-_Halaquin_-_Nabalkutu",
+      "matchedReference": "Nabalkutu",
+      "matchedSprite": "304-1.png"
+    },
+    "304-2.png": {
+      "name": "Halaquin",
+      "sheet": 1,
+      "row": 253,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lasam_-_Halaquin_-_Nabalkutu",
+      "matchedReference": "Nabalkutu",
+      "matchedSprite": "304-1.png"
+    },
+    "304-3.png": {
+      "name": "Nabalkutu",
+      "sheet": 1,
+      "row": 254,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lasam_-_Halaquin_-_Nabalkutu",
+      "matchedReference": "Nabalkutu",
+      "matchedSprite": "304-1.png"
+    },
+    "438-1.png": {
+      "name": "Putu",
+      "sheet": 1,
+      "row": 255,
+      "link": "http://defenderoftexel.wikia.com/wiki/Putu_-_Muhhu_-_Qaqqadu",
+      "matchedReference": "Qaqqadu",
+      "matchedSprite": "438-3.png"
+    },
+    "438-2.png": {
+      "name": "Muhhu",
+      "sheet": 1,
+      "row": 256,
+      "link": "http://defenderoftexel.wikia.com/wiki/Putu_-_Muhhu_-_Qaqqadu",
+      "matchedReference": "Qaqqadu",
+      "matchedSprite": "438-3.png"
+    },
+    "438-3.png": {
+      "name": "Qaqqadu",
+      "sheet": 1,
+      "row": 257,
+      "link": "http://defenderoftexel.wikia.com/wiki/Putu_-_Muhhu_-_Qaqqadu",
+      "matchedReference": "Qaqqadu",
+      "matchedSprite": "438-3.png"
+    },
+    "289-1.png": {
+      "name": "Kotiata",
+      "sheet": 1,
+      "row": 258,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kotiata_-_Dicotella_-_Mendruta",
+      "matchedReference": "Mendruta",
+      "matchedSprite": "289-3.png"
+    },
+    "289-2.png": {
+      "name": "Dicotella",
+      "sheet": 1,
+      "row": 259,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kotiata_-_Dicotella_-_Mendruta",
+      "matchedReference": "Mendruta",
+      "matchedSprite": "289-3.png"
+    },
+    "289-3.png": {
+      "name": "Mendruta",
+      "sheet": 1,
+      "row": 260,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kotiata_-_Dicotella_-_Mendruta",
+      "matchedReference": "Mendruta",
+      "matchedSprite": "289-3.png"
+    },
+    "607-1.png": {
+      "name": "Zroyia",
+      "sheet": 1,
+      "row": 261,
+      "link": "http://defenderoftexel.wikia.com/wiki/Zroyia_-_Aghasa_-_Quabelona",
+      "matchedReference": "Quabelona",
+      "matchedSprite": "607-3.png"
+    },
+    "607-2.png": {
+      "name": "Aghasa",
+      "sheet": 1,
+      "row": 262,
+      "link": "http://defenderoftexel.wikia.com/wiki/Zroyia_-_Aghasa_-_Quabelona",
+      "matchedReference": "Quabelona",
+      "matchedSprite": "607-3.png"
+    },
+    "607-3.png": {
+      "name": "Quabelona",
+      "sheet": 1,
+      "row": 263,
+      "link": "http://defenderoftexel.wikia.com/wiki/Zroyia_-_Aghasa_-_Quabelona",
+      "matchedReference": "Quabelona",
+      "matchedSprite": "607-3.png"
+    },
+    "349-1.png": {
+      "name": "Mizutto",
+      "sheet": 1,
+      "row": 264,
+      "link": "http://defenderoftexel.wikia.com/wiki/Mizutto_-_Pelagrand_-_Wasserdief",
+      "matchedReference": "Wasserdief",
+      "matchedSprite": "349-1.png"
+    },
+    "349-2.png": {
+      "name": "Pelagrand",
+      "sheet": 1,
+      "row": 265,
+      "link": "http://defenderoftexel.wikia.com/wiki/Mizutto_-_Pelagrand_-_Wasserdief",
+      "matchedReference": "Wasserdief",
+      "matchedSprite": "349-1.png"
+    },
+    "349-3.png": {
+      "name": "Wasserdief",
+      "sheet": 1,
+      "row": 266,
+      "link": "http://defenderoftexel.wikia.com/wiki/Mizutto_-_Pelagrand_-_Wasserdief",
+      "matchedReference": "Wasserdief",
+      "matchedSprite": "349-1.png"
+    },
+    "604-1.png": {
+      "name": "Zib",
+      "sheet": 1,
+      "row": 270,
+      "link": "http://defenderoftexel.wikia.com/wiki/Zib_-_Gunu_-_Imhamun",
+      "matchedReference": "Imhamun",
+      "matchedSprite": "604-3.png"
+    },
+    "604-2.png": {
+      "name": "Gunu",
+      "sheet": 1,
+      "row": 271,
+      "link": "http://defenderoftexel.wikia.com/wiki/Zib_-_Gunu_-_Imhamun",
+      "matchedReference": "Imhamun",
+      "matchedSprite": "604-3.png"
+    },
+    "604-3.png": {
+      "name": "Imhamun",
+      "sheet": 1,
+      "row": 272,
+      "link": "http://defenderoftexel.wikia.com/wiki/Zib_-_Gunu_-_Imhamun",
+      "matchedReference": "Imhamun",
+      "matchedSprite": "604-3.png"
+    },
+    "485-1.png": {
+      "name": "Semapo",
+      "sheet": 1,
+      "row": 273,
+      "link": "http://defenderoftexel.wikia.com/wiki/Semapo_-_Deimathias_-_Agamidablo",
+      "matchedReference": "Agamidablo",
+      "matchedSprite": "485-1.png"
+    },
+    "485-2.png": {
+      "name": "Deimathias",
+      "sheet": 1,
+      "row": 274,
+      "link": "http://defenderoftexel.wikia.com/wiki/Semapo_-_Deimathias_-_Agamidablo",
+      "matchedReference": "Agamidablo",
+      "matchedSprite": "485-1.png"
+    },
+    "485-3.png": {
+      "name": "Agamidablo",
+      "sheet": 1,
+      "row": 275,
+      "link": "http://defenderoftexel.wikia.com/wiki/Semapo_-_Deimathias_-_Agamidablo",
+      "matchedReference": "Agamidablo",
+      "matchedSprite": "485-1.png"
+    },
+    "278-1.png": {
+      "name": "Kelara",
+      "sheet": 1,
+      "row": 276,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kelara_-_Deagan_-_Hudjam",
+      "matchedReference": "Hudjam",
+      "matchedSprite": "278-1.png"
+    },
+    "278-2.png": {
+      "name": "Deagan",
+      "sheet": 1,
+      "row": 277,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kelara_-_Deagan_-_Hudjam",
+      "matchedReference": "Hudjam",
+      "matchedSprite": "278-1.png"
+    },
+    "278-3.png": {
+      "name": "Hudjam",
+      "sheet": 1,
+      "row": 278,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kelara_-_Deagan_-_Hudjam",
+      "matchedReference": "Hudjam",
+      "matchedSprite": "278-1.png"
+    },
+    "232-1.png": {
+      "name": "Hoorn-Ving",
+      "sheet": 1,
+      "row": 279,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hoorn-Ving_-_Zwa-Grot_-_Gou-Vlag",
+      "matchedReference": "Gou-Vlag",
+      "matchedSprite": "232-3.png"
+    },
+    "232-2.png": {
+      "name": "Zwa-Grot",
+      "sheet": 1,
+      "row": 280,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hoorn-Ving_-_Zwa-Grot_-_Gou-Vlag",
+      "matchedReference": "Gou-Vlag",
+      "matchedSprite": "232-3.png"
+    },
+    "232-3.png": {
+      "name": "Gou-Vlag",
+      "sheet": 1,
+      "row": 281,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hoorn-Ving_-_Zwa-Grot_-_Gou-Vlag",
+      "matchedReference": "Gou-Vlag",
+      "matchedSprite": "232-3.png"
+    },
+    "286-1.png": {
+      "name": "Kohmoo",
+      "sheet": 1,
+      "row": 282,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kohmoo_-_Puhshi_-_Suyzin",
+      "matchedReference": "Suyzin",
+      "matchedSprite": "286-1.png"
+    },
+    "286-2.png": {
+      "name": "Puhshi",
+      "sheet": 1,
+      "row": 283,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kohmoo_-_Puhshi_-_Suyzin",
+      "matchedReference": "Suyzin",
+      "matchedSprite": "286-1.png"
+    },
+    "286-3.png": {
+      "name": "Suyzin",
+      "sheet": 1,
+      "row": 284,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kohmoo_-_Puhshi_-_Suyzin",
+      "matchedReference": "Suyzin",
+      "matchedSprite": "286-1.png"
+    },
+    "306-1.png": {
+      "name": "Leekan",
+      "sheet": 1,
+      "row": 285,
+      "link": "http://defenderoftexel.wikia.com/wiki/Leekan_-_Fancha_-_Tchanki",
+      "matchedReference": "Tchanki",
+      "matchedSprite": "306-2.png"
+    },
+    "306-2.png": {
+      "name": "Fancha",
+      "sheet": 1,
+      "row": 286,
+      "link": "http://defenderoftexel.wikia.com/wiki/Leekan_-_Fancha_-_Tchanki",
+      "matchedReference": "Tchanki",
+      "matchedSprite": "306-2.png"
+    },
+    "306-3.png": {
+      "name": "Tchanki",
+      "sheet": 1,
+      "row": 287,
+      "link": "http://defenderoftexel.wikia.com/wiki/Leekan_-_Fancha_-_Tchanki",
+      "matchedReference": "Tchanki",
+      "matchedSprite": "306-2.png"
+    },
+    "452-1.png": {
+      "name": "Rhusvaru",
+      "sheet": 1,
+      "row": 288,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rhusvaru_-_Sindoran_-_Kinnabari",
+      "matchedReference": "Kinnabari",
+      "matchedSprite": "452-3.png"
+    },
+    "452-2.png": {
+      "name": "Sindoran",
+      "sheet": 1,
+      "row": 289,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rhusvaru_-_Sindoran_-_Kinnabari",
+      "matchedReference": "Kinnabari",
+      "matchedSprite": "452-3.png"
+    },
+    "452-3.png": {
+      "name": "Kinnabari",
+      "sheet": 1,
+      "row": 290,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rhusvaru_-_Sindoran_-_Kinnabari",
+      "matchedReference": "Kinnabari",
+      "matchedSprite": "452-3.png"
+    },
+    "170-1.png": {
+      "name": "Erlene",
+      "sheet": 1,
+      "row": 291,
+      "link": "http://defenderoftexel.wikia.com/wiki/Erlene_-_Queenie_-_Lilla_Redlace",
+      "matchedReference": "Lilla Redlace",
+      "matchedSprite": "170-2.png"
+    },
+    "170-2.png": {
+      "name": "Queenie",
+      "sheet": 1,
+      "row": 292,
+      "link": "http://defenderoftexel.wikia.com/wiki/Erlene_-_Queenie_-_Lilla_Redlace",
+      "matchedReference": "Lilla Redlace",
+      "matchedSprite": "170-2.png"
+    },
+    "170-3.png": {
+      "name": "Lilla Redlace",
+      "sheet": 1,
+      "row": 293,
+      "link": "http://defenderoftexel.wikia.com/wiki/Erlene_-_Queenie_-_Lilla_Redlace",
+      "matchedReference": "Lilla Redlace",
+      "matchedSprite": "170-2.png"
+    },
+    "226-1.png": {
+      "name": "Hnoss",
+      "sheet": 1,
+      "row": 294,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hnoss_-_Gersemi_-_Mistress_of_Seith",
+      "matchedReference": "Mistress of Seith",
+      "matchedSprite": "226-3.png"
+    },
+    "226-2.png": {
+      "name": "Gersemi",
+      "sheet": 1,
+      "row": 295,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hnoss_-_Gersemi_-_Mistress_of_Seith",
+      "matchedReference": "Mistress of Seith",
+      "matchedSprite": "226-3.png"
+    },
+    "226-3.png": {
+      "name": "Mistress of Seith",
+      "sheet": 1,
+      "row": 296,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hnoss_-_Gersemi_-_Mistress_of_Seith",
+      "matchedReference": "Mistress of Seith",
+      "matchedSprite": "226-3.png"
+    },
+    "074-1.png": {
+      "name": "Bankam",
+      "sheet": 1,
+      "row": 297,
+      "link": "http://defenderoftexel.wikia.com/wiki/Bankam_-_Llist_-_Tippitch",
+      "matchedReference": "Tippitch",
+      "matchedSprite": "074-3.png"
+    },
+    "074-2.png": {
+      "name": "Llist",
+      "sheet": 1,
+      "row": 298,
+      "link": "http://defenderoftexel.wikia.com/wiki/Bankam_-_Llist_-_Tippitch",
+      "matchedReference": "Tippitch",
+      "matchedSprite": "074-3.png"
+    },
+    "074-3.png": {
+      "name": "Tippitch",
+      "sheet": 1,
+      "row": 299,
+      "link": "http://defenderoftexel.wikia.com/wiki/Bankam_-_Llist_-_Tippitch",
+      "matchedReference": "Tippitch",
+      "matchedSprite": "074-3.png"
+    },
+    "441-1.png": {
+      "name": "Quippaj",
+      "sheet": 1,
+      "row": 300,
+      "link": "http://defenderoftexel.wikia.com/wiki/Quippaj_-_Sally-San_-_Grimaaldi",
+      "matchedReference": "Grimaaldi",
+      "matchedSprite": "441-3.png"
+    },
+    "441-2.png": {
+      "name": "Sally-San",
+      "sheet": 1,
+      "row": 301,
+      "link": "http://defenderoftexel.wikia.com/wiki/Quippaj_-_Sally-San_-_Grimaaldi",
+      "matchedReference": "Grimaaldi",
+      "matchedSprite": "441-3.png"
+    },
+    "441-3.png": {
+      "name": "Grimaaldi",
+      "sheet": 1,
+      "row": 302,
+      "link": "http://defenderoftexel.wikia.com/wiki/Quippaj_-_Sally-San_-_Grimaaldi",
+      "matchedReference": "Grimaaldi",
+      "matchedSprite": "441-3.png"
+    },
+    "516-2.png": {
+      "name": "Akhebina",
+      "sheet": 1,
+      "row": 304,
+      "link": "http://defenderoftexel.wikia.com/wiki/Akhebina",
+      "matchedSprite": "516-2.png"
+    },
+    "539-3.png": {
+      "name": "Akkad Awakened",
+      "sheet": 1,
+      "row": 307,
+      "link": "http://defenderoftexel.wikia.com/wiki/Akkad_Awakened",
+      "matchedSprite": "539-3.png"
+    },
+    "528-2.png": {
+      "name": "Antheia All-fair",
+      "sheet": 1,
+      "row": 317,
+      "link": "http://defenderoftexel.wikia.com/wiki/Antheia_All-fair",
+      "matchedSprite": "528-2.png"
+    },
+    "584-1.png": {
+      "name": "Wardu",
+      "sheet": 1,
+      "row": 721,
+      "link": "http://defenderoftexel.wikia.com/wiki/Wardu_-_Magaru_-_Apputtu",
+      "matchedReference": "Wardu",
+      "matchedSprite": "584-1.png"
+    },
+    "584-2.png": {
+      "name": "Magaru",
+      "sheet": 1,
+      "row": 539,
+      "link": "http://defenderoftexel.wikia.com/wiki/Wardu_-_Magaru_-_Apputtu",
+      "matchedReference": "Wardu",
+      "matchedSprite": "584-1.png"
+    },
+    "584-3.png": {
+      "name": "Apputtu",
+      "sheet": 1,
+      "row": 319,
+      "link": "http://defenderoftexel.wikia.com/wiki/Wardu_-_Magaru_-_Apputtu",
+      "matchedReference": "Wardu",
+      "matchedSprite": "584-1.png"
+    },
+    "205-2.png": {
+      "name": "Aprilvis",
+      "sheet": 1,
+      "row": 320,
+      "link": "http://defenderoftexel.wikia.com/wiki/Aprilvis",
+      "matchedSprite": "205-2.png"
+    },
+    "190-2.png": {
+      "name": "Aquarius",
+      "sheet": 1,
+      "row": 321,
+      "link": "http://defenderoftexel.wikia.com/wiki/Aquarius",
+      "matchedSprite": "190-2.png"
+    },
+    "044-1.png": {
+      "name": "Ares Dreadsire",
+      "sheet": 1,
+      "row": 326,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ares_Dreadsire",
+      "matchedSprite": "044-1.png"
+    },
+    "142-3.png": {
+      "name": "Askoreia",
+      "sheet": 1,
+      "row": 333,
+      "link": "http://defenderoftexel.wikia.com/wiki/Askoreia",
+      "matchedSprite": "142-3.png"
+    },
+    "291-3.png": {
+      "name": "Asteriskos",
+      "sheet": 1,
+      "row": 336,
+      "link": "http://defenderoftexel.wikia.com/wiki/Asteriskos",
+      "matchedSprite": "291-3.png"
+    },
+    "055-1.png": {
+      "name": "Atalanta Unfettered",
+      "sheet": 1,
+      "row": 338,
+      "link": "http://defenderoftexel.wikia.com/wiki/Atalanta_Unfettered",
+      "matchedSprite": "055-1.png"
+    },
+    "371-1.png": {
+      "name": "Atirib",
+      "sheet": 1,
+      "row": 341,
+      "link": "http://defenderoftexel.wikia.com/wiki/Atirib",
+      "matchedSprite": "371-1.png"
+    },
+    "101-3.png": {
+      "name": "Aurikhal",
+      "sheet": 1,
+      "row": 345,
+      "link": "http://defenderoftexel.wikia.com/wiki/Aurikhal",
+      "matchedSprite": "101-3.png"
+    },
+    "404-3.png": {
+      "name": "Aurumetti",
+      "sheet": 1,
+      "row": 346,
+      "link": "http://defenderoftexel.wikia.com/wiki/Aurumetti",
+      "matchedSprite": "404-3.png"
+    },
+    "158-3.png": {
+      "name": "Baarthok",
+      "sheet": 1,
+      "row": 349,
+      "link": "http://defenderoftexel.wikia.com/wiki/Baarthok",
+      "matchedSprite": "158-3.png"
+    },
+    "069-3.png": {
+      "name": "Basqunk",
+      "sheet": 1,
+      "row": 352,
+      "link": "http://defenderoftexel.wikia.com/wiki/Basqunk",
+      "matchedSprite": "069-3.png"
+    },
+    "369-3.png": {
+      "name": "Beltayne",
+      "sheet": 1,
+      "row": 356,
+      "link": "http://defenderoftexel.wikia.com/wiki/Beltayne",
+      "matchedSprite": "369-3.png"
+    },
+    "083-3.png": {
+      "name": "Beowulf Wyrmbane",
+      "sheet": 1,
+      "row": 358,
+      "link": "http://defenderoftexel.wikia.com/wiki/Beowulf_Wyrmbane",
+      "matchedSprite": "083-3.png"
+    },
+    "361-3.png": {
+      "name": "Blaster Benny",
+      "sheet": 1,
+      "row": 362,
+      "link": "http://defenderoftexel.wikia.com/wiki/Blaster_Benny",
+      "matchedSprite": "361-3.png"
+    },
+    "189-3.png": {
+      "name": "Bombazhin",
+      "sheet": 1,
+      "row": 365,
+      "link": "http://defenderoftexel.wikia.com/wiki/Bombazhin",
+      "matchedSprite": "189-3.png"
+    },
+    "257-3.png": {
+      "name": "Cantaranc",
+      "sheet": 1,
+      "row": 371,
+      "link": "http://defenderoftexel.wikia.com/wiki/Cantaranc",
+      "matchedSprite": "257-3.png"
+    },
+    "229-3.png": {
+      "name": "Conifenius",
+      "sheet": 1,
+      "row": 378,
+      "link": "http://defenderoftexel.wikia.com/wiki/Conifenius",
+      "matchedSprite": "229-3.png"
+    },
+    "111-3.png": {
+      "name": "Consoleda",
+      "sheet": 1,
+      "row": 379,
+      "link": "http://defenderoftexel.wikia.com/wiki/Consoleda",
+      "matchedSprite": "111-3.png"
+    },
+    "601-2.png": {
+      "name": "Darya",
+      "sheet": 1,
+      "row": 382,
+      "link": "http://defenderoftexel.wikia.com/wikiDarya",
+      "matchedSprite": "601-2.png"
+    },
+    "215-3.png": {
+      "name": "Dee'qiteesu",
+      "sheet": 1,
+      "row": 384,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dee'qiteesu",
+      "matchedSprite": "215-3.png"
+    },
+    "305-3.png": {
+      "name": "Dinupula",
+      "sheet": 1,
+      "row": 386,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dinupula",
+      "matchedSprite": "305-3.png"
+    },
+    "431-3.png": {
+      "name": "Dioskouri",
+      "sheet": 1,
+      "row": 387,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dioskouri",
+      "matchedSprite": "431-3.png"
+    },
+    "518-3.png": {
+      "name": "Dreamseer",
+      "sheet": 1,
+      "row": 391,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dreamseer",
+      "matchedSprite": "518-3.png"
+    },
+    "376-2.png": {
+      "name": "Druaga",
+      "sheet": 1,
+      "row": 392,
+      "link": "http://defenderoftexel.wikia.com/wiki/Druaga",
+      "matchedSprite": "376-2.png"
+    },
+    "432-2.png": {
+      "name": "Eirweard",
+      "sheet": 1,
+      "row": 397,
+      "link": "http://defenderoftexel.wikia.com/wiki/Eirweard",
+      "matchedSprite": "432-2.png"
+    },
+    "161-3.png": {
+      "name": "Elelu",
+      "sheet": 1,
+      "row": 398,
+      "link": "http://defenderoftexel.wikia.com/wiki/Elelu",
+      "matchedSprite": "161-3.png"
+    },
+    "013-2.png": {
+      "name": "Elulu",
+      "sheet": 1,
+      "row": 401,
+      "link": "http://defenderoftexel.wikia.com/wiki/Elulu",
+      "matchedSprite": "013-2.png"
+    },
+    "569-2.png": {
+      "name": "Enmesarra",
+      "sheet": 1,
+      "row": 405,
+      "link": "http://defenderoftexel.wikia.com/wiki/Enmesarra",
+      "matchedSprite": "569-2.png"
+    },
+    "287-3.png": {
+      "name": "Erascus",
+      "sheet": 1,
+      "row": 408,
+      "link": "http://defenderoftexel.wikia.com/wiki/Erascus",
+      "matchedSprite": "287-3.png"
+    },
+    "433-3.png": {
+      "name": "Eurymedon",
+      "sheet": 1,
+      "row": 412,
+      "link": "http://defenderoftexel.wikia.com/wiki/Eurymedon",
+      "matchedSprite": "433-3.png"
+    },
+    "227-3.png": {
+      "name": "Evreux",
+      "sheet": 1,
+      "row": 419,
+      "link": "http://defenderoftexel.wikia.com/wiki/Evreux",
+      "matchedSprite": "227-3.png"
+    },
+    "191-2.png": {
+      "name": "Flauntenblom",
+      "sheet": 1,
+      "row": 426,
+      "link": "http://defenderoftexel.wikia.com/wiki/Flauntenblom",
+      "matchedSprite": "191-2.png"
+    },
+    "573-2.png": {
+      "name": "Freyja",
+      "sheet": 1,
+      "row": 430,
+      "link": "http://defenderoftexel.wikia.com/wiki/Freyja",
+      "matchedSprite": "573-2.png"
+    },
+    "310-2.png": {
+      "name": "Fulminir",
+      "sheet": 1,
+      "row": 431,
+      "link": "http://defenderoftexel.wikia.com/wiki/Fulminir",
+      "matchedSprite": "310-2.png"
+    },
+    "534-2.png": {
+      "name": "Gaia Mater",
+      "sheet": 1,
+      "row": 433,
+      "link": "http://defenderoftexel.wikia.com/wiki/Gaia_Mater",
+      "matchedSprite": "534-2.png"
+    },
+    "510-3.png": {
+      "name": "Ghoncheh",
+      "sheet": 1,
+      "row": 441,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ghoncheh",
+      "matchedSprite": "510-3.png"
+    },
+    "409-3.png": {
+      "name": "Guthar",
+      "sheet": 1,
+      "row": 451,
+      "link": "http://defenderoftexel.wikia.com/wiki/Guthar",
+      "matchedSprite": "409-3.png"
+    },
+    "209-3.png": {
+      "name": "Hereward",
+      "sheet": 1,
+      "row": 456,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hereward",
+      "matchedSprite": "209-3.png"
+    },
+    "144-2.png": {
+      "name": "Hermes Wayfarer",
+      "sheet": 1,
+      "row": 457,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hermes_Wayfarer",
+      "matchedSprite": "144-2.png"
+    },
+    "396-3.png": {
+      "name": "Heyoka Takini",
+      "sheet": 1,
+      "row": 459,
+      "link": "http://defenderoftexel.wikia.com/wiki/Heyoka_Takini",
+      "matchedSprite": "396-3.png"
+    },
+    "297-2.png": {
+      "name": "Hightagel",
+      "sheet": 1,
+      "row": 462,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hightagel",
+      "matchedSprite": "297-2.png"
+    },
+    "449-2.png": {
+      "name": "Isa",
+      "sheet": 1,
+      "row": 476,
+      "link": "http://defenderoftexel.wikia.com/wiki/Isa",
+      "matchedSprite": "449-2.png"
+    },
+    "216-3.png": {
+      "name": "Izanagi Illflame",
+      "sheet": 1,
+      "row": 481,
+      "link": "http://defenderoftexel.wikia.com/wiki/Izanagi_Illflame",
+      "matchedSprite": "216-3.png"
+    },
+    "494-2.png": {
+      "name": "Izanami Everwroth",
+      "sheet": 1,
+      "row": 482,
+      "link": "http://defenderoftexel.wikia.com/wiki/Izanami_Everwroth",
+      "matchedSprite": "494-2.png"
+    },
+    "450-3.png": {
+      "name": "Jairakan",
+      "sheet": 1,
+      "row": 485,
+      "link": "http://defenderoftexel.wikia.com/wiki/Jairakan",
+      "matchedSprite": "450-3.png"
+    },
+    "084-3.png": {
+      "name": "Jambaque",
+      "sheet": 1,
+      "row": 487,
+      "link": "http://defenderoftexel.wikia.com/wiki/Jambaque",
+      "matchedSprite": "084-3.png"
+    },
+    "359-3.png": {
+      "name": "Jester Bangs",
+      "sheet": 1,
+      "row": 489,
+      "link": "http://defenderoftexel.wikia.com/wiki/Jester_Bangs",
+      "matchedSprite": "359-3.png"
+    },
+    "579-3.png": {
+      "name": "Jetsam the Jinn",
+      "sheet": 1,
+      "row": 490,
+      "link": "http://defenderoftexel.wikia.com/wiki/Jetsam_the_Jinn",
+      "matchedSprite": "579-3.png"
+    },
+    "086-2.png": {
+      "name": "Kanu",
+      "sheet": 1,
+      "row": 493,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kanu",
+      "matchedSprite": "086-2.png"
+    },
+    "458-1.png": {
+      "name": "Rosale",
+      "sheet": 1,
+      "row": 496,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rosale_-_Pilea_-_Kaverinikola",
+      "matchedReference": "Kaverinikola",
+      "matchedSprite": "458-2.png"
+    },
+    "458-2.png": {
+      "name": "Pilea",
+      "sheet": 1,
+      "row": 496,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rosale_-_Pilea_-_Kaverinikola",
+      "matchedReference": "Kaverinikola",
+      "matchedSprite": "458-2.png"
+    },
+    "458-3.png": {
+      "name": "Kaverinikola",
+      "sheet": 1,
+      "row": 496,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rosale_-_Pilea_-_Kaverinikola",
+      "matchedReference": "Kaverinikola",
+      "matchedSprite": "458-2.png"
+    },
+    "425-1.png": {
+      "name": "Kerecacpa",
+      "sheet": 1,
+      "row": 501,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kerecacpa",
+      "matchedSprite": "425-1.png"
+    },
+    "231-3.png": {
+      "name": "Khiddo",
+      "sheet": 1,
+      "row": 502,
+      "link": "http://defenderoftexel.wikia.com/wiki/Khiddo",
+      "matchedSprite": "231-3.png"
+    },
+    "079-2.png": {
+      "name": "Khodadad Bornfree",
+      "sheet": 1,
+      "row": 503,
+      "link": "http://defenderoftexel.wikia.com/wiki/Khodadad_Bornfree",
+      "matchedSprite": "079-2.png"
+    },
+    "279-3.png": {
+      "name": "Khshayarsha",
+      "sheet": 1,
+      "row": 504,
+      "link": "http://defenderoftexel.wikia.com/wiki/Khshayarsha",
+      "matchedSprite": "279-3.png"
+    },
+    "194-2.png": {
+      "name": "Kir",
+      "sheet": 1,
+      "row": 506,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kir",
+      "matchedSprite": "194-2.png"
+    },
+    "602-1.png": {
+      "name": "Krisa",
+      "sheet": 1,
+      "row": 510,
+      "link": "http://defenderoftexel.wikia.com/wiki/Krisa",
+      "matchedSprite": "602-1.png"
+    },
+    "599-3.png": {
+      "name": "Kudur",
+      "sheet": 1,
+      "row": 513,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kudur",
+      "matchedSprite": "599-3.png"
+    },
+    "122-2.png": {
+      "name": "Lamcua",
+      "sheet": 1,
+      "row": 519,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lamcua",
+      "matchedSprite": "122-2.png"
+    },
+    "411-1.png": {
+      "name": "Liddo",
+      "sheet": 1,
+      "row": 527,
+      "link": "http://defenderoftexel.wikia.com/wiki/Liddo",
+      "matchedSprite": "411-1.png"
+    },
+    "578-3.png": {
+      "name": "Lithaline",
+      "sheet": 1,
+      "row": 532,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lithaline",
+      "matchedSprite": "578-3.png"
+    },
+    "317-2.png": {
+      "name": "Loki Hellraiser",
+      "sheet": 1,
+      "row": 534,
+      "link": "http://defenderoftexel.wikia.com/wiki/Loki_Hellraiser",
+      "matchedSprite": "317-2.png"
+    },
+    "056-2.png": {
+      "name": "Maidie",
+      "sheet": 1,
+      "row": 540,
+      "link": "http://defenderoftexel.wikia.com/wiki/Maidie",
+      "matchedSprite": "056-2.png"
+    },
+    "114-2.png": {
+      "name": "Mannatar",
+      "sheet": 1,
+      "row": 545,
+      "link": "http://defenderoftexel.wikia.com/wiki/Mannatar",
+      "matchedSprite": "114-2.png"
+    },
+    "471-2.png": {
+      "name": "Maruduk",
+      "sheet": 1,
+      "row": 548,
+      "link": "http://defenderoftexel.wikia.com/wiki/Maruduk",
+      "matchedSprite": "471-2.png"
+    },
+    "566-3.png": {
+      "name": "Meroe",
+      "sheet": 1,
+      "row": 554,
+      "link": "http://defenderoftexel.wikia.com/wiki/Meroe",
+      "matchedSprite": "566-3.png"
+    },
+    "550-2.png": {
+      "name": "Moloch",
+      "sheet": 1,
+      "row": 557,
+      "link": "http://defenderoftexel.wikia.com/wiki/Moloch",
+      "matchedSprite": "550-2.png"
+    },
+    "041-3.png": {
+      "name": "Momahk",
+      "sheet": 1,
+      "row": 558,
+      "link": "http://defenderoftexel.wikia.com/wiki/Momahk",
+      "matchedSprite": "041-3.png"
+    },
+    "201-2.png": {
+      "name": "Montelepre",
+      "sheet": 1,
+      "row": 559,
+      "link": "http://defenderoftexel.wikia.com/wiki/Montelepre",
+      "matchedSprite": "201-2.png"
+    },
+    "364-1.png": {
+      "name": "Munu",
+      "sheet": 1,
+      "row": 563,
+      "link": "http://defenderoftexel.wikia.com/wiki/Munu_-_Izisoob_-_Tak-Tak",
+      "matchedReference": "Tak-Tak",
+      "matchedSprite": "364-1.png"
+    },
+    "364-2.png": {
+      "name": "Izisoob",
+      "sheet": 1,
+      "row": 484,
+      "link": "http://defenderoftexel.wikia.com/wiki/Munu_-_Izisoob_-_Tak-Tak",
+      "matchedReference": "Tak-Tak",
+      "matchedSprite": "364-1.png"
+    },
+    "364-3.png": {
+      "name": "Tak-Tak",
+      "sheet": 1,
+      "row": 670,
+      "link": "http://defenderoftexel.wikia.com/wiki/Munu_-_Izisoob_-_Tak-Tak",
+      "matchedReference": "Tak-Tak",
+      "matchedSprite": "364-1.png"
+    },
+    "373-1.png": {
+      "name": "Nabu-Belshum",
+      "sheet": 1,
+      "row": 565,
+      "link": "http://defenderoftexel.wikia.com/wiki/Nabu-Belshum",
+      "matchedSprite": "373-1.png"
+    },
+    "582-2.png": {
+      "name": "Narokken",
+      "sheet": 1,
+      "row": 570,
+      "link": "http://defenderoftexel.wikia.com/wiki/Narokken",
+      "matchedSprite": "582-2.png"
+    },
+    "233-1.png": {
+      "name": "Hoxha",
+      "sheet": 1,
+      "row": 464,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hoxha_-_Afandi_-_Nasreddin",
+      "matchedReference": "Hoxha",
+      "matchedSprite": "233-1.png"
+    },
+    "233-2.png": {
+      "name": "Afandi",
+      "sheet": 1,
+      "row": 196,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hoxha_-_Afandi_-_Nasreddin",
+      "matchedReference": "Hoxha",
+      "matchedSprite": "233-1.png"
+    },
+    "233-3.png": {
+      "name": "Nasreddin",
+      "sheet": 1,
+      "row": 571,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hoxha_-_Afandi_-_Nasreddin",
+      "matchedReference": "Hoxha",
+      "matchedSprite": "233-1.png"
+    },
+    "050-2.png": {
+      "name": "Nemenepsa",
+      "sheet": 1,
+      "row": 575,
+      "link": "http://defenderoftexel.wikia.com/wiki/Nemenepsa",
+      "matchedSprite": "050-2.png"
+    },
+    "468-3.png": {
+      "name": "Niloufar",
+      "sheet": 1,
+      "row": 581,
+      "link": "http://defenderoftexel.wikia.com/wiki/Niloufar",
+      "matchedSprite": "468-3.png"
+    },
+    "341-1.png": {
+      "name": "Nimshah",
+      "sheet": 1,
+      "row": 582,
+      "link": "http://defenderoftexel.wikia.com/Nimshah",
+      "matchedSprite": "341-1.png"
+    },
+    "005-3.png": {
+      "name": "Oneiros",
+      "sheet": 1,
+      "row": 592,
+      "link": "http://defenderoftexel.wikia.com/wiki/Oneiros",
+      "matchedSprite": "005-3.png"
+    },
+    "224-3.png": {
+      "name": "Onolff",
+      "sheet": 1,
+      "row": 594,
+      "link": "http://defenderoftexel.wikia.com/wiki/Onolff",
+      "matchedSprite": "224-3.png"
+    },
+    "135-3.png": {
+      "name": "Orchamus",
+      "sheet": 1,
+      "row": 595,
+      "link": "http://defenderoftexel.wikia.com/wiki/Orchamus",
+      "matchedSprite": "135-3.png"
+    },
+    "558-1.png": {
+      "name": "Ottokras",
+      "sheet": 1,
+      "row": 598,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ottokras",
+      "matchedSprite": "558-1.png"
+    },
+    "034-3.png": {
+      "name": "Ovo",
+      "sheet": 1,
+      "row": 599,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ovo",
+      "matchedSprite": "034-3.png"
+    },
+    "605-2.png": {
+      "name": "Oyeb",
+      "sheet": 1,
+      "row": 600,
+      "link": "http://defenderoftexel.wikia.com/wiki/Oyeb",
+      "matchedSprite": "605-2.png"
+    },
+    "398-3.png": {
+      "name": "Palivore",
+      "sheet": 1,
+      "row": 602,
+      "link": "http://defenderoftexel.wikia.com/wiki/Palivore",
+      "matchedSprite": "398-3.png"
+    },
+    "413-3.png": {
+      "name": "Palna the Vanguard",
+      "sheet": 1,
+      "row": 605,
+      "link": "http://defenderoftexel.wikia.com/wiki/Palna_the_Vanguard",
+      "matchedSprite": "413-3.png"
+    },
+    "542-2.png": {
+      "name": "Perendon the Pure",
+      "sheet": 1,
+      "row": 609,
+      "link": "http://defenderoftexel.wikia.com/wiki/Perendon the Pure",
+      "matchedSprite": "542-2.png"
+    },
+    "608-3.png": {
+      "name": "Polypodia",
+      "sheet": 1,
+      "row": 619,
+      "link": "http://defenderoftexel.wikia.com/wiki/Polypodia",
+      "matchedSprite": "608-3.png"
+    },
+    "294-3.png": {
+      "name": "Queen Brumellia",
+      "sheet": 1,
+      "row": 623,
+      "link": "http://defenderoftexel.wikia.com/wiki/Queen_Brumellia",
+      "matchedSprite": "294-3.png"
+    },
+    "157-3.png": {
+      "name": "Quetzalcoatl",
+      "sheet": 1,
+      "row": 624,
+      "link": "http://defenderoftexel.wikia.com/wiki/Quetzalcoatl",
+      "matchedSprite": "157-3.png"
+    },
+    "091-3.png": {
+      "name": "Redkhol",
+      "sheet": 1,
+      "row": 628,
+      "link": "http://defenderoftexel.wikia.com/wiki/Redkohl",
+      "matchedSprite": "091-3.png"
+    },
+    "353-2.png": {
+      "name": "Rega Snapdragon",
+      "sheet": 1,
+      "row": 629,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rega_Snapdragon",
+      "matchedSprite": "353-2.png"
+    },
+    "592-2.png": {
+      "name": "Reineke",
+      "sheet": 1,
+      "row": 631,
+      "link": "http://defenderoftexel.wikia.com/wiki/Reineke",
+      "matchedSprite": "592-2.png"
+    },
+    "236-3.png": {
+      "name": "Rishalee",
+      "sheet": 1,
+      "row": 634,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rishalee",
+      "matchedSprite": "236-3.png"
+    },
+    "556-3.png": {
+      "name": "Rocksee",
+      "sheet": 1,
+      "row": 635,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rocksee",
+      "matchedSprite": "556-3.png"
+    },
+    "514-3.png": {
+      "name": "Rollix",
+      "sheet": 1,
+      "row": 636,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rollix",
+      "matchedSprite": "514-3.png"
+    },
+    "146-3.png": {
+      "name": "Rosaura",
+      "sheet": 1,
+      "row": 637,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rosaura",
+      "matchedSprite": "146-3.png"
+    },
+    "533-3.png": {
+      "name": "Rudho",
+      "sheet": 1,
+      "row": 640,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rudho",
+      "matchedSprite": "533-3.png"
+    },
+    "382-2.png": {
+      "name": "Sarapu",
+      "sheet": 1,
+      "row": 642,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sarapu",
+      "matchedSprite": "382-2.png"
+    },
+    "314-3.png": {
+      "name": "Savignul",
+      "sheet": 1,
+      "row": 645,
+      "link": "http://defenderoftexel.wikia.com/wiki/Savignul",
+      "matchedSprite": "314-3.png"
+    },
+    "405-3.png": {
+      "name": "Shahrivar",
+      "sheet": 1,
+      "row": 651,
+      "link": "http://defenderoftexel.wikia.com/wiki/Shahrivar",
+      "matchedSprite": "405-3.png"
+    },
+    "517-3.png": {
+      "name": "Shajahn",
+      "sheet": 1,
+      "row": 652,
+      "link": "http://defenderoftexel.wikia.com/wiki/Shajahn",
+      "matchedSprite": "517-3.png"
+    },
+    "263-3.png": {
+      "name": "Shaqja",
+      "sheet": 1,
+      "row": 654,
+      "link": "http://defenderoftexel.wikia.com/wiki/Shaqja",
+      "matchedSprite": "263-3.png"
+    },
+    "222-3.png": {
+      "name": "Shereen",
+      "sheet": 1,
+      "row": 656,
+      "link": "http://defenderoftexel.wikia.com/wiki/Shereen",
+      "matchedSprite": "222-3.png"
+    },
+    "506-2.png": {
+      "name": "Silik-Mu-Lu-Dug",
+      "sheet": 1,
+      "row": 658,
+      "link": "http://defenderoftexel.wikia.com/wiki/Silik-Mu-Lu-Dug",
+      "matchedSprite": "506-2.png"
+    },
+    "375-3.png": {
+      "name": "Sisuthrus",
+      "sheet": 1,
+      "row": 663,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sisuthrus",
+      "matchedSprite": "375-3.png"
+    },
+    "082-3.png": {
+      "name": "Sruk",
+      "sheet": 1,
+      "row": 665,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sruk",
+      "matchedSprite": "082-3.png"
+    },
+    "495-3.png": {
+      "name": "Sulagrand",
+      "sheet": 1,
+      "row": 667,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sulagrand",
+      "matchedSprite": "495-3.png"
+    },
+    "469-2.png": {
+      "name": "Tamric",
+      "sheet": 1,
+      "row": 671,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tamric",
+      "matchedSprite": "469-2.png"
+    },
+    "385-1.png": {
+      "name": "Nazarre",
+      "sheet": 1,
+      "row": 573,
+      "link": "http://defenderoftexel.wikia.com/wiki/Nazarre_-_Tangrihan_-_Asphandiat",
+      "matchedReference": "Nazarre",
+      "matchedSprite": "385-1.png"
+    },
+    "385-2.png": {
+      "name": "Tangrihan",
+      "sheet": 1,
+      "row": 674,
+      "link": "http://defenderoftexel.wikia.com/wiki/Nazarre_-_Tangrihan_-_Asphandiat",
+      "matchedReference": "Nazarre",
+      "matchedSprite": "385-1.png"
+    },
+    "385-3.png": {
+      "name": "Asphandiat",
+      "sheet": 1,
+      "row": 334,
+      "link": "http://defenderoftexel.wikia.com/wiki/Nazarre_-_Tangrihan_-_Asphandiat",
+      "matchedReference": "Nazarre",
+      "matchedSprite": "385-1.png"
+    },
+    "344-3.png": {
+      "name": "Taurus",
+      "sheet": 1,
+      "row": 678,
+      "link": "http://defenderoftexel.wikia.com/wiki/Taurus",
+      "matchedSprite": "344-3.png"
+    },
+    "488-3.png": {
+      "name": "Tengra",
+      "sheet": 1,
+      "row": 679,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tengra",
+      "matchedSprite": "488-3.png"
+    },
+    "427-2.png": {
+      "name": "Teucer",
+      "sheet": 1,
+      "row": 681,
+      "link": "http://defenderoftexel.wikia.com/wiki/Teucer",
+      "matchedSprite": "427-2.png"
+    },
+    "541-3.png": {
+      "name": "Thor, Thunder-God",
+      "sheet": 1,
+      "row": 687,
+      "link": "http://defenderoftexel.wikia.com/wiki/Thor,_Thunder-god",
+      "matchedSprite": "541-3.png"
+    },
+    "581-2.png": {
+      "name": "Tiphilia",
+      "sheet": 1,
+      "row": 690,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tiphilia",
+      "matchedSprite": "581-2.png"
+    },
+    "423-3.png": {
+      "name": "Tremarine",
+      "sheet": 1,
+      "row": 695,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tremarine",
+      "matchedSprite": "423-3.png"
+    },
+    "184-3.png": {
+      "name": "Trubhel",
+      "sheet": 1,
+      "row": 696,
+      "link": "http://defenderoftexel.wikia.com/wiki/Trubhel",
+      "matchedSprite": "184-3.png"
+    },
+    "489-3.png": {
+      "name": "Ttrenthon",
+      "sheet": 1,
+      "row": 698,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ttrenthon",
+      "matchedSprite": "489-3.png"
+    },
+    "213-3.png": {
+      "name": "Ubaratutu",
+      "sheet": 1,
+      "row": 702,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ubaratutu",
+      "matchedSprite": "213-3.png"
+    },
+    "480-1.png": {
+      "name": "Usazila",
+      "sheet": 1,
+      "row": 708,
+      "link": "http://defenderoftexel.wikia.com/wiki/Usazila",
+      "matchedSprite": "480-1.png"
+    },
+    "148-2.png": {
+      "name": "Ustpoluy",
+      "sheet": 1,
+      "row": 709,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ustpoluy",
+      "matchedSprite": "148-2.png"
+    },
+    "522-3.png": {
+      "name": "Velthuria",
+      "sheet": 1,
+      "row": 714,
+      "link": "http://defenderoftexel.wikia.com/wiki/Velthuria",
+      "matchedSprite": "522-3.png"
+    },
+    "553-2.png": {
+      "name": "Wurunqi Warpslung",
+      "sheet": 1,
+      "row": 730,
+      "link": "http://defenderoftexel.wikia.com/wiki/Wurunqi_Warpslung",
+      "matchedSprite": "553-2.png"
+    },
+    "323-2.png": {
+      "name": "Yaguaris",
+      "sheet": 1,
+      "row": 734,
+      "link": "http://defenderoftexel.wikia.com/wiki/Yaguaris",
+      "matchedSprite": "323-2.png"
+    },
+    "107-2.png": {
+      "name": "Yotan",
+      "sheet": 1,
+      "row": 736,
+      "link": "http://defenderoftexel.wikia.com/wiki/Yotan",
+      "matchedSprite": "107-2.png"
+    },
+    "535-1.png": {
+      "name": "Teres",
+      "sheet": 1,
+      "row": 680,
+      "link": "http://defenderoftexel.wikia.com/wiki/Teres_-_Ammadoc_-_Zalmodegicus",
+      "matchedReference": "Teres",
+      "matchedSprite": "535-1.png"
+    },
+    "535-2.png": {
+      "name": "Ammadoc",
+      "sheet": 1,
+      "row": 314,
+      "link": "http://defenderoftexel.wikia.com/wiki/Teres_-_Ammadoc_-_Zalmodegicus",
+      "matchedReference": "Teres",
+      "matchedSprite": "535-1.png"
+    },
+    "535-3.png": {
+      "name": "Zalmodegicus",
+      "sheet": 1,
+      "row": 740,
+      "link": "http://defenderoftexel.wikia.com/wiki/Teres_-_Ammadoc_-_Zalmodegicus",
+      "matchedReference": "Teres",
+      "matchedSprite": "535-1.png"
+    },
+    "603-3.png": {
+      "name": "Zeus Olympios",
+      "sheet": 1,
+      "row": 744,
+      "link": "http://defenderoftexel.wikia.com/wiki/Zeus_Olympios",
+      "matchedSprite": "603-3.png"
+    },
+    "378-2.png": {
+      "name": "Zimarie",
+      "sheet": 1,
+      "row": 747,
+      "link": "http://defenderoftexel.wikia.com/wiki/Zimarie",
+      "matchedSprite": "378-2.png"
+    },
+    "416-3.png": {
+      "name": "Zuleika",
+      "sheet": 1,
+      "row": 748,
+      "link": "http://defenderoftexel.wikia.com/wiki/Zuleika",
+      "matchedSprite": "416-3.png"
+    },
+    "454-1.png": {
+      "name": "Rigozus",
+      "sheet": 2,
+      "row": 33,
+      "link": "https://static.wikia.nocookie.net/defenderoftexel/images/b/b3/Rigozus_Icon.png/revision/latest?cb=20130428023558",
+      "matchedSprite": "454-1.png"
+    },
+    "454-2.png": {
+      "name": "Scorylo",
+      "sheet": 2,
+      "row": 34,
+      "link": "https://static.wikia.nocookie.net/defenderoftexel/images/a/a8/Scorylo_Icon.png/revision/latest?cb=20130428024244",
+      "matchedSprite": "454-2.png"
+    },
+    "454-3.png": {
+      "name": "Tarbus",
+      "sheet": 1,
+      "row": 675,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tarbus",
+      "matchedSprite": "454-3.png"
+    },
+    "544-1.png": {
+      "name": "Tiati",
+      "sheet": 2,
+      "row": 36,
+      "link": "https://static.wikia.nocookie.net/defenderoftexel/images/7/75/Tiati_Icon.png/revision/latest?cb=20130428024245",
+      "matchedSprite": "544-1.png"
+    },
+    "544-2.png": {
+      "name": "Tsinna",
+      "sheet": 2,
+      "row": 37,
+      "link": "https://static.wikia.nocookie.net/defenderoftexel/images/5/5c/Tsinna_Icon.png/revision/latest?cb=20130428024245",
+      "matchedSprite": "544-2.png"
+    },
+    "544-3.png": {
+      "name": "Tsiru",
+      "sheet": 1,
+      "row": 697,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tsiru",
+      "matchedSprite": "544-3.png"
+    },
+    "124-1.png": {
+      "name": "Cono",
+      "sheet": 2,
+      "row": 57,
+      "link": "https://static.wikia.nocookie.net/defenderoftexel/images/4/44/Cono_Icon.png/revision/latest?cb=20130428024930",
+      "matchedSprite": "124-1.png"
+    },
+    "124-2.png": {
+      "name": "Diggo",
+      "sheet": 2,
+      "row": 58,
+      "link": "https://static.wikia.nocookie.net/defenderoftexel/images/3/34/Diggo_Icon.png/revision/latest?cb=20130428024930",
+      "matchedSprite": "124-2.png"
+    },
+    "062-1.png": {
+      "name": "Avo",
+      "sheet": 2,
+      "row": 60,
+      "link": "https://static.wikia.nocookie.net/defenderoftexel/images/8/82/Avo_Icon.png/revision/latest?cb=20130428024930",
+      "matchedSprite": "062-1.png"
+    },
+    "062-2.png": {
+      "name": "Baderic",
+      "sheet": 2,
+      "row": 61,
+      "link": "https://static.wikia.nocookie.net/defenderoftexel/images/b/bd/Baderic_Icon.png/revision/latest?cb=20130428024931",
+      "matchedSprite": "062-2.png"
+    },
+    "554-1.png": {
+      "name": "Turntail",
+      "sheet": 2,
+      "row": 195,
+      "link": "https://defenderoftexel.fandom.com/wiki/Turntail_-_Twinlance_-_Ambarender",
+      "matchedReference": "Amarender",
+      "matchedSprite": "554-3.png"
+    },
+    "554-2.png": {
+      "name": "Twinlance",
+      "sheet": 2,
+      "row": 196,
+      "link": "https://defenderoftexel.fandom.com/wiki/Turntail_-_Twinlance_-_Ambarender",
+      "matchedReference": "Amarender",
+      "matchedSprite": "554-3.png"
+    },
+    "554-3.png": {
+      "name": "Ambarender",
+      "sheet": 1,
+      "row": 312,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ambarender",
+      "matchedSprite": "554-3.png"
+    },
+    "033-1.png": {
+      "name": "Anatu",
+      "sheet": 2,
+      "row": 198,
+      "link": "https://defenderoftexel.fandom.com/wiki/Anatu_-_Alittum_-_Attii%27kusu",
+      "matchedReference": "Attii'kusu",
+      "matchedSprite": "033-3.png"
+    },
+    "033-2.png": {
+      "name": "Alittum",
+      "sheet": 2,
+      "row": 199,
+      "link": "https://defenderoftexel.fandom.com/wiki/Anatu_-_Alittum_-_Attii%27kusu",
+      "matchedReference": "Attii'kusu",
+      "matchedSprite": "033-3.png"
+    },
+    "033-3.png": {
+      "name": "Attii'kusu",
+      "sheet": 1,
+      "row": 342,
+      "link": "http://defenderoftexel.wikia.com/wiki/Attii'kusu",
+      "matchedSprite": "033-3.png"
+    },
+    "021-1.png": {
+      "name": "Alda",
+      "sheet": 2,
+      "row": 201,
+      "link": "https://defenderoftexel.fandom.com/wiki/Alda_-_Aldwi_-_Iudith",
+      "matchedReference": "Iudith",
+      "matchedSprite": "021-3.png"
+    },
+    "021-2.png": {
+      "name": "Aldwi",
+      "sheet": 2,
+      "row": 202,
+      "link": "https://defenderoftexel.fandom.com/wiki/Alda_-_Aldwi_-_Iudith",
+      "matchedReference": "Iudith",
+      "matchedSprite": "021-3.png"
+    },
+    "021-3.png": {
+      "name": "Iudith",
+      "sheet": 1,
+      "row": 480,
+      "link": "http://defenderoftexel.wikia.com/wiki/Iudith",
+      "matchedSprite": "021-3.png"
+    },
+    "097-1.png": {
+      "name": "Bolefang",
+      "sheet": 1,
+      "row": 78,
+      "link": "http://defenderoftexel.wikia.com/wiki/Bronzenail",
+      "matchedSprite": "097-1.png"
+    },
+    "097-2.png": {
+      "name": "Brickfoot",
+      "sheet": 1,
+      "row": 79,
+      "link": "http://defenderoftexel.wikia.com/wiki/Bronzenail",
+      "matchedSprite": "097-2.png"
+    },
+    "097-3.png": {
+      "name": "Bronzenail",
+      "sheet": 1,
+      "row": 80,
+      "link": "http://defenderoftexel.wikia.com/wiki/Bronzenail",
+      "matchedSprite": "097-3.png"
+    },
+    "212-1.png": {
+      "name": "Halflight",
+      "sheet": 1,
+      "row": 84,
+      "link": "http://defenderoftexel.wikia.com/wiki/Darlghast",
+      "matchedSprite": "212-1.png"
+    },
+    "212-2.png": {
+      "name": "Darkbegone",
+      "sheet": 1,
+      "row": 85,
+      "link": "http://defenderoftexel.wikia.com/wiki/Darlghast",
+      "matchedSprite": "212-2.png"
+    },
+    "212-3.png": {
+      "name": "Darlghast",
+      "sheet": 1,
+      "row": 86,
+      "link": "http://defenderoftexel.wikia.com/wiki/Darlghast",
+      "matchedSprite": "212-3.png"
+    },
+    "177-1.png": {
+      "name": "Fallowfrost",
+      "sheet": 1,
+      "row": 87,
+      "link": "http://defenderoftexel.wikia.com/wiki/Fallowfrost_-_Greysap_-_Griefall",
+      "matchedReference": "Greysay",
+      "matchedSprite": "177-2.png"
+    },
+    "177-2.png": {
+      "name": "Greysap",
+      "sheet": 1,
+      "row": 88,
+      "link": "http://defenderoftexel.wikia.com/wiki/Fallowfrost_-_Greysap_-_Griefall",
+      "matchedReference": "Greysay",
+      "matchedSprite": "177-2.png"
+    },
+    "177-3.png": {
+      "name": "Griefall",
+      "sheet": 1,
+      "row": 89,
+      "link": "http://defenderoftexel.wikia.com/wiki/Fallowfrost_-_Greysap_-_Griefall",
+      "matchedReference": "Greysay",
+      "matchedSprite": "177-2.png"
+    },
+    "446-1.png": {
+      "name": "Redfang",
+      "sheet": 1,
+      "row": 90,
+      "link": "http://defenderoftexel.wikia.com/wiki/Redfang_-_Greengrief_-_Foolsgold",
+      "matchedReference": "Greengrief",
+      "matchedSprite": "446-2.png"
+    },
+    "446-2.png": {
+      "name": "Greengrief",
+      "sheet": 1,
+      "row": 91,
+      "link": "http://defenderoftexel.wikia.com/wiki/Redfang_-_Greengrief_-_Foolsgold",
+      "matchedReference": "Greengrief",
+      "matchedSprite": "446-2.png"
+    },
+    "446-3.png": {
+      "name": "Foolsgold",
+      "sheet": 2,
+      "row": 71,
+      "link": "http://defenderoftexel.wikia.com/wiki/Foolsgold",
+      "matchedSprite": "446-3.png"
+    },
+    "118-1.png": {
+      "name": "Clayfeather",
+      "sheet": 2,
+      "row": 72,
+      "link": "http://defenderoftexel.wikia.com/wiki/Harrowfond",
+      "matchedSprite": "118-1.png"
+    },
+    "118-2.png": {
+      "name": "Fawnlocks",
+      "sheet": 2,
+      "row": 73,
+      "link": "http://defenderoftexel.wikia.com/wiki/Harrowfond",
+      "matchedSprite": "118-2.png"
+    },
+    "220-1.png": {
+      "name": "Heartsweet",
+      "sheet": 1,
+      "row": 96,
+      "link": "http://defenderoftexel.wikia.com/wiki/Heartsweet_-_Heartswift_-_Illenswift",
+      "matchedReference": "Heartswift",
+      "matchedSprite": "220-2.png"
+    },
+    "220-2.png": {
+      "name": "Heartswift",
+      "sheet": 1,
+      "row": 97,
+      "link": "http://defenderoftexel.wikia.com/wiki/Heartsweet_-_Heartswift_-_Illenswift",
+      "matchedReference": "Heartswift",
+      "matchedSprite": "220-2.png"
+    },
+    "220-3.png": {
+      "name": "Illenswift",
+      "sheet": 1,
+      "row": 98,
+      "link": "http://defenderoftexel.wikia.com/wiki/Illenswift",
+      "matchedSprite": "220-3.png"
+    },
+    "248-1.png": {
+      "name": "Illfond",
+      "sheet": 2,
+      "row": 85,
+      "link": "http://defenderoftexel.wikia.com/wiki/Illfond_-_Jadewing_-_Jinxan",
+      "matchedReference": "Jadewing",
+      "matchedSprite": "248-2.png"
+    },
+    "248-2.png": {
+      "name": "Jadewing",
+      "sheet": 1,
+      "row": 100,
+      "link": "http://defenderoftexel.wikia.com/wiki/Illfond_-_Jadewing_-_Jinxan",
+      "matchedReference": "Jadewing",
+      "matchedSprite": "248-2.png"
+    },
+    "248-3.png": {
+      "name": "Jinxan",
+      "sheet": 2,
+      "row": 86,
+      "link": "http://defenderoftexel.wikia.com/wiki/Jinxan",
+      "matchedSprite": "248-3.png"
+    },
+    "312-1.png": {
+      "name": "Limefoot",
+      "sheet": 1,
+      "row": 102,
+      "link": "http://defenderoftexel.wikia.com/wiki/Limefoot_-_Banelove_-_Lightbane",
+      "matchedReference": "Banelove",
+      "matchedSprite": "312-2.png"
+    },
+    "312-2.png": {
+      "name": "Banelove",
+      "sheet": 1,
+      "row": 103,
+      "link": "http://defenderoftexel.wikia.com/wiki/Limefoot_-_Banelove_-_Lightbane",
+      "matchedReference": "Banelove",
+      "matchedSprite": "312-2.png"
+    },
+    "312-3.png": {
+      "name": "Lightbane",
+      "sheet": 2,
+      "row": 77,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lightbane",
+      "matchedSprite": "312-3.png"
+    },
+    "355-3.png": {
+      "name": "Makepeace",
+      "sheet": 2,
+      "row": 89,
+      "link": "http://defenderoftexel.wikia.com/wiki/Makepeace",
+      "matchedSprite": "355-3.png"
+    },
+    "588-1.png": {
+      "name": "Whitespore",
+      "sheet": 2,
+      "row": 90,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rendfoot",
+      "matchedSprite": "588-1.png"
+    },
+    "588-2.png": {
+      "name": "Redrime",
+      "sheet": 2,
+      "row": 91,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rendfoot",
+      "matchedSprite": "588-2.png"
+    },
+    "588-3.png": {
+      "name": "Rendfoot",
+      "sheet": 2,
+      "row": 92,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rendfoot",
+      "matchedSprite": "588-3.png"
+    },
+    "520-1.png": {
+      "name": "Springfolly",
+      "sheet": 2,
+      "row": 99,
+      "link": "http://defenderoftexel.wikia.com/wiki/Starthwart",
+      "matchedSprite": "520-1.png"
+    },
+    "520-2.png": {
+      "name": "Starblight",
+      "sheet": 2,
+      "row": 100,
+      "link": "http://defenderoftexel.wikia.com/wiki/Starthwart",
+      "matchedSprite": "520-2.png"
+    },
+    "520-3.png": {
+      "name": "Starthwart",
+      "sheet": 2,
+      "row": 101,
+      "link": "http://defenderoftexel.wikia.com/wiki/Starthwart",
+      "matchedSprite": "520-3.png"
+    },
+    "529-1.png": {
+      "name": "Sweetbane",
+      "sheet": 1,
+      "row": 126,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sweetbane_-_Sweetgrief_-_Tideborn",
+      "matchedReference": "Sweetgrief",
+      "matchedSprite": "529-2.png"
+    },
+    "529-2.png": {
+      "name": "Sweetgrief",
+      "sheet": 1,
+      "row": 127,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sweetbane_-_Sweetgrief_-_Tideborn",
+      "matchedReference": "Sweetgrief",
+      "matchedSprite": "529-2.png"
+    },
+    "529-3.png": {
+      "name": "Tideborn",
+      "sheet": 1,
+      "row": 128,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tideborn",
+      "matchedSprite": "529-3.png"
+    },
+    "564-1.png": {
+      "name": "Umberfoot",
+      "sheet": 1,
+      "row": 129,
+      "link": "http://defenderoftexel.wikia.com/wiki/Umberfoot_-_Wellfond_-_Wheatsap",
+      "matchedReference": "Wellfond",
+      "matchedSprite": "564-2.png"
+    },
+    "564-2.png": {
+      "name": "Wellfond",
+      "sheet": 1,
+      "row": 130,
+      "link": "http://defenderoftexel.wikia.com/wiki/Umberfoot_-_Wellfond_-_Wheatsap",
+      "matchedReference": "Wellfond",
+      "matchedSprite": "564-2.png"
+    },
+    "564-3.png": {
+      "name": "Wheatsap",
+      "sheet": 1,
+      "row": 130,
+      "link": "http://defenderoftexel.wikia.com/wiki/Umberfoot_-_Wellfond_-_Wheatsap",
+      "matchedReference": "Wellfond",
+      "matchedSprite": "564-2.png"
+    },
+    "267-1.png": {
+      "name": "Jonquil",
+      "sheet": 1,
+      "row": 132,
+      "link": "http://defenderoftexel.wikia.com/wiki/Jonquil_-_Sablehead_-_Brightplume",
+      "matchedReference": "Sablehead",
+      "matchedSprite": "267-2.png"
+    },
+    "267-2.png": {
+      "name": "Sablehead",
+      "sheet": 1,
+      "row": 133,
+      "link": "http://defenderoftexel.wikia.com/wiki/Jonquil_-_Sablehead_-_Brightplume",
+      "matchedReference": "Sablehead",
+      "matchedSprite": "267-2.png"
+    },
+    "267-3.png": {
+      "name": "Brightplume",
+      "sheet": 2,
+      "row": 107,
+      "link": "http://defenderoftexel.wikia.com/wiki/Brightplume",
+      "matchedSprite": "267-3.png"
+    },
+    "120-1.png": {
+      "name": "Cloudshard",
+      "sheet": 1,
+      "row": 135,
+      "link": "http://defenderoftexel.wikia.com/wiki/Cloudshard_-_Iristost_-_Darkbloom",
+      "matchedReference": "Iristost",
+      "matchedSprite": "120-2.png"
+    },
+    "120-2.png": {
+      "name": "Iristost",
+      "sheet": 1,
+      "row": 136,
+      "link": "http://defenderoftexel.wikia.com/wiki/Cloudshard_-_Iristost_-_Darkbloom",
+      "matchedReference": "Iristost",
+      "matchedSprite": "120-2.png"
+    },
+    "120-3.png": {
+      "name": "Darkbloom",
+      "sheet": 2,
+      "row": 110,
+      "link": "http://defenderoftexel.wikia.com/wiki/Darkbloom",
+      "matchedSprite": "120-3.png"
+    },
+    "039-1.png": {
+      "name": "Aplaa",
+      "sheet": 1,
+      "row": 138,
+      "link": "http://defenderoftexel.wikia.com/wiki/Aplaa_-_Appan_-_Anti%27iikusu",
+      "matchedReference": "Appan",
+      "matchedSprite": "039-2.png"
+    },
+    "039-2.png": {
+      "name": "Appan",
+      "sheet": 1,
+      "row": 139,
+      "link": "http://defenderoftexel.wikia.com/wiki/Aplaa_-_Appan_-_Anti%27iikusu",
+      "matchedReference": "Appan",
+      "matchedSprite": "039-2.png"
+    },
+    "039-3.png": {
+      "name": "Anti'iikusu",
+      "sheet": 2,
+      "row": 125,
+      "link": "http://defenderoftexel.wikia.com/wiki/Anti'iikusu",
+      "matchedSprite": "039-3.png"
+    },
+    "025-1.png": {
+      "name": "Allatu",
+      "sheet": 1,
+      "row": 150,
+      "link": "http://defenderoftexel.wikia.com/wiki/Allatu_-_Amata_-_Anagalmeshshu",
+      "matchedReference": "Amata",
+      "matchedSprite": "025-1.png"
+    },
+    "025-2.png": {
+      "name": "Amata",
+      "sheet": 1,
+      "row": 151,
+      "link": "http://defenderoftexel.wikia.com/wiki/Allatu_-_Amata_-_Anagalmeshshu",
+      "matchedReference": "Amata",
+      "matchedSprite": "025-1.png"
+    },
+    "025-3.png": {
+      "name": "Anagalmeshshu",
+      "sheet": 2,
+      "row": 136,
+      "link": "http://defenderoftexel.wikia.com/wiki/Allatu_-_Amata_-_Anagalmeshshu",
+      "matchedReference": "Amata",
+      "matchedSprite": "025-1.png"
+    },
+    "140-1.png": {
+      "name": "Dipatusu",
+      "sheet": 1,
+      "row": 153,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dipatusu_-_Arishaka_-_Ugurnaszir",
+      "matchedReference": "Arishaka",
+      "matchedSprite": "140-1.png"
+    },
+    "140-2.png": {
+      "name": "Arishaka",
+      "sheet": 1,
+      "row": 154,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dipatusu_-_Arishaka_-_Ugurnaszir",
+      "matchedReference": "Arishaka",
+      "matchedSprite": "140-1.png"
+    },
+    "140-3.png": {
+      "name": "Ugurnaszir",
+      "sheet": 1,
+      "row": 154,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dipatusu_-_Arishaka_-_Ugurnaszir",
+      "matchedReference": "Arishaka",
+      "matchedSprite": "140-1.png"
+    },
+    "131-1.png": {
+      "name": "Damkina",
+      "sheet": 1,
+      "row": 156,
+      "link": "http://defenderoftexel.wikia.com/wiki/Damkina_-_Davke_-_Ellat-Gula",
+      "matchedReference": "Davke",
+      "matchedSprite": "131-2.png"
+    },
+    "131-2.png": {
+      "name": "Davke",
+      "sheet": 1,
+      "row": 157,
+      "link": "http://defenderoftexel.wikia.com/wiki/Damkina_-_Davke_-_Ellat-Gula",
+      "matchedReference": "Davke",
+      "matchedSprite": "131-2.png"
+    },
+    "131-3.png": {
+      "name": "Ellat-Gula",
+      "sheet": 2,
+      "row": 140,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ellat-Gula",
+      "matchedSprite": "131-3.png"
+    },
+    "156-1.png": {
+      "name": "Ea-nasir",
+      "sheet": 1,
+      "row": 159,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ea-nasir_-_Ekurzakir_-_Enshunu",
+      "matchedReference": "Ekurzakir",
+      "matchedSprite": "156-2.png"
+    },
+    "156-2.png": {
+      "name": "Ekurzakir",
+      "sheet": 1,
+      "row": 160,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ea-nasir_-_Ekurzakir_-_Enshunu",
+      "matchedReference": "Ekurzakir",
+      "matchedSprite": "156-2.png"
+    },
+    "156-3.png": {
+      "name": "Enshunu",
+      "sheet": 2,
+      "row": 142,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ea-nasir_-_Ekurzakir_-_Enshunu",
+      "matchedReference": "Ekurzakir",
+      "matchedSprite": "156-2.png"
+    },
+    "271-3.png": {
+      "name": "Kissare",
+      "sheet": 2,
+      "row": 146,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kissare",
+      "matchedSprite": "271-3.png"
+    },
+    "391-3.png": {
+      "name": "Numunia",
+      "sheet": 2,
+      "row": 149,
+      "link": "http://defenderoftexel.wikia.com/wiki/Numunia",
+      "matchedSprite": "391-3.png"
+    },
+    "110-1.png": {
+      "name": "Cainei",
+      "sheet": 1,
+      "row": 183,
+      "link": "http://defenderoftexel.wikia.com/wiki/Cainei_-_Papni_-_Ramtha",
+      "matchedReference": "Papni",
+      "matchedSprite": "110-1.png"
+    },
+    "110-2.png": {
+      "name": "Papni",
+      "sheet": 1,
+      "row": 184,
+      "link": "http://defenderoftexel.wikia.com/wiki/Cainei_-_Papni_-_Ramtha",
+      "matchedReference": "Papni",
+      "matchedSprite": "110-1.png"
+    },
+    "110-3.png": {
+      "name": "Ramtha",
+      "sheet": 1,
+      "row": 184,
+      "link": "http://defenderoftexel.wikia.com/wiki/Cainei_-_Papni_-_Ramtha",
+      "matchedReference": "Papni",
+      "matchedSprite": "110-1.png"
+    },
+    "163-1.png": {
+      "name": "Emesh",
+      "sheet": 1,
+      "row": 186,
+      "link": "http://defenderoftexel.wikia.com/wiki/Enkimdu",
+      "matchedSprite": "163-1.png"
+    },
+    "163-2.png": {
+      "name": "Ennugi",
+      "sheet": 1,
+      "row": 187,
+      "link": "http://defenderoftexel.wikia.com/wiki/Enkimdu",
+      "matchedSprite": "163-2.png"
+    },
+    "367-1.png": {
+      "name": "Mylitta",
+      "sheet": 1,
+      "row": 189,
+      "link": "http://defenderoftexel.wikia.com/wiki/Mylitta_-_Neith_-_Tauthe",
+      "matchedReference": "Neith",
+      "matchedSprite": "367-2.png"
+    },
+    "367-2.png": {
+      "name": "Neith",
+      "sheet": 1,
+      "row": 190,
+      "link": "http://defenderoftexel.wikia.com/wiki/Mylitta_-_Neith_-_Tauthe",
+      "matchedReference": "Neith",
+      "matchedSprite": "367-2.png"
+    },
+    "367-3.png": {
+      "name": "Tauthe",
+      "sheet": 1,
+      "row": 191,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tauthe",
+      "matchedSprite": "367-3.png"
+    },
+    "448-2.png": {
+      "name": "Abaminsk",
+      "sheet": 1,
+      "row": 192,
+      "link": "http://defenderoftexel.wikia.com/wiki/Abaminsk",
+      "matchedSprite": "448-2.png"
+    },
+    "466-3.png": {
+      "name": "Adrahasis",
+      "sheet": 1,
+      "row": 193,
+      "link": "http://defenderoftexel.wikia.com/wiki/Adrahasis",
+      "matchedSprite": "466-3.png"
+    },
+    "258-1.png": {
+      "name": "Irax",
+      "sheet": 1,
+      "row": 474,
+      "link": "http://defenderoftexel.wikia.com/wiki/Irax_-_Hieros_-_Aistra",
+      "matchedReference": "Irax",
+      "matchedSprite": "258-1.png"
+    },
+    "258-2.png": {
+      "name": "Hieros",
+      "sheet": 1,
+      "row": 460,
+      "link": "http://defenderoftexel.wikia.com/wiki/Irax_-_Hieros_-_Aistra",
+      "matchedReference": "Irax",
+      "matchedSprite": "258-1.png"
+    },
+    "258-3.png": {
+      "name": "Aistra",
+      "sheet": 1,
+      "row": 303,
+      "link": "http://defenderoftexel.wikia.com/wiki/Irax_-_Hieros_-_Aistra",
+      "matchedReference": "Irax",
+      "matchedSprite": "258-1.png"
+    },
+    "274-2.png": {
+      "name": "Alectrya",
+      "sheet": 1,
+      "row": 308,
+      "link": "http://defenderoftexel.wikia.com/wiki/Alectrya",
+      "matchedSprite": "274-2.png"
+    },
+    "322-3.png": {
+      "name": "Algallen",
+      "sheet": 1,
+      "row": 309,
+      "link": "http://defenderoftexel.wikia.com/wiki/Algallen",
+      "matchedSprite": "322-3.png"
+    },
+    "502-3.png": {
+      "name": "Alleumad",
+      "sheet": 1,
+      "row": 310,
+      "link": "http://defenderoftexel.wikia.com/wiki/Alleumad",
+      "matchedSprite": "502-3.png"
+    },
+    "296-3.png": {
+      "name": "Amaralice",
+      "sheet": 1,
+      "row": 311,
+      "link": "http://defenderoftexel.wikia.com/wiki/Amaralice",
+      "matchedSprite": "296-3.png"
+    },
+    "350-3.png": {
+      "name": "Amereta",
+      "sheet": 1,
+      "row": 313,
+      "link": "http://defenderoftexel.wikia.com/wiki/Amereta",
+      "matchedSprite": "350-3.png"
+    },
+    "042-3.png": {
+      "name": "Anagalshu",
+      "sheet": 1,
+      "row": 315,
+      "link": "http://defenderoftexel.wikia.com/wiki/Anagalshu",
+      "matchedSprite": "042-3.png"
+    },
+    "479-3.png": {
+      "name": "Aranethea",
+      "sheet": 1,
+      "row": 322,
+      "link": "http://defenderoftexel.wikia.com/wiki/Aranethea",
+      "matchedSprite": "479-3.png"
+    },
+    "547-1.png": {
+      "name": "Tita",
+      "sheet": 1,
+      "row": 323,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tita_-_Cafatia_-_Arathia",
+      "matchedReference": "Arathia",
+      "matchedSprite": "547-1.png"
+    },
+    "547-2.png": {
+      "name": "Cafatia",
+      "sheet": 1,
+      "row": 323,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tita_-_Cafatia_-_Arathia",
+      "matchedReference": "Arathia",
+      "matchedSprite": "547-1.png"
+    },
+    "547-3.png": {
+      "name": "Arathia",
+      "sheet": 1,
+      "row": 323,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tita_-_Cafatia_-_Arathia",
+      "matchedReference": "Arathia",
+      "matchedSprite": "547-1.png"
+    },
+    "536-3.png": {
+      "name": "Araziia",
+      "sheet": 1,
+      "row": 324,
+      "link": "http://defenderoftexel.wikia.com/wiki/Araziia",
+      "matchedSprite": "536-3.png"
+    },
+    "078-3.png": {
+      "name": "Arcuriand",
+      "sheet": 1,
+      "row": 325,
+      "link": "http://defenderoftexel.wikia.com/wiki/Arcuriand",
+      "matchedSprite": "078-3.png"
+    },
+    "422-1.png": {
+      "name": "Pele",
+      "sheet": 1,
+      "row": 327,
+      "link": "http://defenderoftexel.wikia.com/wiki/Pele_-_Urphe_-_Aril",
+      "matchedReference": "Aril",
+      "matchedSprite": "422-3.png"
+    },
+    "422-2.png": {
+      "name": "Urphe",
+      "sheet": 1,
+      "row": 327,
+      "link": "http://defenderoftexel.wikia.com/wiki/Pele_-_Urphe_-_Aril",
+      "matchedReference": "Aril",
+      "matchedSprite": "422-3.png"
+    },
+    "422-3.png": {
+      "name": "Aril",
+      "sheet": 1,
+      "row": 327,
+      "link": "http://defenderoftexel.wikia.com/wiki/Pele_-_Urphe_-_Aril",
+      "matchedReference": "Aril",
+      "matchedSprite": "422-3.png"
+    },
+    "136-1.png": {
+      "name": "Deligha",
+      "sheet": 1,
+      "row": 331,
+      "link": "http://defenderoftexel.wikia.com/wiki/Deligha_-_Owina_-_Ascepeyka",
+      "matchedReference": "Ascepeyka",
+      "matchedSprite": "136-1.png"
+    },
+    "136-2.png": {
+      "name": "Owina",
+      "sheet": 1,
+      "row": 331,
+      "link": "http://defenderoftexel.wikia.com/wiki/Deligha_-_Owina_-_Ascepeyka",
+      "matchedReference": "Ascepeyka",
+      "matchedSprite": "136-1.png"
+    },
+    "136-3.png": {
+      "name": "Ascepeyka",
+      "sheet": 1,
+      "row": 331,
+      "link": "http://defenderoftexel.wikia.com/wiki/Deligha_-_Owina_-_Ascepeyka",
+      "matchedReference": "Ascepeyka",
+      "matchedSprite": "136-1.png"
+    },
+    "065-1.png": {
+      "name": "Azimua",
+      "sheet": 1,
+      "row": 332,
+      "link": "http://defenderoftexel.wikia.com/wiki/Azimua_-_Apulnidiszu_-_Ashnan",
+      "matchedReference": "Ashnan",
+      "matchedSprite": "065-2.png"
+    },
+    "065-2.png": {
+      "name": "Apulnidiszu",
+      "sheet": 1,
+      "row": 332,
+      "link": "http://defenderoftexel.wikia.com/wiki/Azimua_-_Apulnidiszu_-_Ashnan",
+      "matchedReference": "Ashnan",
+      "matchedSprite": "065-2.png"
+    },
+    "065-3.png": {
+      "name": "Ashnan",
+      "sheet": 1,
+      "row": 332,
+      "link": "http://defenderoftexel.wikia.com/wiki/Azimua_-_Apulnidiszu_-_Ashnan",
+      "matchedReference": "Ashnan",
+      "matchedSprite": "065-2.png"
+    },
+    "455-1.png": {
+      "name": "Rimelia",
+      "sheet": 1,
+      "row": 337,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rimelia_-_Firnelle_-_Astruga",
+      "matchedReference": "Astruga",
+      "matchedSprite": "455-3.png"
+    },
+    "455-2.png": {
+      "name": "Firnelle",
+      "sheet": 1,
+      "row": 337,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rimelia_-_Firnelle_-_Astruga",
+      "matchedReference": "Astruga",
+      "matchedSprite": "455-3.png"
+    },
+    "455-3.png": {
+      "name": "Astruga",
+      "sheet": 1,
+      "row": 337,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rimelia_-_Firnelle_-_Astruga",
+      "matchedReference": "Astruga",
+      "matchedSprite": "455-3.png"
+    },
+    "049-3.png": {
+      "name": "Atanah-Ili",
+      "sheet": 1,
+      "row": 339,
+      "link": "http://defenderoftexel.wikia.com/wiki/Atanah-Ili",
+      "matchedSprite": "049-3.png"
+    },
+    "300-3.png": {
+      "name": "Ataneedusu",
+      "sheet": 1,
+      "row": 340,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ataneedusu",
+      "matchedSprite": "300-3.png"
+    },
+    "430-3.png": {
+      "name": "Aubyzant",
+      "sheet": 1,
+      "row": 343,
+      "link": "http://defenderoftexel.wikia.com/wiki/Plumstone",
+      "matchedSprite": "430-3.png"
+    },
+    "551-3.png": {
+      "name": "Audelinea",
+      "sheet": 1,
+      "row": 344,
+      "link": "http://defenderoftexel.wikia.com/wiki/Audelinea",
+      "matchedSprite": "551-3.png"
+    },
+    "497-1.png": {
+      "name": "Shimka",
+      "sheet": 1,
+      "row": 348,
+      "link": "http://defenderoftexel.wikia.com/wiki/Shimka_-_Mitziya_-_Azuna_the_Amberling",
+      "matchedReference": "Azuna the Amberling",
+      "matchedSprite": "497-2.png"
+    },
+    "497-2.png": {
+      "name": "Mitziya",
+      "sheet": 1,
+      "row": 348,
+      "link": "http://defenderoftexel.wikia.com/wiki/Shimka_-_Mitziya_-_Azuna_the_Amberling",
+      "matchedReference": "Azuna the Amberling",
+      "matchedSprite": "497-2.png"
+    },
+    "497-3.png": {
+      "name": "Azuna the Amberling",
+      "sheet": 1,
+      "row": 348,
+      "link": "http://defenderoftexel.wikia.com/wiki/Shimka_-_Mitziya_-_Azuna_the_Amberling",
+      "matchedReference": "Azuna the Amberling",
+      "matchedSprite": "497-2.png"
+    },
+    "275-1.png": {
+      "name": "Kasr",
+      "sheet": 1,
+      "row": 350,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kasr_-_Homera_-_Babil",
+      "matchedReference": "Babil",
+      "matchedSprite": "275-3.png"
+    },
+    "275-2.png": {
+      "name": "Homera",
+      "sheet": 1,
+      "row": 350,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kasr_-_Homera_-_Babil",
+      "matchedReference": "Babil",
+      "matchedSprite": "275-3.png"
+    },
+    "275-3.png": {
+      "name": "Babil",
+      "sheet": 1,
+      "row": 350,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kasr_-_Homera_-_Babil",
+      "matchedReference": "Babil",
+      "matchedSprite": "275-3.png"
+    },
+    "071-3.png": {
+      "name": "Bel-Sum-Iscun",
+      "sheet": 1,
+      "row": 353,
+      "link": "http://defenderoftexel.wikia.com/wiki/Bel-Sum-Iscun",
+      "matchedSprite": "071-3.png"
+    },
+    "076-3.png": {
+      "name": "Belili",
+      "sheet": 1,
+      "row": 354,
+      "link": "http://defenderoftexel.wikia.com/wiki/Belili",
+      "matchedSprite": "076-3.png"
+    },
+    "062-3.png": {
+      "name": "Benno",
+      "sheet": 2,
+      "row": 62,
+      "link": "http://defenderoftexel.wikia.com/wiki/Benno",
+      "matchedSprite": "062-3.png"
+    },
+    "509-1.png": {
+      "name": "Silvyll",
+      "sheet": 1,
+      "row": 359,
+      "link": "http://defenderoftexel.wikia.com/wiki/Silvyll_-_Hangoak_-_Birnam",
+      "matchedReference": "Birnam",
+      "matchedSprite": "509-3.png"
+    },
+    "509-2.png": {
+      "name": "Hangoak",
+      "sheet": 1,
+      "row": 359,
+      "link": "http://defenderoftexel.wikia.com/wiki/Silvyll_-_Hangoak_-_Birnam",
+      "matchedReference": "Birnam",
+      "matchedSprite": "509-3.png"
+    },
+    "509-3.png": {
+      "name": "Birnam",
+      "sheet": 1,
+      "row": 359,
+      "link": "http://defenderoftexel.wikia.com/wiki/Silvyll_-_Hangoak_-_Birnam",
+      "matchedReference": "Birnam",
+      "matchedSprite": "509-3.png"
+    },
+    "390-3.png": {
+      "name": "Bit-Nur",
+      "sheet": 1,
+      "row": 360,
+      "link": "http://defenderoftexel.wikia.com/wiki/Bit-Nur",
+      "matchedSprite": "390-3.png"
+    },
+    "092-3.png": {
+      "name": "Blacktide",
+      "sheet": 1,
+      "row": 361,
+      "link": "http://defenderoftexel.wikia.com/wiki/Blacktide",
+      "matchedSprite": "092-3.png"
+    },
+    "402-1.png": {
+      "name": "Okhrosanct",
+      "sheet": 1,
+      "row": 363,
+      "link": "http://defenderoftexel.wikia.com/wiki/Okhrosanct_-_Irataurih_-_Blasterion",
+      "matchedReference": "Blasterion",
+      "matchedSprite": "402-3.png"
+    },
+    "402-2.png": {
+      "name": "Irataurih",
+      "sheet": 1,
+      "row": 363,
+      "link": "http://defenderoftexel.wikia.com/wiki/Okhrosanct_-_Irataurih_-_Blasterion",
+      "matchedReference": "Blasterion",
+      "matchedSprite": "402-3.png"
+    },
+    "402-3.png": {
+      "name": "Blasterion",
+      "sheet": 1,
+      "row": 363,
+      "link": "http://defenderoftexel.wikia.com/wiki/Okhrosanct_-_Irataurih_-_Blasterion",
+      "matchedReference": "Blasterion",
+      "matchedSprite": "402-3.png"
+    },
+    "020-3.png": {
+      "name": "Boldewin",
+      "sheet": 1,
+      "row": 364,
+      "link": "http://defenderoftexel.wikia.com/wiki/Boldewin",
+      "matchedSprite": "020-3.png"
+    },
+    "435-3.png": {
+      "name": "Braveburn",
+      "sheet": 1,
+      "row": 367,
+      "link": "http://defenderoftexel.wikia.com/wiki/Braveburn",
+      "matchedSprite": "435-3.png"
+    },
+    "418-1.png": {
+      "name": "Pattipan",
+      "sheet": 1,
+      "row": 369,
+      "link": "http://defenderoftexel.wikia.com/wiki/Pattipan_-_Butternutt_-_Caboccia",
+      "matchedReference": "Caboccia",
+      "matchedSprite": "418-3.png"
+    },
+    "418-2.png": {
+      "name": "Butternutt",
+      "sheet": 1,
+      "row": 369,
+      "link": "http://defenderoftexel.wikia.com/wiki/Pattipan_-_Butternutt_-_Caboccia",
+      "matchedReference": "Caboccia",
+      "matchedSprite": "418-3.png"
+    },
+    "418-3.png": {
+      "name": "Caboccia",
+      "sheet": 1,
+      "row": 369,
+      "link": "http://defenderoftexel.wikia.com/wiki/Pattipan_-_Butternutt_-_Caboccia",
+      "matchedReference": "Caboccia",
+      "matchedSprite": "418-3.png"
+    },
+    "331-2.png": {
+      "name": "Cadmian",
+      "sheet": 1,
+      "row": 370,
+      "link": "http://defenderoftexel.wikia.com/wiki/Cadmian",
+      "matchedSprite": "331-2.png"
+    },
+    "299-1.png": {
+      "name": "Lapinia",
+      "sheet": 1,
+      "row": 372,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lapinia_-_Applebliss_-_Cascalynd",
+      "matchedReference": "Cascalynd",
+      "matchedSprite": "299-3.png"
+    },
+    "299-2.png": {
+      "name": "Applebliss",
+      "sheet": 1,
+      "row": 372,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lapinia_-_Applebliss_-_Cascalynd",
+      "matchedReference": "Cascalynd",
+      "matchedSprite": "299-3.png"
+    },
+    "299-3.png": {
+      "name": "Cascalynd",
+      "sheet": 1,
+      "row": 372,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lapinia_-_Applebliss_-_Cascalynd",
+      "matchedReference": "Cascalynd",
+      "matchedSprite": "299-3.png"
+    },
+    "586-3.png": {
+      "name": "Celestia",
+      "sheet": 1,
+      "row": 373,
+      "link": "http://defenderoftexel.wikia.com/wiki/Celestia",
+      "matchedSprite": "586-3.png"
+    },
+    "348-3.png": {
+      "name": "Cinouboila",
+      "sheet": 1,
+      "row": 375,
+      "link": "http://defenderoftexel.wikia.com/wiki/Cinouboila",
+      "matchedSprite": "348-3.png"
+    },
+    "530-1.png": {
+      "name": "Syzette",
+      "sheet": 1,
+      "row": 669,
+      "link": "http://defenderoftexel.wikia.com/wiki/Syzette_-_Lauthra_-_Coenobetha",
+      "matchedReference": "Syzette",
+      "matchedSprite": "530-1.png"
+    },
+    "530-2.png": {
+      "name": "Lauthra",
+      "sheet": 1,
+      "row": 521,
+      "link": "http://defenderoftexel.wikia.com/wiki/Syzette_-_Lauthra_-_Coenobetha",
+      "matchedReference": "Syzette",
+      "matchedSprite": "530-1.png"
+    },
+    "530-3.png": {
+      "name": "Coenobetha",
+      "sheet": 1,
+      "row": 376,
+      "link": "http://defenderoftexel.wikia.com/wiki/Syzette_-_Lauthra_-_Coenobetha",
+      "matchedReference": "Syzette",
+      "matchedSprite": "530-1.png"
+    },
+    "560-3.png": {
+      "name": "Comosicus",
+      "sheet": 1,
+      "row": 377,
+      "link": "http://defenderoftexel.wikia.com/wiki/Comosicus",
+      "matchedSprite": "560-3.png"
+    },
+    "138-2.png": {
+      "name": "Dablosi",
+      "sheet": 1,
+      "row": 380,
+      "link": "http://defenderoftexel.wikia.com/wiki/Diegis",
+      "matchedSprite": "138-2.png"
+    },
+    "127-3.png": {
+      "name": "Darrius",
+      "sheet": 1,
+      "row": 381,
+      "link": "http://defenderoftexel.wikia.com/wiki/Darrius",
+      "matchedSprite": "127-3.png"
+    },
+    "007-3.png": {
+      "name": "Dilgan",
+      "sheet": 1,
+      "row": 385,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dilgan",
+      "matchedSprite": "007-3.png"
+    },
+    "124-3.png": {
+      "name": "Ditmar",
+      "sheet": 2,
+      "row": 59,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ditmar",
+      "matchedSprite": "124-3.png"
+    },
+    "451-3.png": {
+      "name": "Dread Dysipius",
+      "sheet": 1,
+      "row": 390,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dread_Dysipius",
+      "matchedSprite": "451-3.png"
+    },
+    "589-3.png": {
+      "name": "Drymead",
+      "sheet": 1,
+      "row": 393,
+      "link": "http://defenderoftexel.wikia.com/wiki/Drymead",
+      "matchedSprite": "589-3.png"
+    },
+    "010-3.png": {
+      "name": "Ebbi",
+      "sheet": 1,
+      "row": 395,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ebbi",
+      "matchedSprite": "010-3.png"
+    },
+    "155-3.png": {
+      "name": "Ebustrone",
+      "sheet": 1,
+      "row": 396,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ebustrone",
+      "matchedSprite": "155-3.png"
+    },
+    "160-3.png": {
+      "name": "Ello",
+      "sheet": 1,
+      "row": 400,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ello",
+      "matchedSprite": "160-3.png"
+    },
+    "019-3.png": {
+      "name": "Emeric",
+      "sheet": 1,
+      "row": 402,
+      "link": "http://defenderoftexel.wikia.com/wiki/Emeric",
+      "matchedSprite": "019-3.png"
+    },
+    "009-1.png": {
+      "name": "Adad",
+      "sheet": 1,
+      "row": 403,
+      "link": "http://defenderoftexel.wikia.com/wiki/Adad_-_Damu_-_Endursaga",
+      "matchedReference": "Endursaga",
+      "matchedSprite": "009-3.png"
+    },
+    "009-2.png": {
+      "name": "Damu",
+      "sheet": 1,
+      "row": 403,
+      "link": "http://defenderoftexel.wikia.com/wiki/Adad_-_Damu_-_Endursaga",
+      "matchedReference": "Endursaga",
+      "matchedSprite": "009-3.png"
+    },
+    "009-3.png": {
+      "name": "Endursaga",
+      "sheet": 1,
+      "row": 403,
+      "link": "http://defenderoftexel.wikia.com/wiki/Adad_-_Damu_-_Endursaga",
+      "matchedReference": "Endursaga",
+      "matchedSprite": "009-3.png"
+    },
+    "024-3.png": {
+      "name": "Enheduana",
+      "sheet": 1,
+      "row": 404,
+      "link": "http://defenderoftexel.wikia.com/wiki/Enheduana",
+      "matchedSprite": "024-3.png"
+    },
+    "141-3.png": {
+      "name": "Enzuna",
+      "sheet": 1,
+      "row": 407,
+      "link": "http://defenderoftexel.wikia.com/wiki/Enzuna",
+      "matchedSprite": "141-3.png"
+    },
+    "094-3.png": {
+      "name": "Esmellion",
+      "sheet": 1,
+      "row": 411,
+      "link": "http://defenderoftexel.wikia.com/wiki/Esmellion",
+      "matchedSprite": "094-3.png"
+    },
+    "244-3.png": {
+      "name": "Evenclove",
+      "sheet": 1,
+      "row": 413,
+      "link": "http://defenderoftexel.wikia.com/wiki/Evenclove",
+      "matchedSprite": "244-3.png"
+    },
+    "195-3.png": {
+      "name": "Evengloom",
+      "sheet": 1,
+      "row": 414,
+      "link": "http://defenderoftexel.wikia.com/wiki/Evengloom",
+      "matchedSprite": "195-3.png"
+    },
+    "583-1.png": {
+      "name": "Wallflower",
+      "sheet": 1,
+      "row": 415,
+      "link": "http://defenderoftexel.wikia.com/wiki/Evenglory",
+      "matchedSprite": "583-1.png"
+    },
+    "583-2.png": {
+      "name": "Bloomhoof",
+      "sheet": 1,
+      "row": 416,
+      "link": "http://defenderoftexel.wikia.com/wiki/Evenglory",
+      "matchedSprite": "583-2.png"
+    },
+    "583-3.png": {
+      "name": "Evenglory",
+      "sheet": 1,
+      "row": 417,
+      "link": "http://defenderoftexel.wikia.com/wiki/Evenglory",
+      "matchedSprite": "583-3.png"
+    },
+    "235-2.png": {
+      "name": "Everflower",
+      "sheet": 1,
+      "row": 418,
+      "link": "http://defenderoftexel.wikia.com/wiki/Everflower",
+      "matchedSprite": "235-2.png"
+    },
+    "552-1.png": {
+      "name": "Tuntle",
+      "sheet": 1,
+      "row": 700,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tuntle_-_Evtucle_-_Meleacr",
+      "matchedReference": "Tuntle",
+      "matchedSprite": "552-1.png"
+    },
+    "552-2.png": {
+      "name": "Evtucle",
+      "sheet": 1,
+      "row": 420,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tuntle_-_Evtucle_-_Meleacr",
+      "matchedReference": "Tuntle",
+      "matchedSprite": "552-1.png"
+    },
+    "552-3.png": {
+      "name": "Meleacr",
+      "sheet": 1,
+      "row": 550,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tuntle_-_Evtucle_-_Meleacr",
+      "matchedReference": "Tuntle",
+      "matchedSprite": "552-1.png"
+    },
+    "218-3.png": {
+      "name": "Fainglory",
+      "sheet": 1,
+      "row": 421,
+      "link": "http://defenderoftexel.wikia.com/wiki/Fainglory",
+      "matchedSprite": "218-3.png"
+    },
+    "262-3.png": {
+      "name": "Falko",
+      "sheet": 1,
+      "row": 422,
+      "link": "http://defenderoftexel.wikia.com/wiki/Falko",
+      "matchedSprite": "262-3.png"
+    },
+    "308-1.png": {
+      "name": "Lewdekin",
+      "sheet": 1,
+      "row": 424,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lewdekin_-_Vanguard_-_Flakkenbury",
+      "matchedReference": "Flakkenbury",
+      "matchedSprite": "308-3.png"
+    },
+    "308-2.png": {
+      "name": "Vanguard",
+      "sheet": 1,
+      "row": 424,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lewdekin_-_Vanguard_-_Flakkenbury",
+      "matchedReference": "Flakkenbury",
+      "matchedSprite": "308-3.png"
+    },
+    "308-3.png": {
+      "name": "Flakkenbury",
+      "sheet": 1,
+      "row": 424,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lewdekin_-_Vanguard_-_Flakkenbury",
+      "matchedReference": "Flakkenbury",
+      "matchedSprite": "308-3.png"
+    },
+    "121-3.png": {
+      "name": "Flamewinder",
+      "sheet": 1,
+      "row": 425,
+      "link": "http://defenderoftexel.wikia.com/wiki/Flamewinder",
+      "matchedSprite": "121-3.png"
+    },
+    "116-1.png": {
+      "name": "Cicatri",
+      "sheet": 1,
+      "row": 428,
+      "link": "http://defenderoftexel.wikia.com/wiki/Cicatri_-_Adzen_-_Fortunato",
+      "matchedReference": "Fortunato",
+      "matchedSprite": "116-3.png"
+    },
+    "116-2.png": {
+      "name": "Adzen",
+      "sheet": 1,
+      "row": 428,
+      "link": "http://defenderoftexel.wikia.com/wiki/Cicatri_-_Adzen_-_Fortunato",
+      "matchedReference": "Fortunato",
+      "matchedSprite": "116-3.png"
+    },
+    "116-3.png": {
+      "name": "Fortunato",
+      "sheet": 1,
+      "row": 428,
+      "link": "http://defenderoftexel.wikia.com/wiki/Cicatri_-_Adzen_-_Fortunato",
+      "matchedReference": "Fortunato",
+      "matchedSprite": "116-3.png"
+    },
+    "035-1.png": {
+      "name": "Gaga",
+      "sheet": 1,
+      "row": 432,
+      "link": "http://defenderoftexel.wikia.com/wiki/Gaga",
+      "matchedSprite": "035-1.png"
+    },
+    "228-1.png": {
+      "name": "Hodden",
+      "sheet": 1,
+      "row": 436,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hodden_-_Woolsey_-_Gazaar",
+      "matchedReference": "Gazaar",
+      "matchedSprite": "228-3.png"
+    },
+    "228-2.png": {
+      "name": "Woolsey",
+      "sheet": 1,
+      "row": 436,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hodden_-_Woolsey_-_Gazaar",
+      "matchedReference": "Gazaar",
+      "matchedSprite": "228-3.png"
+    },
+    "228-3.png": {
+      "name": "Gazaar",
+      "sheet": 1,
+      "row": 436,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hodden_-_Woolsey_-_Gazaar",
+      "matchedReference": "Gazaar",
+      "matchedSprite": "228-3.png"
+    },
+    "166-3.png": {
+      "name": "Gela",
+      "sheet": 1,
+      "row": 437,
+      "link": "http://defenderoftexel.wikia.com/wiki/Gela",
+      "matchedSprite": "166-3.png"
+    },
+    "173-3.png": {
+      "name": "Gemeti",
+      "sheet": 1,
+      "row": 438,
+      "link": "http://defenderoftexel.wikia.com/wiki/Gemeti",
+      "matchedSprite": "173-3.png"
+    },
+    "555-1.png": {
+      "name": "Turtak",
+      "sheet": 1,
+      "row": 439,
+      "link": "http://defenderoftexel.wikia.com/wiki/Turtak_-_Lahar_-_Gerra",
+      "matchedReference": "Gerra",
+      "matchedSprite": "555-2.png"
+    },
+    "555-2.png": {
+      "name": "Lahar",
+      "sheet": 1,
+      "row": 439,
+      "link": "http://defenderoftexel.wikia.com/wiki/Turtak_-_Lahar_-_Gerra",
+      "matchedReference": "Gerra",
+      "matchedSprite": "555-2.png"
+    },
+    "555-3.png": {
+      "name": "Gerra",
+      "sheet": 1,
+      "row": 439,
+      "link": "http://defenderoftexel.wikia.com/wiki/Turtak_-_Lahar_-_Gerra",
+      "matchedReference": "Gerra",
+      "matchedSprite": "555-2.png"
+    },
+    "439-1.png": {
+      "name": "Qal",
+      "sheet": 1,
+      "row": 622,
+      "link": "http://defenderoftexel.wikia.com/wiki/Qal_-_Girrabun_-_Kudurru",
+      "matchedReference": "Qal",
+      "matchedSprite": "439-1.png"
+    },
+    "439-2.png": {
+      "name": "Girrabun",
+      "sheet": 1,
+      "row": 443,
+      "link": "http://defenderoftexel.wikia.com/wiki/Qal_-_Girrabun_-_Kudurru",
+      "matchedReference": "Qal",
+      "matchedSprite": "439-1.png"
+    },
+    "439-3.png": {
+      "name": "Kudurru",
+      "sheet": 1,
+      "row": 514,
+      "link": "http://defenderoftexel.wikia.com/wiki/Qal_-_Girrabun_-_Kudurru",
+      "matchedReference": "Qal",
+      "matchedSprite": "439-1.png"
+    },
+    "247-1.png": {
+      "name": "Ijiraq",
+      "sheet": 1,
+      "row": 444,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ijiraq_-_Ijiraq_Icetouch_-_Glacierwalker_Ijiraq",
+      "matchedReference": "Glacierwalker Ijiraq",
+      "matchedSprite": "247-3.png"
+    },
+    "247-2.png": {
+      "name": "Ijiraq Icetouch",
+      "sheet": 1,
+      "row": 444,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ijiraq_-_Ijiraq_Icetouch_-_Glacierwalker_Ijiraq",
+      "matchedReference": "Glacierwalker Ijiraq",
+      "matchedSprite": "247-3.png"
+    },
+    "247-3.png": {
+      "name": "Glacierwalker Ijiraq",
+      "sheet": 1,
+      "row": 444,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ijiraq_-_Ijiraq_Icetouch_-_Glacierwalker_Ijiraq",
+      "matchedReference": "Glacierwalker Ijiraq",
+      "matchedSprite": "247-3.png"
+    },
+    "285-1.png": {
+      "name": "Knotwood",
+      "sheet": 1,
+      "row": 445,
+      "link": "http://defenderoftexel.wikia.com/wiki/Goldfleece",
+      "matchedSprite": "285-1.png"
+    },
+    "285-2.png": {
+      "name": "Cyannis",
+      "sheet": 1,
+      "row": 446,
+      "link": "http://defenderoftexel.wikia.com/wiki/Goldfleece",
+      "matchedSprite": "285-2.png"
+    },
+    "285-3.png": {
+      "name": "Goldfleece",
+      "sheet": 1,
+      "row": 447,
+      "link": "http://defenderoftexel.wikia.com/wiki/Goldfleece",
+      "matchedSprite": "285-3.png"
+    },
+    "580-1.png": {
+      "name": "Vesia",
+      "sheet": 1,
+      "row": 448,
+      "link": "http://defenderoftexel.wikia.com/wiki/Vesia_-_Thana_-_Gratia",
+      "matchedReference": "Gratia",
+      "matchedSprite": "580-3.png"
+    },
+    "580-2.png": {
+      "name": "Thana",
+      "sheet": 1,
+      "row": 448,
+      "link": "http://defenderoftexel.wikia.com/wiki/Vesia_-_Thana_-_Gratia",
+      "matchedReference": "Gratia",
+      "matchedSprite": "580-3.png"
+    },
+    "580-3.png": {
+      "name": "Gratia",
+      "sheet": 1,
+      "row": 448,
+      "link": "http://defenderoftexel.wikia.com/wiki/Vesia_-_Thana_-_Gratia",
+      "matchedReference": "Gratia",
+      "matchedSprite": "580-3.png"
+    },
+    "137-1.png": {
+      "name": "Delshad",
+      "sheet": 1,
+      "row": 450,
+      "link": "http://defenderoftexel.wikia.com/wiki/Delshad_-_Khorvash_-_Gulbahar",
+      "matchedReference": "Gulbahar",
+      "matchedSprite": "137-3.png"
+    },
+    "137-2.png": {
+      "name": "Khorvash",
+      "sheet": 1,
+      "row": 450,
+      "link": "http://defenderoftexel.wikia.com/wiki/Delshad_-_Khorvash_-_Gulbahar",
+      "matchedReference": "Gulbahar",
+      "matchedSprite": "137-3.png"
+    },
+    "137-3.png": {
+      "name": "Gulbahar",
+      "sheet": 1,
+      "row": 450,
+      "link": "http://defenderoftexel.wikia.com/wiki/Delshad_-_Khorvash_-_Gulbahar",
+      "matchedReference": "Gulbahar",
+      "matchedSprite": "137-3.png"
+    },
+    "491-1.png": {
+      "name": "Sethra",
+      "sheet": 1,
+      "row": 452,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sethra_-_Velia_-_Hanunia",
+      "matchedReference": "Hanunia",
+      "matchedSprite": "491-3.png"
+    },
+    "491-2.png": {
+      "name": "Velia",
+      "sheet": 1,
+      "row": 452,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sethra_-_Velia_-_Hanunia",
+      "matchedReference": "Hanunia",
+      "matchedSprite": "491-3.png"
+    },
+    "491-3.png": {
+      "name": "Hanunia",
+      "sheet": 1,
+      "row": 452,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sethra_-_Velia_-_Hanunia",
+      "matchedReference": "Hanunia",
+      "matchedSprite": "491-3.png"
+    },
+    "152-3.png": {
+      "name": "Heliotrooper",
+      "sheet": 1,
+      "row": 453,
+      "link": "http://defenderoftexel.wikia.com/wiki/Heliotrooper",
+      "matchedSprite": "152-3.png"
+    },
+    "017-3.png": {
+      "name": "Hera",
+      "sheet": 1,
+      "row": 454,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hera",
+      "matchedSprite": "017-3.png"
+    },
+    "590-3.png": {
+      "name": "Herard",
+      "sheet": 1,
+      "row": 455,
+      "link": "http://defenderoftexel.wikia.com/wiki/Herard",
+      "matchedSprite": "590-3.png"
+    },
+    "180-3.png": {
+      "name": "Heydar",
+      "sheet": 1,
+      "row": 458,
+      "link": "http://defenderoftexel.wikia.com/wiki/Heydar",
+      "matchedSprite": "180-3.png"
+    },
+    "219-3.png": {
+      "name": "Highsaddle",
+      "sheet": 1,
+      "row": 461,
+      "link": "http://defenderoftexel.wikia.com/wiki/Highsaddle",
+      "matchedSprite": "219-3.png"
+    },
+    "001-2.png": {
+      "name": "Hinkypunk",
+      "sheet": 1,
+      "row": 463,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hinkypunk",
+      "matchedSprite": "001-2.png"
+    },
+    "193-2.png": {
+      "name": "Hsalvia",
+      "sheet": 1,
+      "row": 465,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hsalvia",
+      "matchedSprite": "193-2.png"
+    },
+    "238-3.png": {
+      "name": "Humusi",
+      "sheet": 1,
+      "row": 466,
+      "link": "http://defenderoftexel.wikia.com/wiki/Humusi",
+      "matchedSprite": "238-3.png"
+    },
+    "234-1.png": {
+      "name": "Hunter Gatherer",
+      "sheet": 1,
+      "row": 467,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hunter_Gatherer_-_Hunter_Seeker_-_Hunter_Victor",
+      "matchedReference": "Hunter Victor",
+      "matchedSprite": "234-2.png"
+    },
+    "234-2.png": {
+      "name": "Hunter Seeker",
+      "sheet": 1,
+      "row": 468,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hunter_Gatherer_-_Hunter_Seeker_-_Hunter_Victor",
+      "matchedReference": "Hunter Victor",
+      "matchedSprite": "234-2.png"
+    },
+    "234-3.png": {
+      "name": "Hunter Victor",
+      "sheet": 1,
+      "row": 469,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hunter_Gatherer_-_Hunter_Seeker_-_Hunter_Victor",
+      "matchedReference": "Hunter Victor",
+      "matchedSprite": "234-2.png"
+    },
+    "507-3.png": {
+      "name": "Iaazipaa",
+      "sheet": 1,
+      "row": 470,
+      "link": "http://defenderoftexel.wikia.com/wiki/Iaazipaa",
+      "matchedSprite": "507-3.png"
+    },
+    "587-1.png": {
+      "name": "Wenzo",
+      "sheet": 1,
+      "row": 471,
+      "link": "http://defenderoftexel.wikia.com/wiki/Wenzo_-_Getti_-_Igo",
+      "matchedReference": "Igo",
+      "matchedSprite": "587-2.png"
+    },
+    "587-2.png": {
+      "name": "Getti",
+      "sheet": 1,
+      "row": 471,
+      "link": "http://defenderoftexel.wikia.com/wiki/Wenzo_-_Getti_-_Igo",
+      "matchedReference": "Igo",
+      "matchedSprite": "587-2.png"
+    },
+    "587-3.png": {
+      "name": "Igo",
+      "sheet": 1,
+      "row": 471,
+      "link": "http://defenderoftexel.wikia.com/wiki/Wenzo_-_Getti_-_Igo",
+      "matchedReference": "Igo",
+      "matchedSprite": "587-2.png"
+    },
+    "256-1.png": {
+      "name": "Ira, Specter",
+      "sheet": 1,
+      "row": 473,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ira%2C_Specter_-_Azure-Haired_Ira_-_Ira%2C_Hypnotic_Specter",
+      "matchedReference": "Ira, Hypnotic Specter",
+      "matchedSprite": "256-3.png"
+    },
+    "256-2.png": {
+      "name": "Azure-Haired Ira",
+      "sheet": 1,
+      "row": 473,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ira%2C_Specter_-_Azure-Haired_Ira_-_Ira%2C_Hypnotic_Specter",
+      "matchedReference": "Ira, Hypnotic Specter",
+      "matchedSprite": "256-3.png"
+    },
+    "256-3.png": {
+      "name": "Ira, Hypnotic Specter",
+      "sheet": 1,
+      "row": 473,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ira%2C_Specter_-_Azure-Haired_Ira_-_Ira%2C_Hypnotic_Specter",
+      "matchedReference": "Ira, Hypnotic Specter",
+      "matchedSprite": "256-3.png"
+    },
+    "519-3.png": {
+      "name": "Ironclad",
+      "sheet": 1,
+      "row": 475,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ironclad",
+      "matchedSprite": "519-3.png"
+    },
+    "210-1.png": {
+      "name": "Hagan",
+      "sheet": 1,
+      "row": 477,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hagan_-_Lambu_-_Ishpah",
+      "matchedReference": "Ishpah",
+      "matchedSprite": "210-2.png"
+    },
+    "210-2.png": {
+      "name": "Lambu",
+      "sheet": 1,
+      "row": 477,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hagan_-_Lambu_-_Ishpah",
+      "matchedReference": "Ishpah",
+      "matchedSprite": "210-2.png"
+    },
+    "210-3.png": {
+      "name": "Ishpah",
+      "sheet": 1,
+      "row": 477,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hagan_-_Lambu_-_Ishpah",
+      "matchedReference": "Ishpah",
+      "matchedSprite": "210-2.png"
+    },
+    "151-1.png": {
+      "name": "Dudu",
+      "sheet": 1,
+      "row": 478,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dudu_-_Nanum_-_Ishum",
+      "matchedReference": "Ishum",
+      "matchedSprite": "151-3.png"
+    },
+    "151-2.png": {
+      "name": "Nanum",
+      "sheet": 1,
+      "row": 478,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dudu_-_Nanum_-_Ishum",
+      "matchedReference": "Ishum",
+      "matchedSprite": "151-3.png"
+    },
+    "151-3.png": {
+      "name": "Ishum",
+      "sheet": 1,
+      "row": 478,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dudu_-_Nanum_-_Ishum",
+      "matchedReference": "Ishum",
+      "matchedSprite": "151-3.png"
+    },
+    "255-3.png": {
+      "name": "Isiratuu",
+      "sheet": 1,
+      "row": 479,
+      "link": "http://defenderoftexel.wikia.com/wiki/Isiratuu",
+      "matchedSprite": "255-3.png"
+    },
+    "389-3.png": {
+      "name": "Kagar",
+      "sheet": 1,
+      "row": 491,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kagar",
+      "matchedSprite": "389-3.png"
+    },
+    "128-3.png": {
+      "name": "Karopithla",
+      "sheet": 1,
+      "row": 494,
+      "link": "http://defenderoftexel.wikia.com/wiki/Karopithla",
+      "matchedSprite": "128-3.png"
+    },
+    "242-3.png": {
+      "name": "Kastubili",
+      "sheet": 1,
+      "row": 495,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kastubili",
+      "matchedSprite": "242-3.png"
+    },
+    "270-3.png": {
+      "name": "Kavie",
+      "sheet": 1,
+      "row": 497,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kavie",
+      "matchedSprite": "270-3.png"
+    },
+    "499-3.png": {
+      "name": "Kaytifo",
+      "sheet": 1,
+      "row": 498,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kaytifo",
+      "matchedSprite": "499-3.png"
+    },
+    "597-3.png": {
+      "name": "Keekeval",
+      "sheet": 1,
+      "row": 499,
+      "link": "http://defenderoftexel.wikia.com/wiki/Keekeval",
+      "matchedSprite": "597-3.png"
+    },
+    "031-1.png": {
+      "name": "Amira",
+      "sheet": 1,
+      "row": 507,
+      "link": "http://defenderoftexel.wikia.com/wiki/Amira_-_Mahnaz_-_Kohinoor",
+      "matchedReference": "Kohinoor",
+      "matchedSprite": "031-3.png"
+    },
+    "031-2.png": {
+      "name": "Mahnaz",
+      "sheet": 1,
+      "row": 507,
+      "link": "http://defenderoftexel.wikia.com/wiki/Amira_-_Mahnaz_-_Kohinoor",
+      "matchedReference": "Kohinoor",
+      "matchedSprite": "031-3.png"
+    },
+    "031-3.png": {
+      "name": "Kohinoor",
+      "sheet": 1,
+      "row": 507,
+      "link": "http://defenderoftexel.wikia.com/wiki/Amira_-_Mahnaz_-_Kohinoor",
+      "matchedReference": "Kohinoor",
+      "matchedSprite": "031-3.png"
+    },
+    "012-3.png": {
+      "name": "Koikolida",
+      "sheet": 1,
+      "row": 508,
+      "link": "http://defenderoftexel.wikia.com/wiki/Koikolida",
+      "matchedSprite": "012-3.png"
+    },
+    "503-1.png": {
+      "name": "Siavash",
+      "sheet": 1,
+      "row": 511,
+      "link": "http://defenderoftexel.wikia.com/wiki/Siavash_-_Naseem_-_Ksathra",
+      "matchedReference": "Ksathra",
+      "matchedSprite": "503-1.png"
+    },
+    "503-2.png": {
+      "name": "Naseem",
+      "sheet": 1,
+      "row": 511,
+      "link": "http://defenderoftexel.wikia.com/wiki/Siavash_-_Naseem_-_Ksathra",
+      "matchedReference": "Ksathra",
+      "matchedSprite": "503-1.png"
+    },
+    "503-3.png": {
+      "name": "Ksathra",
+      "sheet": 1,
+      "row": 511,
+      "link": "http://defenderoftexel.wikia.com/wiki/Siavash_-_Naseem_-_Ksathra",
+      "matchedReference": "Ksathra",
+      "matchedSprite": "503-1.png"
+    },
+    "292-3.png": {
+      "name": "Ku-Aya",
+      "sheet": 1,
+      "row": 512,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ku-Aya",
+      "matchedSprite": "292-3.png"
+    },
+    "281-3.png": {
+      "name": "Kuri",
+      "sheet": 1,
+      "row": 515,
+      "link": "http://defenderoftexel.wikia.com/wiki/Kuri",
+      "matchedSprite": "281-3.png"
+    },
+    "040-3.png": {
+      "name": "Labashi",
+      "sheet": 1,
+      "row": 516,
+      "link": "http://defenderoftexel.wikia.com/wiki/Labashi",
+      "matchedSprite": "040-3.png"
+    },
+    "392-3.png": {
+      "name": "Lady of the Lake",
+      "sheet": 1,
+      "row": 517,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lady_of_the_Lake",
+      "matchedSprite": "392-3.png"
+    },
+    "568-3.png": {
+      "name": "Lagashe",
+      "sheet": 1,
+      "row": 518,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lagashe",
+      "matchedSprite": "568-3.png"
+    },
+    "447-2.png": {
+      "name": "Lazarre",
+      "sheet": 1,
+      "row": 522,
+      "link": "http://defenderoftexel.wikia.com/wiki/Lazarre",
+      "matchedSprite": "447-2.png"
+    },
+    "472-3.png": {
+      "name": "Levithania",
+      "sheet": 1,
+      "row": 525,
+      "link": "http://defenderoftexel.wikia.com/wiki/Levithania",
+      "matchedSprite": "472-3.png"
+    },
+    "546-1.png": {
+      "name": "Tir-Utur",
+      "sheet": 1,
+      "row": 526,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tir-Utur_-_Ul-Khum-Khum_-_Lidan-Gula",
+      "matchedReference": "Lidan-Gula",
+      "matchedSprite": "546-3.png"
+    },
+    "546-2.png": {
+      "name": "Ul-Khum-Khum",
+      "sheet": 1,
+      "row": 526,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tir-Utur_-_Ul-Khum-Khum_-_Lidan-Gula",
+      "matchedReference": "Lidan-Gula",
+      "matchedSprite": "546-3.png"
+    },
+    "546-3.png": {
+      "name": "Lidan-Gula",
+      "sheet": 1,
+      "row": 526,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tir-Utur_-_Ul-Khum-Khum_-_Lidan-Gula",
+      "matchedReference": "Lidan-Gula",
+      "matchedSprite": "546-3.png"
+    },
+    "313-1.png": {
+      "name": "Limmo",
+      "sheet": 1,
+      "row": 530,
+      "link": "http://defenderoftexel.wikia.com/wiki/Limmo_-_Nandino_-_Liopold",
+      "matchedReference": "Nandino",
+      "matchedSprite": "313-2.png"
+    },
+    "313-2.png": {
+      "name": "Nandino",
+      "sheet": 1,
+      "row": 568,
+      "link": "http://defenderoftexel.wikia.com/wiki/Limmo_-_Nandino_-_Liopold",
+      "matchedReference": "Nandino",
+      "matchedSprite": "313-2.png"
+    },
+    "313-3.png": {
+      "name": "Liopold",
+      "sheet": 1,
+      "row": 531,
+      "link": "http://defenderoftexel.wikia.com/wiki/Limmo_-_Nandino_-_Liopold",
+      "matchedReference": "Nandino",
+      "matchedSprite": "313-2.png"
+    },
+    "477-1.png": {
+      "name": "Sathom",
+      "sheet": 1,
+      "row": 533,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sathom_-_Tanghol_-_Llewnosk",
+      "matchedReference": "Llewnosk",
+      "matchedSprite": "477-3.png"
+    },
+    "477-2.png": {
+      "name": "Tanghol",
+      "sheet": 1,
+      "row": 533,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sathom_-_Tanghol_-_Llewnosk",
+      "matchedReference": "Llewnosk",
+      "matchedSprite": "477-3.png"
+    },
+    "477-3.png": {
+      "name": "Llewnosk",
+      "sheet": 1,
+      "row": 533,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sathom_-_Tanghol_-_Llewnosk",
+      "matchedReference": "Llewnosk",
+      "matchedSprite": "477-3.png"
+    },
+    "217-3.png": {
+      "name": "Luckdraw",
+      "sheet": 1,
+      "row": 536,
+      "link": "http://defenderoftexel.wikia.com/wiki/Luckdraw",
+      "matchedSprite": "217-3.png"
+    },
+    "196-3.png": {
+      "name": "Ludbert",
+      "sheet": 1,
+      "row": 537,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ludbert",
+      "matchedSprite": "196-3.png"
+    },
+    "087-3.png": {
+      "name": "Machtild",
+      "sheet": 1,
+      "row": 538,
+      "link": "http://defenderoftexel.wikia.com/wiki/Machtild",
+      "matchedSprite": "087-3.png"
+    },
+    "096-2.png": {
+      "name": "Malakhloros",
+      "sheet": 1,
+      "row": 541,
+      "link": "http://defenderoftexel.wikia.com/wiki/Malakhloros",
+      "matchedSprite": "096-2.png"
+    },
+    "252-1.png": {
+      "name": "Inanna",
+      "sheet": 1,
+      "row": 543,
+      "link": "http://defenderoftexel.wikia.com/wiki/Inanna_-_Nineha_-_Mammetun",
+      "matchedReference": "Mammetun",
+      "matchedSprite": "252-3.png"
+    },
+    "252-2.png": {
+      "name": "Nineha",
+      "sheet": 1,
+      "row": 543,
+      "link": "http://defenderoftexel.wikia.com/wiki/Inanna_-_Nineha_-_Mammetun",
+      "matchedReference": "Mammetun",
+      "matchedSprite": "252-3.png"
+    },
+    "252-3.png": {
+      "name": "Mammetun",
+      "sheet": 1,
+      "row": 543,
+      "link": "http://defenderoftexel.wikia.com/wiki/Inanna_-_Nineha_-_Mammetun",
+      "matchedReference": "Mammetun",
+      "matchedSprite": "252-3.png"
+    },
+    "311-3.png": {
+      "name": "Manishtusu",
+      "sheet": 1,
+      "row": 544,
+      "link": "http://defenderoftexel.wikia.com/wiki/Manishtusu",
+      "matchedSprite": "311-3.png"
+    },
+    "182-1.png": {
+      "name": "Marglint",
+      "sheet": 1,
+      "row": 547,
+      "link": "http://defenderoftexel.wikia.com/wiki/Marglint",
+      "matchedSprite": "182-1.png"
+    },
+    "324-3.png": {
+      "name": "Menika",
+      "sheet": 1,
+      "row": 552,
+      "link": "http://defenderoftexel.wikia.com/wiki/Menika",
+      "matchedSprite": "324-3.png"
+    },
+    "358-1.png": {
+      "name": "Mu",
+      "sheet": 1,
+      "row": 553,
+      "link": "http://defenderoftexel.wikia.com/wiki/Mu_-_Basa_-_Merodak",
+      "matchedReference": "Merodak",
+      "matchedSprite": "358-3.png"
+    },
+    "358-2.png": {
+      "name": "Basa",
+      "sheet": 1,
+      "row": 553,
+      "link": "http://defenderoftexel.wikia.com/wiki/Mu_-_Basa_-_Merodak",
+      "matchedReference": "Merodak",
+      "matchedSprite": "358-3.png"
+    },
+    "358-3.png": {
+      "name": "Merodak",
+      "sheet": 1,
+      "row": 553,
+      "link": "http://defenderoftexel.wikia.com/wiki/Mu_-_Basa_-_Merodak",
+      "matchedReference": "Merodak",
+      "matchedSprite": "358-3.png"
+    },
+    "352-1.png": {
+      "name": "Montu",
+      "sheet": 1,
+      "row": 560,
+      "link": "http://defenderoftexel.wikia.com/wiki/Montu_-_Weaponmaster_Montu_-_Montu,_God_of_War",
+      "matchedReference": "Montu, God of War",
+      "matchedSprite": "352-3.png"
+    },
+    "352-2.png": {
+      "name": "Weaponmaster Montu",
+      "sheet": 1,
+      "row": 560,
+      "link": "http://defenderoftexel.wikia.com/wiki/Montu_-_Weaponmaster_Montu_-_Montu,_God_of_War",
+      "matchedReference": "Montu, God of War",
+      "matchedSprite": "352-3.png"
+    },
+    "352-3.png": {
+      "name": "Montu, God of War",
+      "sheet": 1,
+      "row": 560,
+      "link": "http://defenderoftexel.wikia.com/wiki/Montu_-_Weaponmaster_Montu_-_Montu,_God_of_War",
+      "matchedReference": "Montu, God of War",
+      "matchedSprite": "352-3.png"
+    },
+    "374-2.png": {
+      "name": "Nabu-u-Sabsi",
+      "sheet": 1,
+      "row": 566,
+      "link": "http://defenderoftexel.wikia.com/wiki/Nabu-Kullani",
+      "matchedSprite": "374-2.png"
+    },
+    "562-3.png": {
+      "name": "Naram-Sin",
+      "sheet": 1,
+      "row": 569,
+      "link": "http://defenderoftexel.wikia.com/wiki/Naram-Sin",
+      "matchedSprite": "562-3.png"
+    },
+    "179-2.png": {
+      "name": "Nasrin",
+      "sheet": 1,
+      "row": 572,
+      "link": "http://defenderoftexel.wikia.com/wiki/Nasrin",
+      "matchedSprite": "179-2.png"
+    },
+    "388-1.png": {
+      "name": "Nergal-Sar-Ussur",
+      "sheet": 1,
+      "row": 576,
+      "link": "http://defenderoftexel.wikia.com/wiki/Nergal-Sar-Ussur",
+      "matchedSprite": "388-1.png"
+    },
+    "464-3.png": {
+      "name": "Neversaw",
+      "sheet": 1,
+      "row": 577,
+      "link": "http://defenderoftexel.wikia.com/wiki/Neversaw",
+      "matchedSprite": "464-3.png"
+    },
+    "381-1.png": {
+      "name": "Nanshe",
+      "sheet": 1,
+      "row": 578,
+      "link": "http://defenderoftexel.wikia.com/wiki/Nanshe_-_Namrat_-_Ngeshtin-Ana",
+      "matchedReference": "Ngeshtin-Ana",
+      "matchedSprite": "381-3.png"
+    },
+    "381-2.png": {
+      "name": "Namrat",
+      "sheet": 1,
+      "row": 578,
+      "link": "http://defenderoftexel.wikia.com/wiki/Nanshe_-_Namrat_-_Ngeshtin-Ana",
+      "matchedReference": "Ngeshtin-Ana",
+      "matchedSprite": "381-3.png"
+    },
+    "381-3.png": {
+      "name": "Ngeshtin-Ana",
+      "sheet": 1,
+      "row": 578,
+      "link": "http://defenderoftexel.wikia.com/wiki/Nanshe_-_Namrat_-_Ngeshtin-Ana",
+      "matchedReference": "Ngeshtin-Ana",
+      "matchedSprite": "381-3.png"
+    },
+    "397-3.png": {
+      "name": "Nigsummu",
+      "sheet": 1,
+      "row": 579,
+      "link": "http://defenderoftexel.wikia.com/wiki/Nigsummu",
+      "matchedSprite": "397-3.png"
+    },
+    "243-1.png": {
+      "name": "Ifrazil",
+      "sheet": 1,
+      "row": 580,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ifrazil_-_Shugana_-_Nilassine",
+      "matchedReference": "Nilassine",
+      "matchedSprite": "243-3.png"
+    },
+    "243-2.png": {
+      "name": "Shugana",
+      "sheet": 1,
+      "row": 580,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ifrazil_-_Shugana_-_Nilassine",
+      "matchedReference": "Nilassine",
+      "matchedSprite": "243-3.png"
+    },
+    "243-3.png": {
+      "name": "Nilassine",
+      "sheet": 1,
+      "row": 580,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ifrazil_-_Shugana_-_Nilassine",
+      "matchedReference": "Nilassine",
+      "matchedSprite": "243-3.png"
+    },
+    "394-1.png": {
+      "name": "Ninsunu",
+      "sheet": 1,
+      "row": 583,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ninsunu_-_Nin-Gelal_-_Nin-Akha-Guddu",
+      "matchedReference": "Nin-Akha-Guddu",
+      "matchedSprite": "394-3.png"
+    },
+    "394-2.png": {
+      "name": "Nin-Gelal",
+      "sheet": 1,
+      "row": 583,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ninsunu_-_Nin-Gelal_-_Nin-Akha-Guddu",
+      "matchedReference": "Nin-Akha-Guddu",
+      "matchedSprite": "394-3.png"
+    },
+    "394-3.png": {
+      "name": "Nin-Akha-Guddu",
+      "sheet": 1,
+      "row": 583,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ninsunu_-_Nin-Gelal_-_Nin-Akha-Guddu",
+      "matchedReference": "Nin-Akha-Guddu",
+      "matchedSprite": "394-3.png"
+    },
+    "393-3.png": {
+      "name": "Ninkarrak",
+      "sheet": 1,
+      "row": 584,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ninkarrak",
+      "matchedSprite": "393-3.png"
+    },
+    "442-1.png": {
+      "name": "Quwha",
+      "sheet": 1,
+      "row": 625,
+      "link": "http://defenderoftexel.wikia.com/wiki/Quwha_-_Nittiatte_-_Voider",
+      "matchedReference": "Voider",
+      "matchedSprite": "442-3.png"
+    },
+    "442-2.png": {
+      "name": "Nittiatte",
+      "sheet": 1,
+      "row": 585,
+      "link": "http://defenderoftexel.wikia.com/wiki/Quwha_-_Nittiatte_-_Voider",
+      "matchedReference": "Voider",
+      "matchedSprite": "442-3.png"
+    },
+    "442-3.png": {
+      "name": "Voider",
+      "sheet": 1,
+      "row": 718,
+      "link": "http://defenderoftexel.wikia.com/wiki/Quwha_-_Nittiatte_-_Voider",
+      "matchedReference": "Voider",
+      "matchedSprite": "442-3.png"
+    },
+    "153-3.png": {
+      "name": "Noosewane",
+      "sheet": 1,
+      "row": 586,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dustmote",
+      "matchedSprite": "153-3.png"
+    },
+    "329-3.png": {
+      "name": "Numesie",
+      "sheet": 1,
+      "row": 587,
+      "link": "http://defenderoftexel.wikia.com/wiki/Numesie",
+      "matchedSprite": "329-3.png"
+    },
+    "400-1.png": {
+      "name": "Odin Groundstrider",
+      "sheet": 1,
+      "row": 588,
+      "link": "http://defenderoftexel.wikia.com/wiki/Odin_Groundstrider_-_Odin_-_Odin_Stormgod",
+      "matchedReference": "Odin Stormgod",
+      "matchedSprite": "400-3.png"
+    },
+    "400-2.png": {
+      "name": "Odin",
+      "sheet": 1,
+      "row": 588,
+      "link": "http://defenderoftexel.wikia.com/wiki/Odin_Groundstrider_-_Odin_-_Odin_Stormgod",
+      "matchedReference": "Odin Stormgod",
+      "matchedSprite": "400-3.png"
+    },
+    "400-3.png": {
+      "name": "Odin Stormgod",
+      "sheet": 1,
+      "row": 588,
+      "link": "http://defenderoftexel.wikia.com/wiki/Odin_Groundstrider_-_Odin_-_Odin_Stormgod",
+      "matchedReference": "Odin Stormgod",
+      "matchedSprite": "400-3.png"
+    },
+    "594-1.png": {
+      "name": "Wolber",
+      "sheet": 1,
+      "row": 589,
+      "link": "http://defenderoftexel.wikia.com/wiki/Wolber_-_Knut_-_Odric_Oldsoul",
+      "matchedReference": "Odric Oldsoul",
+      "matchedSprite": "594-1.png"
+    },
+    "594-2.png": {
+      "name": "Knut",
+      "sheet": 1,
+      "row": 589,
+      "link": "http://defenderoftexel.wikia.com/wiki/Wolber_-_Knut_-_Odric_Oldsoul",
+      "matchedReference": "Odric Oldsoul",
+      "matchedSprite": "594-1.png"
+    },
+    "594-3.png": {
+      "name": "Odric Oldsoul",
+      "sheet": 1,
+      "row": 589,
+      "link": "http://defenderoftexel.wikia.com/wiki/Wolber_-_Knut_-_Odric_Oldsoul",
+      "matchedReference": "Odric Oldsoul",
+      "matchedSprite": "594-1.png"
+    },
+    "572-1.png": {
+      "name": "Utyemo",
+      "sheet": 1,
+      "row": 590,
+      "link": "http://defenderoftexel.wikia.com/wiki/Utyemo_-_Neemye_-_Odumeh",
+      "matchedReference": "Odumeh",
+      "matchedSprite": "572-3.png"
+    },
+    "572-2.png": {
+      "name": "Neemye",
+      "sheet": 1,
+      "row": 590,
+      "link": "http://defenderoftexel.wikia.com/wiki/Utyemo_-_Neemye_-_Odumeh",
+      "matchedReference": "Odumeh",
+      "matchedSprite": "572-3.png"
+    },
+    "572-3.png": {
+      "name": "Odumeh",
+      "sheet": 1,
+      "row": 590,
+      "link": "http://defenderoftexel.wikia.com/wiki/Utyemo_-_Neemye_-_Odumeh",
+      "matchedReference": "Odumeh",
+      "matchedSprite": "572-3.png"
+    },
+    "315-3.png": {
+      "name": "Pallormort Wormfeed",
+      "sheet": 1,
+      "row": 603,
+      "link": "http://defenderoftexel.wikia.com/wiki/Pallormort_Wormfeed",
+      "matchedSprite": "315-3.png"
+    },
+    "008-1.png": {
+      "name": "Acuernius",
+      "sheet": 1,
+      "row": 611,
+      "link": "http://defenderoftexel.wikia.com/wiki/Acuernius_-_Lairnell_-_Philzerin",
+      "matchedReference": "Philzerin",
+      "matchedSprite": "008-3.png"
+    },
+    "008-2.png": {
+      "name": "Lairnell",
+      "sheet": 1,
+      "row": 611,
+      "link": "http://defenderoftexel.wikia.com/wiki/Acuernius_-_Lairnell_-_Philzerin",
+      "matchedReference": "Philzerin",
+      "matchedSprite": "008-3.png"
+    },
+    "008-3.png": {
+      "name": "Philzerin",
+      "sheet": 1,
+      "row": 611,
+      "link": "http://defenderoftexel.wikia.com/wiki/Acuernius_-_Lairnell_-_Philzerin",
+      "matchedReference": "Philzerin",
+      "matchedSprite": "008-3.png"
+    },
+    "132-1.png": {
+      "name": "Dapyx",
+      "sheet": 1,
+      "row": 612,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dapyx_-_Zinnas_-_Pieporus",
+      "matchedReference": "Pieporus",
+      "matchedSprite": "132-1.png"
+    },
+    "132-2.png": {
+      "name": "Zinnas",
+      "sheet": 1,
+      "row": 612,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dapyx_-_Zinnas_-_Pieporus",
+      "matchedReference": "Pieporus",
+      "matchedSprite": "132-1.png"
+    },
+    "132-3.png": {
+      "name": "Pieporus",
+      "sheet": 1,
+      "row": 612,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dapyx_-_Zinnas_-_Pieporus",
+      "matchedReference": "Pieporus",
+      "matchedSprite": "132-1.png"
+    },
+    "537-1.png": {
+      "name": "Teudila",
+      "sheet": 1,
+      "row": 614,
+      "link": "http://defenderoftexel.wikia.com/wiki/Teudila_-_Diellena_-_Pinpanella",
+      "matchedReference": "Pinpanella",
+      "matchedSprite": "537-3.png"
+    },
+    "537-2.png": {
+      "name": "Diellena",
+      "sheet": 1,
+      "row": 614,
+      "link": "http://defenderoftexel.wikia.com/wiki/Teudila_-_Diellena_-_Pinpanella",
+      "matchedReference": "Pinpanella",
+      "matchedSprite": "537-3.png"
+    },
+    "537-3.png": {
+      "name": "Pinpanella",
+      "sheet": 1,
+      "row": 614,
+      "link": "http://defenderoftexel.wikia.com/wiki/Teudila_-_Diellena_-_Pinpanella",
+      "matchedReference": "Pinpanella",
+      "matchedSprite": "537-3.png"
+    },
+    "486-1.png": {
+      "name": "Sentrollion",
+      "sheet": 1,
+      "row": 617,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sentrollion_-_Clearcott_-_Poddleflack",
+      "matchedReference": "Poddleflack",
+      "matchedSprite": "486-3.png"
+    },
+    "486-2.png": {
+      "name": "Clearcott",
+      "sheet": 1,
+      "row": 617,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sentrollion_-_Clearcott_-_Poddleflack",
+      "matchedReference": "Poddleflack",
+      "matchedSprite": "486-3.png"
+    },
+    "486-3.png": {
+      "name": "Poddleflack",
+      "sheet": 1,
+      "row": 617,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sentrollion_-_Clearcott_-_Poddleflack",
+      "matchedReference": "Poddleflack",
+      "matchedSprite": "486-3.png"
+    },
+    "332-1.png": {
+      "name": "Mariolette",
+      "sheet": 1,
+      "row": 620,
+      "link": "http://defenderoftexel.wikia.com/wiki/Mariolette_-_Wayanga_-_Poppechik",
+      "matchedReference": "Poppechik",
+      "matchedSprite": "332-3.png"
+    },
+    "332-2.png": {
+      "name": "Wayanga",
+      "sheet": 1,
+      "row": 620,
+      "link": "http://defenderoftexel.wikia.com/wiki/Mariolette_-_Wayanga_-_Poppechik",
+      "matchedReference": "Poppechik",
+      "matchedSprite": "332-3.png"
+    },
+    "332-3.png": {
+      "name": "Poppechik",
+      "sheet": 1,
+      "row": 620,
+      "link": "http://defenderoftexel.wikia.com/wiki/Mariolette_-_Wayanga_-_Poppechik",
+      "matchedReference": "Poppechik",
+      "matchedSprite": "332-3.png"
+    },
+    "103-3.png": {
+      "name": "Pubba",
+      "sheet": 1,
+      "row": 621,
+      "link": "http://defenderoftexel.wikia.com/wiki/Pubba",
+      "matchedSprite": "103-3.png"
+    },
+    "282-3.png": {
+      "name": "Qwagutter",
+      "sheet": 1,
+      "row": 626,
+      "link": "http://defenderoftexel.wikia.com/wiki/Qwagutter",
+      "matchedSprite": "282-3.png"
+    },
+    "412-3.png": {
+      "name": "Reckonsow",
+      "sheet": 1,
+      "row": 627,
+      "link": "http://defenderoftexel.wikia.com/wiki/Reckonsow",
+      "matchedSprite": "412-3.png"
+    },
+    "026-2.png": {
+      "name": "Regolith Stonehewn",
+      "sheet": 1,
+      "row": 630,
+      "link": "http://defenderoftexel.wikia.com/wiki/Regolith_Stonehewn",
+      "matchedSprite": "026-2.png"
+    },
+    "387-2.png": {
+      "name": "Remissandra",
+      "sheet": 1,
+      "row": 632,
+      "link": "http://defenderoftexel.wikia.com/wiki/Remissandra",
+      "matchedSprite": "387-2.png"
+    },
+    "461-3.png": {
+      "name": "Roshanara",
+      "sheet": 1,
+      "row": 638,
+      "link": "http://defenderoftexel.wikia.com/wiki/Roshanara",
+      "matchedSprite": "461-3.png"
+    },
+    "457-3.png": {
+      "name": "Samsuiluna",
+      "sheet": 1,
+      "row": 641,
+      "link": "http://defenderoftexel.wikia.com/wiki/Samsuiluna",
+      "matchedSprite": "457-3.png"
+    },
+    "057-3.png": {
+      "name": "Seianti",
+      "sheet": 1,
+      "row": 646,
+      "link": "http://defenderoftexel.wikia.com/wiki/Seianti",
+      "matchedSprite": "057-3.png"
+    },
+    "532-3.png": {
+      "name": "Sethre",
+      "sheet": 1,
+      "row": 649,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sethre",
+      "matchedSprite": "532-3.png"
+    },
+    "362-3.png": {
+      "name": "Sharyukin",
+      "sheet": 1,
+      "row": 655,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sharyukin",
+      "matchedSprite": "362-3.png"
+    },
+    "470-1.png": {
+      "name": "Shilanuy",
+      "sheet": 1,
+      "row": 657,
+      "link": "http://defenderoftexel.wikia.com/wiki/Shilanuy",
+      "matchedSprite": "470-1.png"
+    },
+    "395-3.png": {
+      "name": "Simanu Scoresettler",
+      "sheet": 1,
+      "row": 660,
+      "link": "http://defenderoftexel.wikia.com/wiki/Simanu_Scoresettler",
+      "matchedSprite": "395-3.png"
+    },
+    "354-3.png": {
+      "name": "Sinecra",
+      "sheet": 1,
+      "row": 661,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sinecra",
+      "matchedSprite": "354-3.png"
+    },
+    "319-3.png": {
+      "name": "Starfisher",
+      "sheet": 1,
+      "row": 666,
+      "link": "http://defenderoftexel.wikia.com/wiki/Starfisher",
+      "matchedSprite": "319-3.png"
+    },
+    "176-3.png": {
+      "name": "Sybillume",
+      "sheet": 1,
+      "row": 668,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sybillume",
+      "matchedSprite": "176-3.png"
+    },
+    "045-1.png": {
+      "name": "Arnthi",
+      "sheet": 1,
+      "row": 672,
+      "link": "http://defenderoftexel.wikia.com/wiki/Arnthi_-_Nesithva_-_Tanaquil",
+      "matchedReference": "Tanaquil",
+      "matchedSprite": "045-2.png"
+    },
+    "045-2.png": {
+      "name": "Nesithva",
+      "sheet": 1,
+      "row": 672,
+      "link": "http://defenderoftexel.wikia.com/wiki/Arnthi_-_Nesithva_-_Tanaquil",
+      "matchedReference": "Tanaquil",
+      "matchedSprite": "045-2.png"
+    },
+    "045-3.png": {
+      "name": "Tanaquil",
+      "sheet": 1,
+      "row": 672,
+      "link": "http://defenderoftexel.wikia.com/wiki/Arnthi_-_Nesithva_-_Tanaquil",
+      "matchedReference": "Tanaquil",
+      "matchedSprite": "045-2.png"
+    },
+    "113-1.png": {
+      "name": "Ceine",
+      "sheet": 1,
+      "row": 676,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ceine_-_Hercna_-_Tarchumenaia",
+      "matchedReference": "Tarchumenaia",
+      "matchedSprite": "113-3.png"
+    },
+    "113-2.png": {
+      "name": "Hercna",
+      "sheet": 1,
+      "row": 676,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ceine_-_Hercna_-_Tarchumenaia",
+      "matchedReference": "Tarchumenaia",
+      "matchedSprite": "113-3.png"
+    },
+    "113-3.png": {
+      "name": "Tarchumenaia",
+      "sheet": 1,
+      "row": 676,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ceine_-_Hercna_-_Tarchumenaia",
+      "matchedReference": "Tarchumenaia",
+      "matchedSprite": "113-3.png"
+    },
+    "575-2.png": {
+      "name": "Tarquin",
+      "sheet": 1,
+      "row": 677,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tarquin",
+      "matchedSprite": "575-2.png"
+    },
+    "085-3.png": {
+      "name": "Theodi",
+      "sheet": 1,
+      "row": 684,
+      "link": "http://defenderoftexel.wikia.com/wiki/Theodi",
+      "matchedSprite": "085-3.png"
+    },
+    "186-3.png": {
+      "name": "Thesanthei",
+      "sheet": 1,
+      "row": 685,
+      "link": "http://defenderoftexel.wikia.com/wiki/Thesanthei",
+      "matchedSprite": "186-3.png"
+    },
+    "576-3.png": {
+      "name": "Thocero",
+      "sheet": 1,
+      "row": 686,
+      "link": "http://defenderoftexel.wikia.com/wiki/Thocero",
+      "matchedSprite": "576-3.png"
+    },
+    "016-3.png": {
+      "name": "Tiamat",
+      "sheet": 1,
+      "row": 688,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tiamat",
+      "matchedSprite": "016-3.png"
+    },
+    "175-3.png": {
+      "name": "Tiercelm",
+      "sheet": 1,
+      "row": 689,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tiercelm",
+      "matchedSprite": "175-3.png"
+    },
+    "379-1.png": {
+      "name": "Nana",
+      "sheet": 1,
+      "row": 691,
+      "link": "http://defenderoftexel.wikia.com/wiki/Nana_-_Tabni-Ishtar_-_Tishpak",
+      "matchedReference": "Tishpak",
+      "matchedSprite": "379-2.png"
+    },
+    "379-2.png": {
+      "name": "Tabni-Ishtar",
+      "sheet": 1,
+      "row": 691,
+      "link": "http://defenderoftexel.wikia.com/wiki/Nana_-_Tabni-Ishtar_-_Tishpak",
+      "matchedReference": "Tishpak",
+      "matchedSprite": "379-2.png"
+    },
+    "379-3.png": {
+      "name": "Tishpak",
+      "sheet": 1,
+      "row": 691,
+      "link": "http://defenderoftexel.wikia.com/wiki/Nana_-_Tabni-Ishtar_-_Tishpak",
+      "matchedReference": "Tishpak",
+      "matchedSprite": "379-2.png"
+    },
+    "037-3.png": {
+      "name": "Tiskhu",
+      "sheet": 1,
+      "row": 692,
+      "link": "http://defenderoftexel.wikia.com/wiki/Tiskhu",
+      "matchedSprite": "037-3.png"
+    },
+    "036-1.png": {
+      "name": "Antigra",
+      "sheet": 1,
+      "row": 693,
+      "link": "http://defenderoftexel.wikia.com/wiki/Antigra_-_Champawa_-_Toran%27dokht",
+      "matchedReference": "Toran'dokht",
+      "matchedSprite": "036-3.png"
+    },
+    "036-2.png": {
+      "name": "Champawa",
+      "sheet": 1,
+      "row": 693,
+      "link": "http://defenderoftexel.wikia.com/wiki/Antigra_-_Champawa_-_Toran%27dokht",
+      "matchedReference": "Toran'dokht",
+      "matchedSprite": "036-3.png"
+    },
+    "036-3.png": {
+      "name": "Toran'dokht",
+      "sheet": 1,
+      "row": 693,
+      "link": "http://defenderoftexel.wikia.com/wiki/Antigra_-_Champawa_-_Toran%27dokht",
+      "matchedReference": "Toran'dokht",
+      "matchedSprite": "036-3.png"
+    },
+    "360-2.png": {
+      "name": "Torquistador",
+      "sheet": 1,
+      "row": 694,
+      "link": "http://defenderoftexel.wikia.com/wiki/Torquistador",
+      "matchedSprite": "360-2.png"
+    },
+    "531-1.png": {
+      "name": "Taranda",
+      "sheet": 1,
+      "row": 699,
+      "link": "http://defenderoftexel.wikia.com/wiki/Taranda_-_Cariban_-_Tungus",
+      "matchedReference": "Tungus",
+      "matchedSprite": "531-3.png"
+    },
+    "531-2.png": {
+      "name": "Cariban",
+      "sheet": 1,
+      "row": 699,
+      "link": "http://defenderoftexel.wikia.com/wiki/Taranda_-_Cariban_-_Tungus",
+      "matchedReference": "Tungus",
+      "matchedSprite": "531-3.png"
+    },
+    "531-3.png": {
+      "name": "Tungus",
+      "sheet": 1,
+      "row": 699,
+      "link": "http://defenderoftexel.wikia.com/wiki/Taranda_-_Cariban_-_Tungus",
+      "matchedReference": "Tungus",
+      "matchedSprite": "531-3.png"
+    },
+    "249-3.png": {
+      "name": "Ubalnu",
+      "sheet": 1,
+      "row": 701,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ubalnu",
+      "matchedSprite": "249-3.png"
+    },
+    "245-1.png": {
+      "name": "Igmar",
+      "sheet": 1,
+      "row": 703,
+      "link": "http://defenderoftexel.wikia.com/wiki/Igmar_-_Wana_-_Udo",
+      "matchedReference": "Udo",
+      "matchedSprite": "245-2.png"
+    },
+    "245-2.png": {
+      "name": "Wana",
+      "sheet": 1,
+      "row": 703,
+      "link": "http://defenderoftexel.wikia.com/wiki/Igmar_-_Wana_-_Udo",
+      "matchedReference": "Udo",
+      "matchedSprite": "245-2.png"
+    },
+    "245-3.png": {
+      "name": "Udo",
+      "sheet": 1,
+      "row": 703,
+      "link": "http://defenderoftexel.wikia.com/wiki/Igmar_-_Wana_-_Udo",
+      "matchedReference": "Udo",
+      "matchedSprite": "245-2.png"
+    },
+    "303-1.png": {
+      "name": "Larsa",
+      "sheet": 1,
+      "row": 705,
+      "link": "http://defenderoftexel.wikia.com/wiki/Larsa_-_Sippar_-_Umma",
+      "matchedReference": "Umma",
+      "matchedSprite": "303-2.png"
+    },
+    "303-2.png": {
+      "name": "Sippar",
+      "sheet": 1,
+      "row": 705,
+      "link": "http://defenderoftexel.wikia.com/wiki/Larsa_-_Sippar_-_Umma",
+      "matchedReference": "Umma",
+      "matchedSprite": "303-2.png"
+    },
+    "303-3.png": {
+      "name": "Umma",
+      "sheet": 1,
+      "row": 705,
+      "link": "http://defenderoftexel.wikia.com/wiki/Larsa_-_Sippar_-_Umma",
+      "matchedReference": "Umma",
+      "matchedSprite": "303-2.png"
+    },
+    "168-3.png": {
+      "name": "Uruk",
+      "sheet": 1,
+      "row": 707,
+      "link": "http://defenderoftexel.wikia.com/wiki/Uruk",
+      "matchedSprite": "168-3.png"
+    },
+    "202-3.png": {
+      "name": "Valiander",
+      "sheet": 1,
+      "row": 711,
+      "link": "http://defenderoftexel.wikia.com/wiki/Valiander",
+      "matchedSprite": "202-3.png"
+    },
+    "063-1.png": {
+      "name": "Azar",
+      "sheet": 1,
+      "row": 712,
+      "link": "http://defenderoftexel.wikia.com/wiki/Azar_-_Gulistan_-_Vashti_Endbringer",
+      "matchedReference": "Vashti Endbringer",
+      "matchedSprite": "063-3.png"
+    },
+    "063-2.png": {
+      "name": "Gulistan",
+      "sheet": 1,
+      "row": 712,
+      "link": "http://defenderoftexel.wikia.com/wiki/Azar_-_Gulistan_-_Vashti_Endbringer",
+      "matchedReference": "Vashti Endbringer",
+      "matchedSprite": "063-3.png"
+    },
+    "063-3.png": {
+      "name": "Vashti Endbringer",
+      "sheet": 1,
+      "row": 712,
+      "link": "http://defenderoftexel.wikia.com/wiki/Azar_-_Gulistan_-_Vashti_Endbringer",
+      "matchedReference": "Vashti Endbringer",
+      "matchedSprite": "063-3.png"
+    },
+    "126-3.png": {
+      "name": "Velthur",
+      "sheet": 1,
+      "row": 713,
+      "link": "http://defenderoftexel.wikia.com/wiki/Velthur",
+      "matchedSprite": "126-3.png"
+    },
+    "197-3.png": {
+      "name": "Verdalance",
+      "sheet": 1,
+      "row": 715,
+      "link": "http://defenderoftexel.wikia.com/wiki/Verdalance",
+      "matchedSprite": "197-3.png"
+    },
+    "198-2.png": {
+      "name": "Vermilitas",
+      "sheet": 1,
+      "row": 716,
+      "link": "http://defenderoftexel.wikia.com/wiki/Vermilitas",
+      "matchedSprite": "198-2.png"
+    },
+    "048-3.png": {
+      "name": "Vulca",
+      "sheet": 1,
+      "row": 720,
+      "link": "http://defenderoftexel.wikia.com/wiki/Vulca",
+      "matchedSprite": "048-3.png"
+    },
+    "456-1.png": {
+      "name": "Rimerobin",
+      "sheet": 1,
+      "row": 722,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rimerobin_-_Pucklenuck_-_Weejabee",
+      "matchedReference": "Weejabee",
+      "matchedSprite": "456-3.png"
+    },
+    "456-2.png": {
+      "name": "Pucklenuck",
+      "sheet": 1,
+      "row": 722,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rimerobin_-_Pucklenuck_-_Weejabee",
+      "matchedReference": "Weejabee",
+      "matchedSprite": "456-3.png"
+    },
+    "456-3.png": {
+      "name": "Weejabee",
+      "sheet": 1,
+      "row": 722,
+      "link": "http://defenderoftexel.wikia.com/wiki/Rimerobin_-_Pucklenuck_-_Weejabee",
+      "matchedReference": "Weejabee",
+      "matchedSprite": "456-3.png"
+    },
+    "192-3.png": {
+      "name": "Wigo",
+      "sheet": 1,
+      "row": 724,
+      "link": "http://defenderoftexel.wikia.com/wiki/Wigo",
+      "matchedSprite": "192-3.png"
+    },
+    "058-1.png": {
+      "name": "Ato",
+      "sheet": 1,
+      "row": 726,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ato_-_Udno_-_Windelmar",
+      "matchedReference": "Windelmar",
+      "matchedSprite": "058-2.png"
+    },
+    "058-2.png": {
+      "name": "Udno",
+      "sheet": 1,
+      "row": 726,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ato_-_Udno_-_Windelmar",
+      "matchedReference": "Windelmar",
+      "matchedSprite": "058-2.png"
+    },
+    "058-3.png": {
+      "name": "Windelmar",
+      "sheet": 1,
+      "row": 726,
+      "link": "http://defenderoftexel.wikia.com/wiki/Ato_-_Udno_-_Windelmar",
+      "matchedReference": "Windelmar",
+      "matchedSprite": "058-2.png"
+    },
+    "230-3.png": {
+      "name": "Witchberry",
+      "sheet": 1,
+      "row": 727,
+      "link": "http://defenderoftexel.wikia.com/wiki/Witchberry",
+      "matchedSprite": "230-3.png"
+    },
+    "145-1.png": {
+      "name": "Dollcinea",
+      "sheet": 1,
+      "row": 732,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dollcinea_-_Octavilani_-_Xiandiana",
+      "matchedReference": "Xiandiana",
+      "matchedSprite": "145-3.png"
+    },
+    "145-2.png": {
+      "name": "Octavilani",
+      "sheet": 1,
+      "row": 732,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dollcinea_-_Octavilani_-_Xiandiana",
+      "matchedReference": "Xiandiana",
+      "matchedSprite": "145-3.png"
+    },
+    "145-3.png": {
+      "name": "Xiandiana",
+      "sheet": 1,
+      "row": 732,
+      "link": "http://defenderoftexel.wikia.com/wiki/Dollcinea_-_Octavilani_-_Xiandiana",
+      "matchedReference": "Xiandiana",
+      "matchedSprite": "145-3.png"
+    },
+    "415-1.png": {
+      "name": "Pari",
+      "sheet": 1,
+      "row": 735,
+      "link": "http://defenderoftexel.wikia.com/wiki/Pari_-_Narda_-_Yasamin",
+      "matchedReference": "Yasamin",
+      "matchedSprite": "415-3.png"
+    },
+    "415-2.png": {
+      "name": "Narda",
+      "sheet": 1,
+      "row": 735,
+      "link": "http://defenderoftexel.wikia.com/wiki/Pari_-_Narda_-_Yasamin",
+      "matchedReference": "Yasamin",
+      "matchedSprite": "415-3.png"
+    },
+    "415-3.png": {
+      "name": "Yasamin",
+      "sheet": 1,
+      "row": 735,
+      "link": "http://defenderoftexel.wikia.com/wiki/Pari_-_Narda_-_Yasamin",
+      "matchedReference": "Yasamin",
+      "matchedSprite": "415-3.png"
+    },
+    "266-1.png": {
+      "name": "Jingaloo",
+      "sheet": 1,
+      "row": 737,
+      "link": "http://defenderoftexel.wikia.com/wiki/Jingaloo_-_Thuringon_-_Yuloboros",
+      "matchedReference": "Yuloboros",
+      "matchedSprite": "266-3.png"
+    },
+    "266-2.png": {
+      "name": "Thuringon",
+      "sheet": 1,
+      "row": 737,
+      "link": "http://defenderoftexel.wikia.com/wiki/Jingaloo_-_Thuringon_-_Yuloboros",
+      "matchedReference": "Yuloboros",
+      "matchedSprite": "266-3.png"
+    },
+    "266-3.png": {
+      "name": "Yuloboros",
+      "sheet": 1,
+      "row": 737,
+      "link": "http://defenderoftexel.wikia.com/wiki/Jingaloo_-_Thuringon_-_Yuloboros",
+      "matchedReference": "Yuloboros",
+      "matchedSprite": "266-3.png"
+    },
+    "474-1.png": {
+      "name": "Sar",
+      "sheet": 1,
+      "row": 738,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sar_-_Telal_-_Zabu",
+      "matchedReference": "Zabu",
+      "matchedSprite": "474-3.png"
+    },
+    "474-2.png": {
+      "name": "Telal",
+      "sheet": 1,
+      "row": 738,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sar_-_Telal_-_Zabu",
+      "matchedReference": "Zabu",
+      "matchedSprite": "474-3.png"
+    },
+    "474-3.png": {
+      "name": "Zabu",
+      "sheet": 1,
+      "row": 738,
+      "link": "http://defenderoftexel.wikia.com/wiki/Sar_-_Telal_-_Zabu",
+      "matchedReference": "Zabu",
+      "matchedSprite": "474-3.png"
+    },
+    "211-1.png": {
+      "name": "Hahanu",
+      "sheet": 1,
+      "row": 739,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hahanu_-_Isimud_-_Zaidu",
+      "matchedReference": "Zaidu",
+      "matchedSprite": "211-2.png"
+    },
+    "211-2.png": {
+      "name": "Isimud",
+      "sheet": 1,
+      "row": 739,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hahanu_-_Isimud_-_Zaidu",
+      "matchedReference": "Zaidu",
+      "matchedSprite": "211-2.png"
+    },
+    "211-3.png": {
+      "name": "Zaidu",
+      "sheet": 1,
+      "row": 739,
+      "link": "http://defenderoftexel.wikia.com/wiki/Hahanu_-_Isimud_-_Zaidu",
+      "matchedReference": "Zaidu",
+      "matchedSprite": "211-2.png"
+    },
+    "054-3.png": {
+      "name": "Zartosht",
+      "sheet": 1,
+      "row": 742,
+      "link": "http://defenderoftexel.wikia.com/wiki/Zartosht",
+      "matchedSprite": "054-3.png"
+    },
+    "293-2.png": {
+      "name": "Zicu",
+      "sheet": 1,
+      "row": 746,
+      "link": "http://defenderoftexel.wikia.com/wiki/Zicu",
+      "matchedSprite": "293-2.png"
+    },
+    "133-2.png": {
+      "name": "Zyraxes",
+      "sheet": 1,
+      "row": 749,
+      "link": "http://defenderoftexel.wikia.com/wiki/Zyraxes",
+      "matchedSprite": "133-2.png"
+    }
+  }
+}

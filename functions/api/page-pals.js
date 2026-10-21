@@ -1,3 +1,4 @@
+import { PAGE_PAL_NAMES } from './page-pal-names.js';
 // Generated from assets/Page Pals; forms are ordered by their numeric suffix.
 export const PAGE_PALS = {
   "100": [
@@ -8505,3 +8506,5 @@ export const PAGE_PALS = {
     }
   ]
 };
+
+for(const forms of Object.values(PAGE_PALS))for(const form of forms){if(PAGE_PAL_NAMES[form.file])form.name=PAGE_PAL_NAMES[form.file];}

@@ -1,3 +1,4 @@
+import { PAGE_PAL_PRICES } from './page-pal-prices.js';
 import { PAGE_PALS } from './page-pals.js';
 import { readJSON } from './shared.js';
 import { FREE_THEMES, THEME_CATALOG, THEME_PRICE } from './theme-catalog.js';
@@ -107,5 +108,5 @@ export async function rewardsData(env, role) {
     const row=await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind('reward_pal_'+student).first(),id=readJSON(row?.value).id;
     equippedPals[student]=Object.hasOwn(pals[student],id)?id:'';
   }
-  return {pagePalCatalog:PAGE_PALS,pals,equippedPals,items,history:history.sort((a,b)=>b.date.localeCompare(a.date)),balances,unlocked,themePrice:THEME_PRICE,cosmetics:COSMETICS,cosmeticRules:COSMETIC_RULES,cosmeticUnlocks,breakdown,goals,activity,pointRules:POINT_RULES};
+  return {pagePalPrices:PAGE_PAL_PRICES,pagePalCatalog:PAGE_PALS,pals,equippedPals,items,history:history.sort((a,b)=>b.date.localeCompare(a.date)),balances,unlocked,themePrice:THEME_PRICE,cosmetics:COSMETICS,cosmeticRules:COSMETIC_RULES,cosmeticUnlocks,breakdown,goals,activity,pointRules:POINT_RULES};
 }

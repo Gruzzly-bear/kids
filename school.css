@@ -458,3 +458,10 @@ dialog[data-dialog="assignments"] .editor-toolbar{margin-top:16px}
 @media(prefers-reduced-motion:reduce){.page-pal,.page-pal img{animation:none!important;transition:none!important}}
 
 html[data-motion="reduced"] .page-pal img{animation:none!important}
+
+/* An explicit Page Pal motion choice takes precedence over device defaults. */
+html .page-pal[data-motion="full"]{transition-property:left!important;transition-duration:inherit}
+html .page-pal[data-motion="full"] img{animation:pal-idle 3s ease-in-out infinite!important}
+html .page-pal[data-motion="full"].pal-walking img{animation:pal-walk .38s ease-in-out infinite!important}
+html .page-pal[data-motion="full"] img.pal-hop{animation:pal-hop .55s ease-out!important}
+html .page-pal[data-motion="reduced"],html .page-pal[data-motion="reduced"] img{animation:none!important;transition:none!important}

@@ -1,3 +1,4 @@
+import { pagePalCost } from './page-pal-prices.js';
 import { PAGE_PALS } from './page-pals.js';
 import { authorized, hash, json, metadata, preferences, readJSON, safeURL, setting } from './shared.js';
 import { earnedSQL, spentSQL, rewardsData, restrictThemes, recordOverduePenalties } from './rewards.js';
@@ -18,9 +19,9 @@ export async function onRequestPost({ request, env }) {
         if(!['leon','logan'].includes(role))return json({error:'Sign in as a child to buy Page Pals.'},403);
         const forms=Object.hasOwn(PAGE_PALS,id)?PAGE_PALS[id]:null,index=body.stage;
         if(!forms||!Number.isInteger(index)||index<0||index>=forms.length)return json({error:'Choose a valid pal and form.'},400);
-        const key='redemption_pal_'+role+'_'+id+'_'+index,cost=5*(index+1),previous='redemption_pal_'+role+'_'+id+'_'+(index-1);
+        const key='redemption_pal_'+role+'_'+id+'_'+index,cost=pagePalCost(id,index),previous='redemption_pal_'+role+'_'+id+'_'+(index-1);
         await env.DB.prepare(`INSERT INTO settings(key,value) SELECT ?,? WHERE ?<=(${earnedSQL()})-(${spentSQL}) AND (?=0 OR EXISTS(SELECT 1 FROM settings WHERE key=?)) ON CONFLICT(key) DO NOTHING`)
-          .bind(key,JSON.stringify({id:id+'-'+index,student:role,pal:id,stage:index,title:'Page Pal #'+id+' · Form '+(index+1),cost,date:new Date().toISOString()}),cost,role,role,index,previous).run();
+          .bind(key,JSON.stringify({id:id+'-'+index,student:role,pal:id,stage:index,title:(forms[index].name||'Page Pal #'+id)+' · Form '+forms[index].form,cost,date:new Date().toISOString()}),cost,role,role,index,previous).run();
         if(!await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind(key).first())return json({error:'You need enough points and the previous form to buy this upgrade.'},409);
       } else if(action==='equipPal'){
         if(!['leon','logan'].includes(role))return json({error:'Only children can equip Page Pals.'},403);
