@@ -627,7 +627,7 @@ test('Page Pals enforce prices, sequential upgrades, ownership and retry safety'
   assert.equal((await buy('001',0)).status,200);
   assert.equal((await buy('001',0)).status,200);
   let r=(await (await post(auth,env,leon)).json()).rewards;
-  assert.equal(r.balances.leon,40-pagePalCost('001'));assert.equal(r.pagePalCatalog['001'][0].form,2);assert.equal(PAGE_PALS['003'][0].form,1);
+  assert.equal(r.balances.leon,40-pagePalCost('001'));assert.equal(PAGE_PALS['001'][0].form,2);assert.equal(PAGE_PALS['003'][0].form,1);
   assert.equal((await buy('001',1)).status,200);
   assert.equal((await buy('001',2)).status,400);
   assert.equal((await buy('missing',0)).status,400);
@@ -660,7 +660,7 @@ test('Page Pal walks promptly, keeps its position on refresh, and honors explici
   let node=null;const timers=[],saved=new Map(),classes=new Set();
   const makeNode=()=>({dataset:{},style:{setProperty(key,value){this[key]=value;}},classList:{add:x=>classes.add(x),remove:x=>classes.delete(x)},setAttribute(){},querySelector:()=>({style:{},classList:{add(){},remove(){}}}),remove(){this.isConnected=false;node=null;},isConnected:true});
   let motion='full';
-  const context=vm.createContext({state:{auth:{role:'leon'},view:'leon',rewards:{pagePalCatalog:{'001':[{file:'001-2.png'}]},equippedPals:{leon:'001'},pals:{leon:{'001':0}}}},prefs:()=>({motion}),window:{innerWidth:1000,matchMedia:()=>({matches:true})},document:{hidden:false,getElementById:()=>node,createElement:makeNode,body:{append:n=>node=n}},localRead:(key,fallback)=>saved.get(key)??fallback,localWrite:(key,value)=>saved.set(key,value),setTimeout:(fn,delay)=>{timers.push({fn,delay});return timers.length;},clearTimeout(){},encodeURIComponent});
+  const context=vm.createContext({esc:String,state:{auth:{role:'leon'},view:'leon',rewards:{pagePalCatalog:{'001':[{file:'001-2.png'}]},equippedPals:{leon:'001'},pals:{leon:{'001':0}}}},prefs:()=>({motion}),window:{innerWidth:1000,matchMedia:()=>({matches:true})},document:{hidden:false,getElementById:()=>node,createElement:makeNode,body:{append:n=>node=n}},localRead:(key,fallback)=>saved.get(key)??fallback,localWrite:(key,value)=>saved.set(key,value),setTimeout:(fn,delay)=>{timers.push({fn,delay});return timers.length;},clearTimeout(){},encodeURIComponent});
   vm.runInContext(readFileSync(new URL('../page-pals-ui.js',import.meta.url),'utf8'),context);
   assert.equal(context.palMotionAllowed(),true,'Full motion overrides device reduction');
   context.renderPagePal();assert.equal(timers[0].delay,150);timers.shift().fn();assert(classes.has('pal-walking'));assert.notEqual(node.style.left,'24px');
@@ -678,7 +678,7 @@ test('curated Page Pal pricing covers every pal and charges authoritative tier p
   assert.equal((await post(save,env,{...leon,rewardAction:'buyPal',id:'001',stage:0,cost:5})).status,409);
   await post(save,env,{...parent,rewardAction:'awardPoints',id:'tier-topup',student:'leon',points:1});
   const result=await (await post(save,env,{...leon,rewardAction:'buyPal',id:'001',stage:0,cost:5})).json();
-  assert.equal(result.rewards.balances.leon,0);assert.equal(result.rewards.history.find(x=>x.pal==='001').cost,12);assert.equal(result.rewards.pagePalPrices['001'],12);
+  assert.equal(result.rewards.balances.leon,0);assert.equal(result.rewards.history.find(x=>x.pal==='001').cost,12);assert.equal(result.rewards.pagePalPrices['001'],undefined);
 });
 
 
@@ -726,25 +726,23 @@ test('all Page Pal names exactly match the sprite pack ID and evolution table',a
 });
 
 
-test('clicking a Page Pal resumes walking and idle after each hop',()=>{
-  let node;const timers=[],imageClasses=new Set(),nodeClasses=new Set();
-  const image={classList:{add:x=>imageClasses.add(x),remove:x=>imageClasses.delete(x)},offsetWidth:80};
-  const facing={style:{}};
-  const context=vm.createContext({state:{auth:{role:'leon'},view:'leon',rewards:{pagePalCatalog:{'001':[{file:'001-2.png'}]},equippedPals:{leon:'001'},pals:{leon:{'001':0}}}},prefs:()=>({motion:'full'}),localRead:(key,fallback)=>fallback,window:{innerWidth:1000,matchMedia:()=>({matches:false})},document:{hidden:false,getElementById:()=>node,createElement:()=>({dataset:{},style:{setProperty(){}},setAttribute(){},classList:{add:x=>nodeClasses.add(x),remove:x=>nodeClasses.delete(x)},querySelector:s=>s==='img'?image:facing,isConnected:true}),body:{append:n=>node=n}},setTimeout:fn=>{timers.push(fn);return timers.length;},clearTimeout(){},encodeURIComponent});
+test('clicking a Page Pal stops at its current position, pauses, then restarts repeatedly',()=>{
+  let node,nextTimer=0;const timers=new Map(),classes=new Set();
+  const context=vm.createContext({state:{auth:{role:'leon'},view:'leon',rewards:{pagePalCatalog:{'001':[{file:'001-2.png'}]},equippedPals:{leon:'001'},pals:{leon:{'001':0}}}},esc:String,prefs:()=>({motion:'full'}),localRead:(key,fallback)=>fallback,window:{innerWidth:1000,matchMedia:()=>({matches:false})},document:{hidden:false,getElementById:()=>node,createElement:()=>({dataset:{},style:{setProperty(){}},setAttribute(){},getBoundingClientRect:()=>({left:123}),classList:{add:x=>classes.add(x),remove:x=>classes.delete(x)},querySelector:()=>({style:{}}),isConnected:true}),body:{append:n=>node=n}},setTimeout:(fn,delay)=>{timers.set(++nextTimer,{fn,delay});return nextTimer;},clearTimeout:id=>timers.delete(id),encodeURIComponent});
   vm.runInContext(readFileSync(new URL('../page-pals-ui.js',import.meta.url),'utf8'),context);
-  context.renderPagePal();timers.shift()();assert(nodeClasses.has('pal-walking'));
-  for(let i=0;i<3;i++){node.onclick();assert(imageClasses.has('pal-hop'));image.onanimationend({animationName:'pal-hop'});assert(!imageClasses.has('pal-hop'));assert(nodeClasses.has('pal-walking'));}
-  timers.shift()();assert(!nodeClasses.has('pal-walking'));
-  node.onclick();image.onanimationend({animationName:'pal-hop'});assert(!imageClasses.has('pal-hop'));assert(!nodeClasses.has('pal-walking'));
-  timers.shift()();assert(nodeClasses.has('pal-walking'));
+  const tick=()=>{const [id,timer]=[...timers][0];timers.delete(id);timer.fn();};
+  context.renderPagePal();tick();assert(classes.has('pal-walking'));
+  for(let i=0;i<3;i++){node.onclick();assert(!classes.has('pal-walking'));assert(classes.has('pal-paused'));assert.equal(node.style.left,'123px');assert.equal(timers.size,1);assert.equal([...timers.values()][0].delay,1500);tick();assert(classes.has('pal-walking'));assert(!classes.has('pal-paused'));}
+  node.onclick();node.onclick();assert.equal(timers.size,1);tick();assert(classes.has('pal-walking'));
 });
 
 
 test('store catalog is named, matches source modules, and is kept out of dashboard refreshes',async()=>{
-  const data=JSON.parse(readFileSync(new URL('../assets/page-pals-catalog.json',import.meta.url),'utf8'));
-  assert.deepEqual(data.catalog,PAGE_PALS);assert.deepEqual(data.prices,PAGE_PAL_PRICES);assert.equal(Object.values(data.catalog).flat().filter(f=>f.name).length,1822);
+  const {onRequestGet:catalog}=await import('../functions/api/page-pals-catalog.js');
+  const data=await catalog({request:new Request('https://local/api/page-pals-catalog?page=0')}).json();
+  assert.equal(Object.keys(data.catalog).length,24);assert.equal(data.catalog['001'][0].name,'Jollyjack');
   const env=await fixture();const signed=await (await post(auth,env,parent)).json();
-  assert.deepEqual(signed.rewards.pagePalCatalog,{});assert(JSON.stringify(signed).length<JSON.stringify(data.catalog).length/2);
+  assert.deepEqual(signed.rewards.pagePalCatalog,{});assert(Object.keys(signed.rewards.pagePalCatalog).length===0);
   const {onRequestPost:store}=await import('../functions/api/rewards-store.js');
   assert.equal((await post(store,env,{role:'leon',password:'wrong'})).status,401);
   assert.equal((await post(store,env,{role:'monitor'})).status,200);
@@ -763,4 +761,41 @@ test('store landing uses departments while point rules live on the dashboard',()
   let html='';const context=vm.createContext({state:{auth:{role:'parent'},rewards:{balances:{leon:4,logan:2}}},nameOf:x=>x,pointBreakdown:()=>'',savingsGoal:()=>'',openDialog:(id,body)=>html=body});
   vm.runInContext(readFileSync(new URL('../rewards-store-ui.js',import.meta.url),'utf8'),context);
   context.drawStoreHome();assert(html.includes('store-departments'));assert(html.includes('openPagePals()'));assert(!html.includes('Past due'));assert(context.dashboardPointRules().includes('How points work'));
+});
+
+
+test('Page Pal pages return only 24 requested families and no catalog is sent just for ownership',async()=>{
+  const {onRequestGet:catalog}=await import('../functions/api/page-pals-catalog.js');
+  const get=async query=>catalog({request:new Request('https://local/api/page-pals-catalog?'+query)});
+  let count=0;const ids=new Set();
+  for(let page=0;page<26;page++){const data=await (await get('page='+page)).json();assert.equal(data.total,608);assert(Object.keys(data.catalog).length<=24);for(const [id,forms] of Object.entries(data.catalog)){assert(!ids.has(id));ids.add(id);assert.deepEqual(forms,PAGE_PALS[id]);count+=forms.length;}}
+  assert.equal(ids.size,608);assert.equal(count,1822);
+  const picked=await (await get('ids=001,585')).json();assert.deepEqual(Object.keys(picked.catalog).sort(),['001','585']);assert.equal((await get('page=-1')).status,400);assert.equal((await get('ids=invalid')).status,400);
+  const env=await fixture();await post(save,env,{...parent,rewardAction:'awardPoints',id:'paged-funds',student:'leon',points:20});
+  let r=await (await post(save,env,{...leon,rewardAction:'buyPal',id:'001',stage:0})).json();assert.deepEqual(r.rewards.pagePalCatalog,{});assert.equal(r.rewards.pals.leon['001'],0);
+  r=await (await post(save,env,{...leon,rewardAction:'equipPal',id:'001'})).json();assert.deepEqual(Object.keys(r.rewards.pagePalCatalog),['001']);
+});
+
+
+test('visited Page Pal pages persist across reloads and a changed catalog version refreshes them',async()=>{
+  const saved=new Map(),requests=[];let version='first';
+  const code=readFileSync(new URL('../page-pals-ui.js',import.meta.url),'utf8');
+  const fresh=()=>{const context=vm.createContext({state:{auth:{role:'parent'},rewards:{}},localRead:(key,fallback)=>saved.get(key)??fallback,localWrite:(key,value)=>saved.set(key,value),encodeURIComponent,fetch:async url=>{requests.push(url);return {ok:true,json:async()=>url.includes('manifest')?{version,total:608}:{version,page:0,total:608,catalog:{'001':PAGE_PALS['001']},prices:{'001':12}}};}});vm.runInContext(code,context);return context;};
+  let context=fresh();assert.equal(requests.length,0);await context.loadPalCatalog(0,false);assert.equal(requests.length,2);await context.loadPalCatalog(0,false);assert.equal(requests.length,2);
+  context=fresh();await context.loadPalCatalog(0,false);assert.equal(requests.length,3,'Only the tiny version check runs after reload');assert.equal(context.palName('001',0),'Jollyjack');
+  version='second';context=fresh();await context.loadPalCatalog(0,false);assert.equal(requests.length,5,'Updated data replaces the cached page');
+});
+
+test('Page Pal crops normalize visible artwork without modifying sprite files',()=>{
+  for(const forms of Object.values(PAGE_PALS))for(const form of forms){const [x,y,w,h,cw,ch]=form.bounds;assert(w>0&&h>0);assert(x>=0&&y>=0&&x+w<=cw&&y+h<=ch);}
+  const context=vm.createContext({state:{rewards:{pagePalCatalog:PAGE_PALS}},esc:String,encodeURIComponent});vm.runInContext(readFileSync(new URL('../page-pals-ui.js',import.meta.url),'utf8'),context);
+  const form=PAGE_PALS['095'][0],markup=context.palSprite('095',0,'pal-art');assert(markup.includes('viewBox="'+form.bounds.slice(0,4).join(' ')+'"'));assert(markup.includes('preserveAspectRatio="xMidYMax meet"'));assert(markup.includes('095-1.png'));
+});
+
+
+test('Page Pal catalog versions provide long-lived caching without hiding future updates',async()=>{
+  const {onRequestGet:catalog}=await import('../functions/api/page-pals-catalog.js');
+  const manifest=catalog({request:new Request('https://local/api/page-pals-catalog?manifest=1')});assert.equal(manifest.headers.get('Cache-Control'),'no-cache');const data=await manifest.json();assert(data.version);assert(!data.catalog);
+  const current=catalog({request:new Request('https://local/api/page-pals-catalog?page=0&v='+data.version)});assert(current.headers.get('Cache-Control').includes('immutable'));
+  const stale=catalog({request:new Request('https://local/api/page-pals-catalog?page=0&v=old')});assert.equal(stale.headers.get('Cache-Control'),'no-cache');assert.equal((await stale.json()).version,data.version);
 });

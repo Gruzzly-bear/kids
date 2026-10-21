@@ -466,18 +466,13 @@ dialog[data-dialog="page-pals"]{width:min(980px,calc(100% - 32px));padding:clamp
 .pal-card-actions label{display:grid;gap:8px;margin:0}.pal-card-actions select{width:100%;min-width:0;max-width:100%}
 .pal-card-actions .button{width:100%;white-space:normal;min-height:44px;margin:0}
 @media(max-width:520px){.pal-grid{grid-template-columns:1fr;gap:16px}.pal-grid .pal-card{padding:20px}.pal-pagination{gap:8px}.pal-pagination .button{padding:10px 12px}}
-.page-pal{position:fixed;bottom:12px;width:80px;height:88px;padding:0;border:0;background:transparent;z-index:30;cursor:pointer;touch-action:manipulation}.page-pal:focus-visible{outline:3px solid currentColor;border-radius:12px}.pal-facing{display:block}.page-pal img{width:80px;height:80px;object-fit:contain;image-rendering:pixelated;transform-origin:center bottom;animation:pal-idle 3s ease-in-out infinite;filter:drop-shadow(0 4px 2px #0003)}.page-pal.pal-walking img{animation:pal-walk .38s ease-in-out infinite}.page-pal img.pal-hop{animation:pal-hop .55s ease-out}
-@keyframes pal-idle{50%{transform:translateY(-3px) rotate(2deg)}}@keyframes pal-walk{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-7px) rotate(4deg)}}@keyframes pal-hop{50%{transform:translateY(-25px) rotate(-8deg)}}
-@media(prefers-reduced-motion:reduce){.page-pal,.page-pal img{animation:none!important;transition:none!important}}
-
-html[data-motion="reduced"] .page-pal img{animation:none!important}
-
-/* An explicit Page Pal motion choice takes precedence over device defaults. */
-html .page-pal[data-motion="full"]{transition-property:left!important;transition-duration:inherit}
-html .page-pal[data-motion="full"] img{animation:pal-idle 3s ease-in-out infinite!important}
-html .page-pal[data-motion="full"].pal-walking img{animation:pal-walk .38s ease-in-out infinite!important}
-html .page-pal[data-motion="full"] img.pal-hop{animation:pal-hop .55s ease-out!important}
-html .page-pal[data-motion="reduced"],html .page-pal[data-motion="reduced"] img{animation:none!important;transition:none!important}
+.pal-sprite{display:block;flex:none;image-rendering:pixelated}.pal-sprite svg{display:block;width:100%;height:100%;image-rendering:pixelated;overflow:visible}
+.page-pal{position:fixed;bottom:12px;width:96px;height:100px;padding:0;border:0;background:transparent;z-index:30;cursor:pointer;touch-action:manipulation}.page-pal:focus-visible{outline:3px solid currentColor;border-radius:12px}.pal-facing{display:block}.pal-art{width:88px;height:88px;margin:4px;transform-origin:center bottom;filter:drop-shadow(0 4px 2px #0003)}
+html .page-pal[data-motion="full"] .pal-art{animation:pal-idle 3s ease-in-out infinite!important}
+html .page-pal[data-motion="full"].pal-walking .pal-art{animation:pal-walk .38s ease-in-out infinite!important}
+html .page-pal.pal-paused .pal-art,html .page-pal[data-motion="full"].pal-paused .pal-art,html .page-pal[data-motion="reduced"] .pal-art{animation:none!important}
+html .page-pal[data-motion="reduced"]{transition:none!important}
+@keyframes pal-idle{50%{transform:translateY(-3px) rotate(2deg)}}@keyframes pal-walk{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-7px) rotate(4deg)}}
 
 /* Rewards Store: one entrance, three clear departments. */
 dialog[data-dialog="rewards"],dialog[data-dialog="store-rewards"],dialog[data-dialog="store-history"]{width:min(900px,calc(100% - 32px));padding:clamp(20px,3vw,32px)}

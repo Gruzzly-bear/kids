@@ -1,3 +1,4 @@
+import { PAGE_PAL_BOUNDS } from './page-pal-bounds.js';
 import { PAGE_PAL_NAMES } from './page-pal-names.js';
 // Generated from assets/Page Pals; forms are ordered by their numeric suffix.
 export const PAGE_PALS = {
@@ -8508,3 +8509,5 @@ export const PAGE_PALS = {
 };
 
 for(const forms of Object.values(PAGE_PALS))for(const form of forms){if(PAGE_PAL_NAMES[form.file]){form.name=PAGE_PAL_NAMES[form.file];form.nameOrigin='reference';}}
+
+for(const forms of Object.values(PAGE_PALS))for(const form of forms)form.bounds=PAGE_PAL_BOUNDS[form.file];

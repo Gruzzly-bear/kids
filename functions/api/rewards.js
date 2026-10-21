@@ -108,7 +108,7 @@ export async function rewardsData(env, role) {
     const row=await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind('reward_pal_'+student).first(),id=readJSON(row?.value).id;
     equippedPals[student]=Object.hasOwn(pals[student],id)?id:'';
   }
-  const ownedIds=[...new Set(Object.values(pals).flatMap(collection=>Object.keys(collection)))];
+  const ownedIds=[...new Set(Object.values(equippedPals).filter(Boolean))];
   const pagePalCatalog=Object.fromEntries(ownedIds.map(id=>[id,PAGE_PALS[id]])),pagePalPrices=Object.fromEntries(ownedIds.map(id=>[id,PAGE_PAL_PRICES[id]]));
   return {pagePalPrices,pagePalCatalog,pals,equippedPals,items,history:history.sort((a,b)=>b.date.localeCompare(a.date)),balances,unlocked,themePrice:THEME_PRICE,cosmetics:COSMETICS,cosmeticRules:COSMETIC_RULES,cosmeticUnlocks,breakdown,goals,activity,pointRules:POINT_RULES};
 }
