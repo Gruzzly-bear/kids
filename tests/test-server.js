@@ -1,3 +1,4 @@
+import { onRequestPost as rewardsStore } from '../functions/api/rewards-store.js';
 // Local test harness: real SQLite plus the same Cloudflare request handlers.
 import { DatabaseSync } from 'node:sqlite';
 import { createServer } from 'node:http';
@@ -45,14 +46,14 @@ export async function startServer(port=4173) {
       if(url.pathname.startsWith('/api/')){
         let body='';for await(const chunk of req)body+=chunk;
         const request=new Request(url,{method:req.method,headers:{'content-type':'application/json'},body});
-        const response=await (url.pathname==='/api/auth'?auth:assignments)({request,env});
+        const response=await (url.pathname==='/api/auth'?auth:url.pathname==='/api/rewards-store'?rewardsStore:assignments)({request,env});
         res.writeHead(response.status,{'content-type':'application/json'});res.end(await response.text());return;
       }
       const pathname=url.pathname==='/'?'/index.html':url.pathname;
-      const path=resolve(root,'.'+pathname);
+      const path=resolve(root,'.'+decodeURIComponent(pathname));
       if(!path.startsWith(root+'\\')&&!path.startsWith(root+'/')){res.writeHead(403);res.end();return;}
       const content=readFileSync(path);
-      res.writeHead(200,{'content-type':({'.html':'text/html','.js':'text/javascript','.css':'text/css'})[extname(path)]||'application/octet-stream'});res.end(content);
+      res.writeHead(200,{'content-type':({'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.png':'image/png'})[extname(path)]||'application/octet-stream'});res.end(content);
     }catch(error){res.writeHead(500);res.end(String(error));}
   });
   await new Promise(resolve=>server.listen(port,'127.0.0.1',resolve));return { server, env };

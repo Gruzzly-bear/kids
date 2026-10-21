@@ -2,5 +2,8 @@
   "name": "family-school-dashboard",
   "private": true,
   "type": "module",
-  "scripts": { "test": "node --test tests/dashboard.test.js" }
+  "scripts": {
+    "test": "node --test tests/dashboard.test.js",
+    "build:pals": "node scripts/build-page-pal-catalog.mjs"
+  }
 }

@@ -627,7 +627,7 @@ test('Page Pals enforce prices, sequential upgrades, ownership and retry safety'
   assert.equal((await buy('001',0)).status,200);
   assert.equal((await buy('001',0)).status,200);
   let r=(await (await post(auth,env,leon)).json()).rewards;
-  assert.equal(r.balances.leon,40-pagePalCost('001'));assert.equal(r.pagePalCatalog['001'][0].form,2);assert.equal(r.pagePalCatalog['003'][0].form,1);
+  assert.equal(r.balances.leon,40-pagePalCost('001'));assert.equal(r.pagePalCatalog['001'][0].form,2);assert.equal(PAGE_PALS['003'][0].form,1);
   assert.equal((await buy('001',1)).status,200);
   assert.equal((await buy('001',2)).status,400);
   assert.equal((await buy('missing',0)).status,400);
@@ -723,4 +723,44 @@ test('all Page Pal names exactly match the sprite pack ID and evolution table',a
   assert.deepEqual(PAGE_PALS['001'].map(f=>[f.form,f.name]),[[2,'Jollyjack'],[3,'Hinkypunk']]);
   assert.deepEqual(PAGE_PALS['002'].map(f=>[f.form,f.name]),[[2,"Mo'lagos"],[3,'Leep-a-Lil']]);
   assert.equal(PAGE_PALS['585'][0].name,'Warqu');
+});
+
+
+test('clicking a Page Pal resumes walking and idle after each hop',()=>{
+  let node;const timers=[],imageClasses=new Set(),nodeClasses=new Set();
+  const image={classList:{add:x=>imageClasses.add(x),remove:x=>imageClasses.delete(x)},offsetWidth:80};
+  const facing={style:{}};
+  const context=vm.createContext({state:{auth:{role:'leon'},view:'leon',rewards:{pagePalCatalog:{'001':[{file:'001-2.png'}]},equippedPals:{leon:'001'},pals:{leon:{'001':0}}}},prefs:()=>({motion:'full'}),localRead:(key,fallback)=>fallback,window:{innerWidth:1000,matchMedia:()=>({matches:false})},document:{hidden:false,getElementById:()=>node,createElement:()=>({dataset:{},style:{setProperty(){}},setAttribute(){},classList:{add:x=>nodeClasses.add(x),remove:x=>nodeClasses.delete(x)},querySelector:s=>s==='img'?image:facing,isConnected:true}),body:{append:n=>node=n}},setTimeout:fn=>{timers.push(fn);return timers.length;},clearTimeout(){},encodeURIComponent});
+  vm.runInContext(readFileSync(new URL('../page-pals-ui.js',import.meta.url),'utf8'),context);
+  context.renderPagePal();timers.shift()();assert(nodeClasses.has('pal-walking'));
+  for(let i=0;i<3;i++){node.onclick();assert(imageClasses.has('pal-hop'));image.onanimationend({animationName:'pal-hop'});assert(!imageClasses.has('pal-hop'));assert(nodeClasses.has('pal-walking'));}
+  timers.shift()();assert(!nodeClasses.has('pal-walking'));
+  node.onclick();image.onanimationend({animationName:'pal-hop'});assert(!imageClasses.has('pal-hop'));assert(!nodeClasses.has('pal-walking'));
+  timers.shift()();assert(nodeClasses.has('pal-walking'));
+});
+
+
+test('store catalog is named, matches source modules, and is kept out of dashboard refreshes',async()=>{
+  const data=JSON.parse(readFileSync(new URL('../assets/page-pals-catalog.json',import.meta.url),'utf8'));
+  assert.deepEqual(data.catalog,PAGE_PALS);assert.deepEqual(data.prices,PAGE_PAL_PRICES);assert.equal(Object.values(data.catalog).flat().filter(f=>f.name).length,1822);
+  const env=await fixture();const signed=await (await post(auth,env,parent)).json();
+  assert.deepEqual(signed.rewards.pagePalCatalog,{});assert(JSON.stringify(signed).length<JSON.stringify(data.catalog).length/2);
+  const {onRequestPost:store}=await import('../functions/api/rewards-store.js');
+  assert.equal((await post(store,env,{role:'leon',password:'wrong'})).status,401);
+  assert.equal((await post(store,env,{role:'monitor'})).status,200);
+  const response=await (await post(store,env,parent)).json();assert(response.rewards.balances);assert(!response.assignments);assert.deepEqual(response.rewards.pagePalCatalog,{});
+});
+
+test('Rewards Store opens immediately before its balance refresh and remains usable on failure',async()=>{
+  const source=readFileSync(new URL('../school.js',import.meta.url),'utf8');let resolveFetch,opened=0,error='';
+  const node={set textContent(value){error=value;}};
+  const context=vm.createContext({state:{auth:{role:'leon'},rewards:{balances:{leon:3}}},drawRewards:()=>opened++,pumpWrites:async()=>true,fetch:()=>new Promise(resolve=>resolveFetch=resolve),document:{getElementById:id=>id==='store-error'?node:{dataset:{dialog:'rewards'}}},updatePointBalances:()=>{}});
+  vm.runInContext(source.slice(source.indexOf('async function openRewards('),source.indexOf('function studentBalanceButton(')),context);
+  const pending=context.openRewards();assert.equal(opened,1);await new Promise(resolve=>setImmediate(resolve));resolveFetch({ok:false,json:async()=>({error:'Offline'})});await pending;assert(error.includes('last loaded balance'));assert.equal(opened,1);
+});
+
+test('store landing uses departments while point rules live on the dashboard',()=>{
+  let html='';const context=vm.createContext({state:{auth:{role:'parent'},rewards:{balances:{leon:4,logan:2}}},nameOf:x=>x,pointBreakdown:()=>'',savingsGoal:()=>'',openDialog:(id,body)=>html=body});
+  vm.runInContext(readFileSync(new URL('../rewards-store-ui.js',import.meta.url),'utf8'),context);
+  context.drawStoreHome();assert(html.includes('store-departments'));assert(html.includes('openPagePals()'));assert(!html.includes('Past due'));assert(context.dashboardPointRules().includes('How points work'));
 });
