@@ -51,28 +51,13 @@ async function clearPointDebt(env,student){
     .bind('redemption_floor_'+id,id,student,new Date().toISOString(),student,student).run();
 }
 
-export async function recordOverduePenalties(env,role){
-  const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});
+export async function reconcilePointBalances(env,role){
   const students=role==='parent'?['leon','logan']:['leon','logan'].includes(role)?[role]:[];
-  for(const student of students){
-    await clearPointDebt(env,student);
-    const rows=await env.DB.prepare("SELECT a.*,m.value AS metadata FROM assignments a LEFT JOIN settings m ON m.key='assignment_meta_'||a.id WHERE student=? AND due<>'' AND due<?").bind(student,today).all();
-    const writes=[];
-    for(const assignment of rows.results){
-      const meta=readJSON(assignment.metadata);
-      if(meta.submittedDate&&meta.submittedDate<=assignment.due)continue;
-      if(assignment.done&&!(meta.submittedDate>assignment.due)&&!(meta.completedDate>assignment.due))continue;
-      const id='late-'+assignment.id,key='redemption_penalty_'+student+'_'+assignment.id;
-      writes.push(env.DB.prepare(`INSERT INTO settings(key,value)
-        SELECT ?,json_set(?,'$.cost',CASE WHEN (${earnedSQL()})-(${spentSQL})>=1 THEN 1 ELSE 0 END)
-        ON CONFLICT(key) DO NOTHING`).bind(key,JSON.stringify({id,student,kind:'penalty',title:assignment.title,cost:1,dueDate:assignment.due,date:new Date().toISOString()}),student,student));
-    }
-    if(writes.length)await env.DB.batch(writes);
-  }
+  for(const student of students)await clearPointDebt(env,student);
 }
 
 export async function rewardsData(env, role) {
-  await recordOverduePenalties(env,role);
+  await reconcilePointBalances(env,role);
   const rows=await env.DB.prepare("SELECT key,value FROM settings WHERE key LIKE 'reward_%' OR key LIKE 'redemption_%'").all();
   const items=[],history=[];
   for(const row of rows.results){const item=readJSON(row.value,{});if(row.key.startsWith('reward_goal_')||row.key.startsWith('reward_pal_'))continue;if(row.key.startsWith('reward_'))items.push(item);else if(role==='parent'||item.student===role)history.push(item);}

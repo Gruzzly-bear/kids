@@ -1,7 +1,7 @@
 import { pagePalCost } from './page-pal-prices.js';
 import { PAGE_PALS } from './page-pals.js';
 import { authorized, hash, json, metadata, preferences, readJSON, safeURL, setting } from './shared.js';
-import { earnedSQL, spentSQL, rewardsData, restrictThemes, recordOverduePenalties } from './rewards.js';
+import { earnedSQL, spentSQL, rewardsData, restrictThemes, reconcilePointBalances } from './rewards.js';
 import { FREE_THEMES, THEME_CATALOG, THEME_PRICE } from './theme-catalog.js';
 import { COSMETICS } from './cosmetics.js';
 import { POINT_RULES } from './point-rules.js';
@@ -11,7 +11,7 @@ export async function onRequestPost({ request, env }) {
     const body = await request.json();
     const { role, password, change } = body;
     if (!await authorized(env, role, password)) return json({ error: 'Please sign in again.' }, 401);
-    await recordOverduePenalties(env,role);
+    await reconcilePointBalances(env,role);
     if (body.rewardAction) {
       const { rewardAction: action, id }=body;
       if(typeof id!=='string'||! /^[a-zA-Z0-9-]{1,120}$/.test(id))return json({error:'Invalid reward.'},400);

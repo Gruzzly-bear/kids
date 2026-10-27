@@ -367,19 +367,19 @@ test('student announcements stay visible without the four reminder bars',()=>{
   const html=context.studentAnnouncementStack('leon');assert(html.startsWith('<section'));assert(!html.includes('<details'));assert(!html.includes('<summary'));assert(html.includes('<announcement/>'));assert(!html.includes('<reminders/>'));assert(html.includes('id="student-announcements"'));
 });
 
-test('past-due deductions stop at zero and never become future debt',async()=>{
+test('overdue assignments never deduct points automatically',async()=>{
   const env=await fixture(),data=async()=>(await (await post(auth,env,leon)).json()).rewards;
   assert.equal((await data()).balances.leon,0);
-  assert.equal((await data()).history.find(x=>x.kind==='penalty').cost,0,'Late at zero is recorded but not charged');
+  assert.equal((await data()).history.some(x=>x.kind==='penalty'),false);
   await post(save,env,{...parent,rewardAction:'awardPoints',id:'late-bonus',student:'leon',points:1});
   assert.equal((await data()).balances.leon,1,'New earnings do not pay old debt');
   const today=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'}),date=new Date(today+'T12:00:00Z');date.setUTCDate(date.getUTCDate()-1);const yesterday=date.toISOString().slice(0,10);
   for(const id of ['leon-0','leon-1'])await post(save,env,{...parent,change:{type:'update',id,student:'leon',subject:'math',title:'Late work',due:yesterday,done:false}});
-  let result=await data();assert.equal(result.balances.leon,0);assert.equal(result.history.filter(x=>x.kind==='penalty').reduce((sum,x)=>sum+x.cost,0),1);
+  let result=await data();assert.equal(result.balances.leon,1);assert.equal(result.history.some(x=>x.kind==='penalty'),false);
   await post(save,env,{...leon,change:{type:'status',id:'leon-0',student:'leon',done:true,completedDate:today,submittedDate:today}});
-  assert.equal((await data()).balances.leon,0,'Late completion does not refund a charged penalty');
+  assert.equal((await data()).balances.leon,1,'Late completion does not deduct points');
   await post(save,env,{...parent,rewardAction:'awardPoints',id:'later-bonus',student:'leon',points:2});
-  assert.equal((await data()).balances.leon,2,'Zero-cost late entries never charge later');
+  assert.equal((await data()).balances.leon,3,'Repeated reads and writes never create late charges');
 });
 
 test('parents can award spendable bonus points per child with retry-safe history',async()=>{
@@ -815,4 +815,24 @@ test('Page Pal form previews do not equip and numbered pagination marks both end
     assert(html.includes('aria-label="Page 1"'));assert(html.includes('aria-label="Page 26"'));
     assert(html.includes('drawPagePals(4,false)'));assert(html.includes('Page 4 of 26'));
   }
+});
+
+
+test('assignment imports complete submitted and completed work without scores',()=>{
+  const context=vm.createContext({Date,Intl,crypto});
+  vm.runInContext(readFileSync(new URL('../school-core.js',import.meta.url),'utf8'),context);
+  const rows=context.parsePastedAssignments(`Assignment | Due Date | Status
+Essay | Oct 26, 2026 | Submitted
+Quiz | Oct 27, 2026 | Completed
+Practice | Oct 28, 2026 | Not submitted
+Reading | Oct 29, 2026 | Not completed
+Project
+Submitted
+Oct 30, 2026
+Review
+Oct 31, 2026
+Completed
+Open task
+Nov 1, 2026`);
+  assert.deepEqual(Array.from(rows,x=>[x.title,x.done]),[['Essay',true],['Quiz',true],['Practice',false],['Reading',false],['Project',true],['Review',true],['Open task',false]]);
 });
