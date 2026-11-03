@@ -29,7 +29,7 @@ function importedDueDate(value){
 function importedAssignmentTitle(value){
   return String(value).replace(/<[^>]*>/g,'').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1 ').replace(/https?:\/\/\S+/gi,'').replace(/(?:Submitted|Completed|Missing)\b[\s\S]*$/i,'').replace(/\bLate\s+[A-Z][a-z]{2},[\s\S]*$/i,'').replace(/\*/g,'').replace(/[|\t]+/g,' ').replace(/\s+/g,' ').replace(/^[-\s]+|[-\s]+$/g,'').trim();
 }
-function importedAssignmentStatus(value){const text=String(value);if(/\b(?:not(?: yet)?|never)\s+(?:completed|submitted|done)\b|\b(?:unsubmitted|incomplete|missing)\b/i.test(text))return false;if(/\b(?:completed|submitted)\b/i.test(text))return true;return null}
+function importedAssignmentStatus(value){const text=String(value);if(/\b(?:not(?: yet)?|never)\s+(?:completed|submitted|done)\b|\b(?:unsubmitted|incomplete|missing)\b/i.test(text))return false;if(/\b(?:completed|submitted)\b/i.test(text)||hasNumericAssignmentScore(text)||/^\s*[✓✔☑]\s*$/.test(text))return true;return null}
 function importedAssignmentComplete(value){return importedAssignmentStatus(value)===true}
 function hasNumericAssignmentScore(value){return /^\s*\d+(?:\.\d+)?\s*pts(?=Out\b|\b)/i.test(String(value));}
 function parsePastedAssignments(text){
@@ -42,17 +42,17 @@ function parsePastedAssignments(text){
       const nonempty=cells.filter(Boolean);
       if(nonempty.length>=2){
         const dueCell=nonempty.findIndex((cell,index)=>index>0&&importedDueDate(cell));
-        if(dueCell>0){const rowStatus=nonempty.map(importedAssignmentStatus).find(value=>value!==null)??null;lastItem=add(nonempty[0],nonempty[dueCell],rowStatus);title='';status=null;continue;}
+        if(dueCell>0){const rowStatuses=nonempty.map(importedAssignmentStatus).filter(value=>value!==null),rowStatus=rowStatuses.includes(true)?true:rowStatuses[0]??null;lastItem=add(nonempty[0],nonempty[dueCell],rowStatus);title='';status=null;continue;}
         if(/^(?:[-: ]+)$/.test(nonempty.join('')))continue;
         if(/Assignment/i.test(nonempty[0])&&/Due Date/i.test(nonempty[1]||''))continue;
       }
     }
     const lineStatus=importedAssignmentStatus(line);
     if(lineStatus!==null&&/^(?:Status:\s*)?(?:Submitted|Completed|Not(?: yet)? (?:submitted|completed|done)|Incomplete|Unsubmitted|Missing)\b/i.test(line)){status=lineStatus;if(lastItem){lastItem.done=status;lastItem.statusKnown=true;}continue;}
-    if(/^Late\s+[A-Z][a-z]{2},/i.test(line)){status=false;continue;}
+    if(/^Late\s+[A-Z][a-z]{2},/i.test(line))continue;
     const due=importedDueDate(line);
     if(due){const lineStatus=importedAssignmentStatus(line);lastItem=add(title,due,lineStatus??status);title='';status=null;continue;}
-    if(hasNumericAssignmentScore(line)){continue;}
+    if(hasNumericAssignmentScore(line)||/^\s*[✓✔☑]\s*$/.test(line)){if(lastItem){lastItem.done=true;lastItem.statusKnown=true;}continue;}
     if(/^(Assignments|Assignment Group|Score|Total:|Totals |View feedback|Out of |—|\d+ pts)/i.test(line))continue;
     if(!/^Brady |^Assignment\s+Due Date/i.test(line)){const candidate=importedAssignmentTitle(line);if(candidate){title=candidate;status=importedAssignmentStatus(line);lastItem=null;}}
   }
