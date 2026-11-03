@@ -29,7 +29,8 @@ function importedDueDate(value){
 function importedAssignmentTitle(value){
   return String(value).replace(/<[^>]*>/g,'').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1 ').replace(/https?:\/\/\S+/gi,'').replace(/(?:Submitted|Completed|Missing)\b[\s\S]*$/i,'').replace(/\bLate\s+[A-Z][a-z]{2},[\s\S]*$/i,'').replace(/\*/g,'').replace(/[|\t]+/g,' ').replace(/\s+/g,' ').replace(/^[-\s]+|[-\s]+$/g,'').trim();
 }
-function importedAssignmentStatus(value){const text=String(value);if(/\b(?:not(?: yet)?|never)\s+(?:completed|submitted|done)\b|\b(?:unsubmitted|incomplete|missing)\b/i.test(text))return false;if(/\b(?:completed|submitted)\b/i.test(text)||hasNumericAssignmentScore(text)||/^\s*[✓✔☑]\s*$/.test(text))return true;return null}
+function isCompletionMark(value){return /[✓✔☑✅√🗸](?:[\uFE0E\uFE0F])?/u.test(String(value))}
+function importedAssignmentStatus(value){const text=String(value);if(/\b(?:completed|submitted)\b/i.test(text)||hasNumericAssignmentScore(text)||isCompletionMark(text))return true;if(/\b(?:not(?: yet)?|never)\s+(?:completed|submitted|done)\b|\b(?:unsubmitted|incomplete|missing)\b/i.test(text))return false;return null}
 function importedAssignmentComplete(value){return importedAssignmentStatus(value)===true}
 function hasNumericAssignmentScore(value){return /^\s*\d+(?:\.\d+)?\s*pts(?=Out\b|\b)/i.test(String(value));}
 function parsePastedAssignments(text){
@@ -52,7 +53,7 @@ function parsePastedAssignments(text){
     if(/^Late\s+[A-Z][a-z]{2},/i.test(line))continue;
     const due=importedDueDate(line);
     if(due){const lineStatus=importedAssignmentStatus(line);lastItem=add(title,due,lineStatus??status);title='';status=null;continue;}
-    if(hasNumericAssignmentScore(line)||/^\s*[✓✔☑]\s*$/.test(line)){if(lastItem){lastItem.done=true;lastItem.statusKnown=true;}continue;}
+    if(hasNumericAssignmentScore(line)||isCompletionMark(line)){if(lastItem){lastItem.done=true;lastItem.statusKnown=true;}continue;}
     if(/^(Assignments|Assignment Group|Score|Total:|Totals |View feedback|Out of |—|\d+ pts)/i.test(line))continue;
     if(!/^Brady |^Assignment\s+Due Date/i.test(line)){const candidate=importedAssignmentTitle(line);if(candidate){title=candidate;status=importedAssignmentStatus(line);lastItem=null;}}
   }
