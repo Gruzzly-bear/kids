@@ -1157,8 +1157,8 @@ setInterval(updateDashboardClock,15000);
 setInterval(updateFocusTimer,1000);
 setInterval(refreshVisibleSchedules,60000);
 setInterval(refreshVisibleAnnouncements,15000);
-// Keep cross-device updates fresh without rereading the full dashboard from
-// D1 every few seconds. Users can still refresh immediately from the header.
-setInterval(()=>{if(state.auth&&!document.hidden&&!document.getElementById('app-dialog'))refreshDashboard(true);},120000);
+// Keep cross-device updates available while limiting full dashboard reads from
+// D1. The clock updates locally; users can refresh dashboard data from the header.
+setInterval(()=>{if(state.auth&&!document.hidden&&!document.getElementById('app-dialog'))refreshDashboard(true);},900000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshVisibleSchedules();});
 applyPreferences();restoreSession();
