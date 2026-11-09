@@ -37,5 +37,8 @@ export async function onRequestPost({request,env}){
     }
     const { rewardsData }=await import('./rewards.js');
     return json({role,assignments,schedules,cards,calendar,preferences:prefs,assignmentSubjectCatalogs,rewards:await rewardsData(env,role)});
-  }catch(e){return json({error:"Setup is incomplete. Run schema.sql in D1, then confirm the three secrets are saved."},500)}
+  }catch(e){
+    console.error("/api/auth failed:",e);
+    return json({error:"Setup is incomplete. Run schema.sql in D1, then confirm the three secrets are saved."},500)
+  }
 }
