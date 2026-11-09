@@ -1159,6 +1159,6 @@ setInterval(refreshVisibleSchedules,60000);
 setInterval(refreshVisibleAnnouncements,15000);
 // Keep cross-device updates available while limiting full dashboard reads from
 // D1. The clock updates locally; users can refresh dashboard data from the header.
-setInterval(()=>{if(state.auth&&!document.hidden&&!document.getElementById('app-dialog'))refreshDashboard(true);},900000);
+setInterval(()=>{if(state.auth?.role==='parent'&&!document.hidden&&!document.getElementById('app-dialog'))refreshDashboard(true);},900000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshVisibleSchedules();});
 applyPreferences();restoreSession();
