@@ -29,13 +29,13 @@ export async function restrictThemes(env,student,prefs){
 }
 
 // Calculate earnings from current assignment records so retries and reopening
-// cannot mint extra points. Submission dates, not completion dates, earn points.
+// cannot mint extra points. Completion dates determine assignment points.
 export function earnedSQL(){
   return `SELECT COALESCE(SUM(CASE WHEN a.due<>''
-  AND date(json_extract(m.value,'$.submittedDate'))=json_extract(m.value,'$.submittedDate')
-  AND json_extract(m.value,'$.submittedDate')<=a.due
-  AND a.due<=date(json_extract(m.value,'$.submittedDate'),'+1 day')
-  THEN CASE WHEN json_extract(m.value,'$.submittedDate')<a.due THEN 2 ELSE 1 END ELSE 0 END),0)
+  AND date(json_extract(m.value,'$.completedDate'))=json_extract(m.value,'$.completedDate')
+  AND json_extract(m.value,'$.completedDate')<=a.due
+  AND a.due<=date(json_extract(m.value,'$.completedDate'),'+1 day')
+  THEN CASE WHEN json_extract(m.value,'$.completedDate')<a.due THEN 2 ELSE 1 END ELSE 0 END),0)
   FROM assignments a LEFT JOIN settings m ON m.key='assignment_meta_'||a.id WHERE a.student=?`;
 }
 export const spentSQL = `SELECT COALESCE(SUM(json_extract(value,'$.cost')),0) FROM settings
@@ -74,7 +74,7 @@ export async function rewardsData(env, role) {
   for(const student of Object.keys(balances)){
     const work=await env.DB.prepare("SELECT a.*,m.value AS metadata FROM assignments a LEFT JOIN settings m ON m.key='assignment_meta_'||a.id WHERE student=?").bind(student).all();
     let earned=0;
-    for(const assignment of work.results){const submitted=readJSON(assignment.metadata).submittedDate;if(submitted&&assignment.due&&submitted<=assignment.due&&Date.parse(assignment.due+'T12:00:00Z')-Date.parse(submitted+'T12:00:00Z')<=86400000)earned+=submitted<assignment.due?2:1;}
+    for(const assignment of work.results){const completed=readJSON(assignment.metadata).completedDate;if(completed&&assignment.due&&completed<=assignment.due&&Date.parse(assignment.due+'T12:00:00Z')-Date.parse(completed+'T12:00:00Z')<=86400000)earned+=completed<assignment.due?2:1;}
     const purchases=history.filter(item=>item.student===student);
     breakdown[student]={earned,deductions:purchases.filter(item=>item.kind==='penalty').reduce((sum,item)=>sum+item.cost,0),behaviorDeductions:purchases.filter(item=>item.kind==='deduction').reduce((sum,item)=>sum+item.cost,0),bonuses:purchases.filter(item=>item.kind==='award').reduce((sum,item)=>sum+item.points,0),adjustments:purchases.filter(item=>item.kind==='balanceAdjustment').reduce((sum,item)=>sum+item.points,0),spent:purchases.filter(item=>!['award','penalty','deduction','balanceAdjustment'].includes(item.kind)).reduce((sum,item)=>sum+item.cost,0)};
     const row=await env.DB.prepare('SELECT value FROM settings WHERE key=?').bind('reward_goal_'+student).first();
