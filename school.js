@@ -776,7 +776,7 @@ function editor(){render();}
 function monitorPage(){state.view='monitor';render();}
 function acceptAuth(data,session){
   const nextView=session.role==='monitor'?'monitor':session.role==='parent'?'parent':session.role,subjectView=state.view===nextView?state.subjectView:null;
-  state.assignments=dbData(data.assignments);loadSchedules(data.schedules);loadCards(data.cards);state.familyCalendar=Array.isArray(data.calendar)?data.calendar:[];
+  state.assignments=dbData(data.assignments);loadSchedules(data.schedules);resetScheduleWatchBaseline();loadCards(data.cards);state.familyCalendar=Array.isArray(data.calendar)?data.calendar:[];
   state.rewards=data.rewards||{items:[],history:[],balances:{}};state.preferences=data.preferences||{};state.assignmentSubjectCatalogs={leon:{added:[],hidden:[]},logan:{added:[],hidden:[]},...(data.assignmentSubjectCatalogs||{})};state.auth=session;state.syncPhase='saved';state.syncError='';state.liveSyncError='';state.view=nextView;
   state.subjectView=subjectView;state.sharedSnapshot=JSON.stringify(data);state.loadError='';state.pending=localRead('school-pending-'+session.role,[]).filter(item=>item&&item.body&&typeof item.label==='string');
   // Replay unsaved edits into the fetched snapshot so a reload does not hide them.
@@ -1145,6 +1145,34 @@ const scheduleImportContent=openScheduleImport;
 openScheduleImport=()=>{scheduleImportContent();const legacy=document.getElementById('schedule-import-modal');const content=legacy.querySelector('.import-box');content.querySelector('button')?.remove();const markup=content.innerHTML;legacy.remove();openDialog('schedule-import',`<div id="schedule-import-modal">${markup}</div>`);};
 closeScheduleImport=()=>closeDialog();
 
+let scheduleWatchDate='',scheduleWatchMinute=-1;
+function resetScheduleWatchBaseline(){scheduleWatchDate=scheduleDay();scheduleWatchMinute=schoolMinutes();}
+function checkScheduleEndRefresh(){
+  const date=scheduleDay(),minute=schoolMinutes();
+  if(!state.auth||!state.view||state.view==='calendar'){
+    scheduleWatchDate=date;scheduleWatchMinute=minute;return;
+  }
+  if(scheduleWatchDate!==date||scheduleWatchMinute<0){
+    scheduleWatchDate=date;scheduleWatchMinute=minute;return;
+  }
+  if(document.hidden)return;
+  const previousMinute=scheduleWatchMinute;
+  if(minute<previousMinute){scheduleWatchDate=date;scheduleWatchMinute=minute;return;}
+  const students=['leon','logan'].includes(state.view)?[state.view]:['parent','monitor'].includes(state.view)?['leon','logan']:[];
+  const classEnded=students.some(student=>{
+    const items=scheduleFor(student).filter(item=>!item.optional&&scheduleMinutes(item.time)>=0).sort((a,b)=>scheduleMinutes(a.time)-scheduleMinutes(b.time));
+    return items.some((item,index)=>{
+      if(item.type==='break'||item.subject==='break')return false;
+      const explicitEnd=scheduleMinutes(item.endTime);
+      const end=explicitEnd>=0?explicitEnd:items[index+1]?scheduleMinutes(items[index+1].time):-1;
+      return end>previousMinute&&end<=minute;
+    });
+  });
+  if(!classEnded){scheduleWatchDate=date;scheduleWatchMinute=minute;return;}
+  if(state.pending.length||pumping||state.refreshing||document.getElementById('app-dialog'))return;
+  scheduleWatchDate=date;scheduleWatchMinute=minute;
+  refreshDashboard(true);
+}
 function refreshVisibleSchedules(){
   const orbit=document.querySelector('.student-page-heading .class-orbit');
   if(orbit){const replacement=document.createElement('div');replacement.innerHTML=classTimeline(state.view);const next=replacement.firstElementChild,oldClock=orbit.querySelector('#dashboard-clock'),nextClock=next.querySelector('#dashboard-clock');if(oldClock&&nextClock){nextClock.dateTime=oldClock.dateTime;nextClock.textContent=oldClock.textContent;}if(orbit.innerHTML!==next.innerHTML)orbit.replaceWith(next);}
@@ -1156,9 +1184,10 @@ function refreshVisibleSchedules(){
 setInterval(updateDashboardClock,15000);
 setInterval(updateFocusTimer,1000);
 setInterval(refreshVisibleSchedules,60000);
+setInterval(checkScheduleEndRefresh,15000);
 setInterval(refreshVisibleAnnouncements,15000);
-// Keep cross-device updates available while limiting full dashboard reads from
-// D1. The clock updates locally; users can refresh dashboard data from the header.
+// Parent sessions retain a slow fallback check. Child and monitor dashboards
+// sync at scheduled class ends; the clock updates locally.
 setInterval(()=>{if(state.auth?.role==='parent'&&!document.hidden&&!document.getElementById('app-dialog'))refreshDashboard(true);},900000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshVisibleSchedules();});
 applyPreferences();restoreSession();
