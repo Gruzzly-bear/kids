@@ -346,9 +346,13 @@ function dbData(rows){const out={leon:{},logan:{}};for(const row of rows||[])(ou
 function scheduleAssignmentSubject(item){
   if(!item||item.type==='break'||item.subject==='break')return'';
   if(item.subject&&item.subject!=='custom')return item.subject;
-  const label=String(item.label||'').trim(),normalized=label.toLowerCase().replace(/\s+/g,' ');
+  const label=String(item.label||'').trim(),normalized=label.replace(/^\(?optional\)?\s*[-:·]?\s*/i,'').toLowerCase().replace(/\s+/g,' ');
   const knownSubject=Object.entries(LABELS).find(([key,name])=>normalized===key||normalized===name.toLowerCase());
   if(knownSubject)return knownSubject[0];
+  if(/^(?:physical education|physical ed|p\.?e\.?)(?:$|\s|:)/i.test(normalized))return'pe';
+  if(/^art(?:$|\s|:)/i.test(normalized))return'art';
+  if(/^(?:ed\s*tech(?:nology)?|educational\s+technology)(?:$|\s|:)/i.test(normalized))return'edtech';
+  if(/^stem(?:$|\s|:)/i.test(normalized))return'stem';
   if(['english language arts','ela'].includes(normalized))return'ela';
   if(['physical ed','p.e.'].includes(normalized))return'pe';
   const slug=normalized.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,32);
