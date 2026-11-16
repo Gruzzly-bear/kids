@@ -30,9 +30,10 @@ function importedAssignmentTitle(value){
   return String(value).replace(/<[^>]*>/g,'').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1 ').replace(/https?:\/\/\S+/gi,'').replace(/(?:Submitted|Completed|Missing)\b[\s\S]*$/i,'').replace(/\bLate\s+[A-Z][a-z]{2},[\s\S]*$/i,'').replace(/\*/g,'').replace(/[|\t]+/g,' ').replace(/\s+/g,' ').replace(/^[-\s]+|[-\s]+$/g,'').trim();
 }
 function isCompletionMark(value){return /[✓✔☑✅√🗸](?:[\uFE0E\uFE0F])?/u.test(String(value))}
-function importedAssignmentStatus(value){const text=String(value);if(/\b(?:completed|submitted)\b/i.test(text)||hasNumericAssignmentScore(text)||isCompletionMark(text))return true;if(/\b(?:not(?: yet)?|never)\s+(?:completed|submitted|done)\b|\b(?:unsubmitted|incomplete|missing)\b/i.test(text))return false;return null}
+function importedAssignmentStatus(value){const text=String(value);if(/\b(?:not(?: yet)?|never)\s+(?:completed|submitted|done)\b|\b(?:unsubmitted|incomplete|missing)\b/i.test(text))return false;if(/\b(?:completed|submitted)\b/i.test(text)||isCompletionMark(text))return true;const score=assignmentScoreStatus(text);if(score!==null)return score;return null}
 function importedAssignmentComplete(value){return importedAssignmentStatus(value)===true}
-function hasNumericAssignmentScore(value){return /^\s*\d+(?:\.\d+)?\s*pts(?=Out\b|\b)/i.test(String(value));}
+function assignmentScoreStatus(value){const text=String(value),fraction=text.match(/(?:^|\s)(-|\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)(?:\s*(?:pts?|points?))?(?=\s|$)/i);if(fraction)return fraction[1]==='-'?false:Number(fraction[1])>0;const points=text.match(/^\s*(\d+(?:\.\d+)?)\s*pts(?=Out\b|\b)/i);return points?Number(points[1])>0:null}
+function hasNumericAssignmentScore(value){return assignmentScoreStatus(value)===true}
 function parsePastedAssignments(text){
   const lines=String(text).replace(/&#x9;/g,'\t').split(/\r?\n/).map(line=>line.trim()).filter(Boolean),items=[];
   const add=(titleText,dueText,status=null)=>{const title=importedAssignmentTitle(titleText),due=importedDueDate(dueText);if(title&&due&&!/^(Assignment|Due Date|Assignment Group|Score)$/i.test(title)){const item={title,due,done:status===true,statusKnown:status!==null};items.push(item);return item;}};
@@ -49,17 +50,18 @@ function parsePastedAssignments(text){
       }
     }
     const lineStatus=importedAssignmentStatus(line);
-    if(lineStatus!==null&&/^(?:Status:\s*)?(?:Submitted|Completed|Not(?: yet)? (?:submitted|completed|done)|Incomplete|Unsubmitted|Missing)\b/i.test(line)){status=lineStatus;if(lastItem){lastItem.done=status;lastItem.statusKnown=true;}continue;}
+    if(lineStatus!==null&&/^(?:Late\b.*?[, :]\s*)?(?:Status:\s*)?(?:Submitted|Completed|Not(?: yet)? (?:submitted|completed|done)|Incomplete|Unsubmitted|Missing)\b/i.test(line)){status=lineStatus;if(lastItem){lastItem.done=status;lastItem.statusKnown=true;}continue;}
     if(/^Late\s+[A-Z][a-z]{2},/i.test(line))continue;
     const due=importedDueDate(line);
     if(due){const lineStatus=importedAssignmentStatus(line);lastItem=add(title,due,lineStatus??status);title='';status=null;continue;}
-    if(hasNumericAssignmentScore(line)||isCompletionMark(line)){if(lastItem){lastItem.done=true;lastItem.statusKnown=true;}continue;}
+    if(assignmentScoreStatus(line)!==null){const scoreStatus=assignmentScoreStatus(line);if(lastItem){if(scoreStatus||!lastItem.done)lastItem.done=scoreStatus;lastItem.statusKnown=true;}else if(scoreStatus||status!==true)status=scoreStatus;continue;}
+    if(isCompletionMark(line)){if(lastItem){lastItem.done=true;lastItem.statusKnown=true;}continue;}
     if(/^(Assignments|Assignment Group|Score|Total:|Totals |View feedback|Out of |—|\d+ pts)/i.test(line))continue;
     if(!/^Brady |^Assignment\s+Due Date/i.test(line)){const candidate=importedAssignmentTitle(line);if(candidate){title=candidate;status=importedAssignmentStatus(line);lastItem=null;}}
   }
   return [...new Map(items.map(item=>[`${normalizeTitle(item.title)}|${item.due}`,item])).values()];
 }
-function openImport(){const student=state.editorStudent||'leon',subject=state.editorSubject;document.body.insertAdjacentHTML('beforeend',`<section id="import-modal" class="import-modal"><div class="import-box"><button class="button light" onclick="closeImport()">Close</button><h2>Import ${student==='leon'?'Leon':'Logan'}’s ${subjectLabel(subject,student)} assignments</h2><p class="small">Due dates and explicit completion statuses are imported. Completed or submitted items are marked complete, and items explicitly marked not done are reopened. Other new items stay open. Scores and feedback are not saved.</p><textarea id="import-text" placeholder="Paste assignments here"></textarea><div class="actions import-actions"><button class="button" onclick="previewImport()">Preview import</button><button id="apply-import" class="button" onclick="applyImport()" hidden>Apply imported items and statuses</button></div><div id="import-preview"></div></div></section>`)}
+function openImport(){const student=state.editorStudent||'leon',subject=state.editorSubject;document.body.insertAdjacentHTML('beforeend',`<section id="import-modal" class="import-modal"><div class="import-box"><button class="button light" onclick="closeImport()">Close</button><h2>Import ${student==='leon'?'Leon':'Logan'}’s ${subjectLabel(subject,student)} assignments</h2><p class="small">Due dates are imported. Submitted or completed items, and items with points above zero (such as 1/4), are marked complete, including late work. Zero or hyphen scores stay open. Items explicitly marked not done are reopened. Other new items stay open; scores and feedback are not saved.</p><textarea id="import-text" placeholder="Paste assignments here"></textarea><div class="actions import-actions"><button class="button" onclick="previewImport()">Preview import</button><button id="apply-import" class="button" onclick="applyImport()" hidden>Apply imported items and statuses</button></div><div id="import-preview"></div></div></section>`)}
 function previewImport(){
   const student=state.editorStudent||'leon',subject=state.editorSubject,parsed=parsePastedAssignments(document.getElementById('import-text').value),existing=state.assignments[student][subject];
   const rows=parsed.map(item=>{const match=existing.find(x=>normalizeTitle(x.title)===normalizeTitle(item.title));let status=!match?'new':!match.due?'add-date':match.due===item.due?'unchanged':'review';if(match&&item.statusKnown&&item.done!==!!match.done&&status!=='review')status=item.done?'complete':'reopen';const willComplete=!!item.done&&(!match||!match.done),willReopen=!!match&&item.statusKnown&&!item.done&&!!match.done;return {...item,status,willComplete,willReopen,id:match?.id}});
